@@ -25,6 +25,7 @@
     --color-base-type-name: #A9B7C6;
     --color-base-type-name-definition: #dddfe2;
     --color-base-keyword: #de935f;
+    --color-base-variable-name: #b294bb;
   }
   
   /* Background */ .chroma { background-color: var(--color-block-background); padding: 16px; }
@@ -54,9 +55,9 @@
   /* NameFunction */ .chroma .nf { color: var(--color-base-function) }
   /* NameFunctionMagic */ .chroma .fm { color: var(--color-base0d) }
   /* NameLabel */ .chroma .nl { color: var(--color-base0d) }
-  /* NameNamespace */ .chroma .nn { color: var(--color-base0d) }
+  /* NameNamespace */ .chroma .nn { color: var(--color-base04) }
   /* NameOther */ .chroma .nx { color: var(--color-base0d) }
-  /* NameProperty */ .chroma .py { color: var(--color-base0d) }
+  /* NameProperty */ .chroma .py { color: var(--color-base-variable-name) }
   /* NameTag */ .chroma .nt { color: var(--color-base0e) }
   /* NameVariable */ .chroma .nv { color: var(--color-base0d) }
   /* NameVariableClass */ .chroma .vc { color: var(--color-base0d) }
