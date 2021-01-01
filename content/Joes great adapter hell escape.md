@@ -3,7 +3,6 @@ title: "Joe's great adapter hell escape"
 date: 2015-07-28T14:46:10+06:00
 description: "Adapter Delegate"
 type: "post"
-image: "images/featured-post/post-1.jpg"
 url: "android/adapter-delegates"
 categories: 
   - "Android"
