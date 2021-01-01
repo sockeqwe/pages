@@ -6,6 +6,7 @@ type: "post"
 url: "android/fragmentargs"
 categories: 
   - "Android"
+  - "Annotation Processor"
 tags:
   - "android"
 ---
