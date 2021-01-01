@@ -33,8 +33,8 @@
   /* Error */ .chroma .err { color: var(--color-base08) }
   /* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
   /* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-  /* LineHighlight */ .chroma .hl { display: block; width: 100%; background-color: var(--color-base02) }
-  /* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em; }
+  /* LineHighlight */ .chroma .hl { display: block; width: 100%; background-color: var(--color-base02); }
+  /* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em; color: #f8f8ff; }
   /* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em; }
   /* Keyword */ .chroma .k { color: var(--color-base-keyword) }
   /* KeywordConstant */ .chroma .kc { color: var(--color-base0e) }

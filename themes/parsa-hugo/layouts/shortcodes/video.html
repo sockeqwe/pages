@@ -1,0 +1,5 @@
+<div>
+    <video width="auto" height="auto" controls="controls" preload="none" onclick="this.paused ? this.play() : this.pause();">
+        <source src="{{ .Get "src" }}" type="{{ .Get "type" }}">
+    </video>
+</div>
