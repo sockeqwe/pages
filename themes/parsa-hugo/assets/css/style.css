@@ -820,6 +820,18 @@ blockquote {
   height: auto;
 }
 
+.content h1,
+.content h2,
+.content h3 {
+  margin-top: 1.5em;
+}
+
+.content h4,
+.content h5,
+.content h6 {
+  margin-top: 1em;
+}
+
 .widget {
   padding: 15px 0;
 }
