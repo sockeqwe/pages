@@ -121,9 +121,9 @@ public class AdvertismentAdapter extends RecyclerView.Adapter {
 
 From then on, every other Adapter extends from `AdvertisementAdapter`:
 
- - `AccessoiresAdapter extends AdvertisementAdapter`
- - `HomeAdapter extends AccessoiresAdapter extends AdvertisementAdapter`
- - `PetFoodTipAdapter extends AdvertisementAdapter`
+ - AccessoiresAdapter extends AdvertisementAdapter
+ - HomeAdapter extends AccessoiresAdapter extends AdvertisementAdapter
+ - PetFoodTipAdapter extends AdvertisementAdapter
 
 Version 3.0 was published on Play Store with advertisement banner everywhere. Once more product manager was happy with Joe's work.
 
