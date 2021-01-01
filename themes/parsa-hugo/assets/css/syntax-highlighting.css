@@ -42,7 +42,7 @@
   /* KeywordNamespace */ .chroma .kn { color: var(--color-base0e) }
   /* KeywordPseudo */ .chroma .kp { color: var(--color-base0e) }
   /* KeywordReserved */ .chroma .kr { color: var(--color-base0e) }
-  /* KeywordType */ .chroma .kt { color: var(--color-base08) }
+  /* KeywordType */ .chroma .kt { color: var(--color-base-keyword) }
   /* Name */ .chroma .n { color: var(--color-base-type-name) }
   /* NameAttribute */ .chroma .na { color: var(--color-base0d) }
   /* NameBuiltin */ .chroma .nb { color: var(--color-base0d) }
