@@ -1,7 +1,7 @@
 ---
 title: "Joe's great adapter hell escape"
 date: 2015-07-28T14:46:10+06:00
-description: "Adapter Delegate"
+description: "AdapterDelegates, a library to build RecyclerView Adapter easily on Android by following the principle of favor composition over inheritance and delegation."
 type: "post"
 url: "android/adapter-delegates"
 categories: 

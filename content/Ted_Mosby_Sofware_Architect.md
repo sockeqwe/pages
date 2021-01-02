@@ -14,7 +14,7 @@ tags:
   - "library"
 ---
 
-Ted Mosby, architect in _How I met your mother_ (one of my favorite tv shows) was the inspiration for the name of this android library I'm going to talk about in this blog post. This library helps you to build good, robust and reusable software by implementing **M**odel-**V**iew-**P**resenter pattern on android along with some nice features like _ViewState_ for handling screen orientation changes easily. This blog post gives you an introduction to Mosby. The next blog post gives you some tips related to Mosby by showing how to implement a mail client on android: [Stinson's playbook for Mosby](http://hannesdorfmann.com/android/mosby-playbook)
+Ted Mosby, architect in _How I met your mother_ (one of my favorite tv shows) was the inspiration for the name of this android library I'm going to talk about in this blog post. This library helps you to build good, robust and reusable software by implementing **M**odel-**V**iew-**P**resenter pattern on android along with some nice features like _ViewState_ for handling screen orientation changes easily. This blog post gives you an introduction to Mosby. The next blog post gives you some tips related to Mosby by showing how to implement a mail client on android: [Stinson's playbook for Mosby]({{< ref Stinsons_playbook_for_mosby.md >}})
 
 ## Model-View-Presenter (MVP)
 The **M**odel-**V**iew-**P**resenter design pattern is a modern pattern to separate the view from the underlying model. MVP is a derivative of the model–view–controller (MVC) software pattern, also used mostly for building user interfaces.
