@@ -1,6 +1,6 @@
 ---
 title: "Don't interrupt the user's flow"
-date: 2018-08-18T10:00:00+01:00
+date: 2015-08-18T10:00:00+01:00
 description: "Use RecyclerView ItemAnimator to create an outstanding user experience UX"
 type: "post"
 url: "android/dont-interrupt-user-flow"

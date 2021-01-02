@@ -1,6 +1,6 @@
 ---
 title: "Debug Overlay"
-date: 2018-08-18T10:00:00+01:00
+date: 2015-10-16T10:00:00+01:00
 description: "A simple library to show debug logs on top of your android app"
 type: "post"
 url: "android/debugoverlay"
