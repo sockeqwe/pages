@@ -67,7 +67,7 @@ For compatibility reasons, especially for android, I recommend to override **get
 
 The next thing you have to know is that the annotation processor runs in it's own jvm. Yes you read correctly. javac starts a complete java virtual machine for running annotation processors. So what that means for you? You can use anything you would use in any other java application. Use guava! If you want to you can use dependency injection tools like dagger or any other library you want to. But don't forget. Even if it's just a small processor you should take care about efficient algorithms and design patterns like you would do for any other java application.
 
-# Register Your Processor
+### Register Your Processor
 You may ask yourself *"How do I register MyProcessor to javac?"*. You have to provide a **.jar** file. Like any other .jar file you pack your (compiled) annotation processor in that file. Furthermore you also have to pack a special file called **javax.annotation.processing.Processor** located in **META-INF/services** in your .jar file. So the content of your .jar file looks like this:
 
 ```
