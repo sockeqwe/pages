@@ -3,12 +3,13 @@ title: "AnnotatedAdapter"
 date: 2014-09-24T10:00:00+01:00
 description: "AnnotatedAdapter"
 type: "post"
-url: "android/annotatedadapter"
+url: "android/AnnotatedAdapter"
 categories: 
   - "Android"
   - "Annotation Processor"
 tags:
   - "android"
+  - "library"
 ---
 
 With [FragmentArgs](http://hannesdorfmann.com/android/fragmentargs) and [ParcelablePlease](http://hannesdorfmann.com/android/ParcelablePlease) I have already shown that **Annotation Processor** is really helpful to speedup development by reducing writing boilerplate code. Regarding Android I found one scenario where I find myself writing nearly the same code ever and ever again. I'm looking at you **Adapter** with your ViewHolders, layout inflating code and view types. In this blog post I want to announce [AnnotatedAdapter](https://github.com/sockeqwe/AnnotatedAdapter)

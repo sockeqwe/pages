@@ -10,6 +10,7 @@ tags:
   - "android"
   - "ui"
   - "ux"
+  - "library"
 ---
 
 SwipeBack for Android Activities does pretty the same as the android "back-button" does, but in a really intuitive way by using a swipe gesture

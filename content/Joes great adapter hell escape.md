@@ -10,6 +10,7 @@ tags:
   - "android"
   - "software-architecture"
   - "design-patterns"
+  - "library"
 ---
 
 Let me tell you a story about Joe Somebody an android developer at MyLittleZoo Inc. and how he walked through the hell while trying to create reusable RecyclerView Adapters with different view types and how he finally managed to implement reusable Adapters painlessly.

@@ -20,13 +20,13 @@ body {
   line-height: 1.8;
   font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
-  font-size: 16px;
+  font-size: 17px;
   color: #585757;
 }
 
 p, .paragraph {
   font-weight: 400;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.8;
   font-family: "Open Sans", sans-serif;
   text-align: justify;
@@ -831,6 +831,19 @@ blockquote {
 .content h6 {
   margin-top: 1em;
 }
+
+.content th {
+  background: #fdefe6;
+  padding: 10px;
+}
+
+.content td {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
 
 .widget {
   padding: 15px 0;

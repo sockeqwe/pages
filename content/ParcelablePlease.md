@@ -3,12 +3,13 @@ title: "ParcelablePlease"
 date: 2014-09-24T10:00:00+01:00
 description: "ParcelablePlease"
 type: "post"
-url: "android/parcelableplease"
+url: "android/ParcelablePlease"
 categories: 
   - "Android"
   - "Annotation Processor"
 tags:
   - "android"
+  - "library"
 ---
 
 In my last blog post I have introduced [FragmentArgs](http://hannesdorfmann.com/android/fragmentargs) an  **Annotation Processor** for Fragments that reduces writing boilerplate code. In this post I want to talk about a similar problem android developer face: Writing boilerplate code for **Parcelable**

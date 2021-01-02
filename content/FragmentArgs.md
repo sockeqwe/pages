@@ -9,6 +9,7 @@ categories:
   - "Annotation Processor"
 tags:
   - "android"
+  - "library"
 ---
 Developing for Android is sometimes painful. You have to write lot of code to do simple things like setting up a Fragment. Fortunately java supports a powerful tool: **Annotation Processors**
 
