@@ -8,6 +8,7 @@ categories:
   - "Annotation Processor"
 tags:
 ---
+
 In this blog entry I would like to explain how to write an annotation processor. First, I am going to explain to you what annotation processing is, what you can do with that powerful tool and finally what you cannot do with it. In a second step we will implement a simple annotation processor step by step.
 
 
