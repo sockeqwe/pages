@@ -10,6 +10,7 @@ tags:
   - "android"
   - "software-architecture"
   - "design-patterns"
+series: ["Mosby MVI"]
 ---
 
 Once I have figured out that I have modeled my Model classes wrong all the time, a lot of issues and headache I previously had with some Android platform related topics are gone. Moreover, finally I was able to build Reactive Apps using RxJava and Model-View-Intent (MVI) as I never was able before although the apps I have built so far are reactive too but not on the same level of reactiveness as I'm going to describe in this blog post series. In the first part I would like to talk about Model and why Model matters.
@@ -225,4 +226,3 @@ Moreover, the unidirectional data flow ensures that our app is easy to debug. Wo
 ##  Conclusion
 In this first part of this blog post series we talked a lot about theoretical stuff. Do we really need a dedicated blog post about Model? I think it is elementary to understand that a Model is important and helps to prevent some issues we otherwise would struggle with. Model doesn't mean business logic. It's the business logic (i.e. an Interactor, a Usecase, a Repositor or whatever you call it in your app) that produces a Model. In the second part we will see this theoretical Model stuff in action when we finally build a reactive app with Model-View-Intent. The demo app we are going to build is a app for a fictional online shop. Here is just a short preview demo of what you can expect in part two. Stay tuned.
 
-{{< youtube rmR9mV1Dsqk >}}
