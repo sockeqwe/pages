@@ -817,8 +817,17 @@ blockquote {
   font-weight: 600;
 }
 
+blockquote > p {
+  margin: 0;
+}
+
 .content * {
   margin-bottom: var(--content-margin-bottom-element)
+}
+
+.content ol > li,
+.content ul > li {
+  margin-bottom: 8px;
 }
 
 .content img {
@@ -850,20 +859,20 @@ blockquote {
   padding-bottom: 5px;
 }
 
-.content figure {
-  margin: var(--content-margin-image) auto;
-}
-
 .content figure > figcaption > p {
   font-size: 12px;
   text-align: center;
+}
+
+.content figure > img {
+  display: block;
+  margin: var(--content-margin-image) auto;
 }
 
 .content p > img {
   margin: var(--content-margin-image) auto;
   display: block;
 }
-
 
 .widget {
   padding: 15px 0;

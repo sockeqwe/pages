@@ -29,15 +29,11 @@ MVI is inspired by some other js frameworks like redux and react, but the key pr
 
 > The Controller in MVC is incompatible with our reactive ideals, because it is a proactive component (implying either passive Model or passive View). However, the original idea in MVC was a method for translating information between two worlds: that of the computer’s digital realm and the user’s mental model.
 
-![Model-View-Controller](/images/mvi/mvc.png)
-
-Source: cycle.js.org
+{{< figure src="/images/mvi/mvc.png" caption="Source: cycle.js.org" >}}
 
 However, in the original MVC the controller may or may not also manipulate the view. But that is not exactly what we want, because we want an **unidirectional data flow** and **immutability** to establish predictable states, which leads to cleaner, more maintainable code and less bugs.
 
-![Circle](/images/mvi/mvi-cicle.png)
-
-<small>Source: cycle.js.org</small>
+{{< figure src="/images/mvi/mvi-cicle.png" caption="Source: cycle.js.org" >}}
 
 Do you see the unidirectional flow? The cycle? The next question is how do we establish such a circle? Well, as you have seen above, the computer takes an input and converts it to an output (display / view). The human, sees the output from computer and takes it as Input and produces Output (UI widgets events like a click on a button) which then will be again the input for the computer. So the concept of taking a input and have an output seems to be familiar, doesn't it? Yes, it's a (mathematical) function.
 
