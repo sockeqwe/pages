@@ -16,14 +16,14 @@ In the previous blog posts we have discussed Model-View-Intent (MVI) and the imp
 
 There are two scenarios we will focus on in this blog post: Restoring state "in memory"
 (for example during screen orientation change) and restoring a "persistent state"
-(for example from Bundle previously saved in Activity.onSaveInstanceState()).
+(for example from Bundle previously saved in `Activity.onSaveInstanceState()`).
 
 
 ## In Memory
 That is the simple case. We just have to keep our RxJava stream that emits new state over time out of
 android components lifecylce (i.e. Activity, Fragment or even ViewGroups). For example Mosby's
-**MviBasePresenter** establishes such a RxJava stream internally by using
-**PublishSubject** for View intents and **BehaviorSubject** to render the state on the view.
+`MviBasePresenter` establishes such a RxJava stream internally by using
+`PublishSubject` for View intents and `BehaviorSubject` to render the state on the view.
 I have already described these implementation details at the end of [Part 2]({{< ref mosby3-mvi-2.md >}}).
 The main idea is that MviBasePresenter is such a component that lives outside View's lifecylce so that a view can be attached and detached to such a Presenter.
 In Mosby the Presenter gets "destroyed" (garbage collected) when the view is destroyed permanently.
@@ -31,7 +31,7 @@ Again, this is just an implementation detail of Mosby.
 Your MVI implementation might be entirely different.
 The important bit is that such a component like a Presenter lives outside of View's lifecycle because
 then it's easy to deal with View attached and detached events:
-whenever the View gets (re)attached to the Presenter we simply call **view.render(previousState)**
+whenever the View gets (re)attached to the Presenter we simply call `view.render(previousState)`
  (therefore Mosby uses BehaviorSubject internally).
 This is just one solution of how to deal with screen orientation changes. It also works with back stack navigation,
 i.e. Fragments on the back stack: if we come back from back stack we simply call view.render(previousState) again and the view is displaying the correct state.
@@ -40,9 +40,9 @@ Actually, state can still be updated even if no view is attached because Present
 ## Persistent State
 That scenario is also much simpler with a unidirectional data flow pattern like MVI.
 Let's say we want that state of our View (i.e. Activity) not only survives in memory, but also through process death.
-Typically in Android one would use **Activity.onSaveInstanceState(Bundle)** to save that state.
+Typically in Android one would use `Activity.onSaveInstanceState(Bundle)` to save that state.
 In contrast to MVP or MVVM where you not necessarily have a Model that represents state
-(see [Part1]({{< ref mosby3-mvi-1.md >}}) in MVI your View has a **render(state)** method which makes it easy to keep track of the latest state.
+(see [Part1]({{< ref mosby3-mvi-1.md >}}) in MVI your View has a `render(state)` method which makes it easy to keep track of the latest state.
 So the obvious solution is to make state Parcelable and store it into the bundle and then restore it afterwards like this:
 
 
@@ -77,7 +77,7 @@ class MyActivity extends Activity implements MyView {
 ```
 
 I think you get the point. Please note that in onCreate() we are not calling
-view.render(initialState) directly but rather we let the initial state sink down to where state management takes place: the state reducer ([see Part 3]({{< ref mosby3-mvi-3.md >}}) where we use it with **.scan(initialState, reducerFunction)**.
+view.render(initialState) directly but rather we let the initial state sink down to where state management takes place: the state reducer ([see Part 3]({{< ref mosby3-mvi-3.md >}}) where we use it with `.scan(initialState, reducerFunction)`.
 
 ## Conclusion
 With a unidirectional data flow and a Model that represents State a lot of state related things are much simpler to implement compared to other patterns.
@@ -86,7 +86,7 @@ First, Bundle has a size limit, so you can't put arbitrary large state into a bu
 Second, we only have discussed how to serialize and deserialize state but that is not necessarily  the same as restoring state.
 
 For Example: Let's assume we have a LCE (Loading-Content-Error) View that displays a loading indicator while loading data and a list of items once the data (items) is loaded.
-So the state would be like **MyViewState.LOADING**. Let's assume that loading takes some time and
+So the state would be like `MyViewState.LOADING`. Let's assume that loading takes some time and
 that the Activity process gets killed while loading (i.e. because another app has come into foreground like phone app because of an incoming call). If we just serialize  MyViewState.LOADING and deserialize it after Activity has been
 recreated as described above, our state reducer would just call view.render(MyViewState.LOADING) which is correct so far **BUT** we would actually never invoke loading data again
 (i.e. start http request) just by using the deserialized state blindly.
