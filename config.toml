@@ -139,3 +139,8 @@ enableEmoji = true
     noClasses = false
     style= "monokai"
     tabWidth = 4
+
+[taxonomies]
+  category = "categories"
+  series = "series"
+  tag = "tags"

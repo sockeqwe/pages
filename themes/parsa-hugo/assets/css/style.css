@@ -809,7 +809,7 @@ textarea.form-control {
   height: 400px;
 }
 
-blockquote {
+blockqublockquote {
   font-style: italic;
   color: #000000;
   background: #fdefe6;
@@ -912,3 +912,14 @@ blockquote > p {
 }
 
 /*# sourceMappingURL=maps/style.css.map */
+
+.series-box {
+  margin: 60px auto;
+  width: 70%;
+  padding: 16px;
+  background-color: #fdfdfd;
+  border-left: #fdefe6 6px solid;
+  border-right: #fdefe6 1px solid;
+  border-top: #fdefe6 1px solid;
+  border-bottom: #fdefe6 1px solid;
+}
