@@ -12,9 +12,9 @@ tags:
   - "design-patterns"
 series: ["Reactive Apps with Model-View-Intent"]
 ---
-In my [previous blog post](http://hannesdorfmann.com/android/coordinators-android) we discussed how the Coordinator pattern can be applied on Android. This time I would like to show how this can be used in Model-View-Intent.
+In my [previous blog post]({{< ref android_coordinators.md >}}) we discussed how the Coordinator pattern can be applied on Android. This time I would like to show how this can be used in Model-View-Intent.
 
-If you don't know yet what the Coordinator pattern is I highly recommend to go back and read the [introdcution](http://hannesdorfmann.com/android/coordinators-android). 
+If you don't know yet what the Coordinator pattern is I highly recommend to go back and read the [introdcution]({{< ref android_coordinators.md >}}). 
 
 Applying this pattern in MVI is not much different from MVVM or MVP: 
 we pass a lambda as navigation callback into our MviBasePresenter. 
