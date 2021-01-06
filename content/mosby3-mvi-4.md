@@ -1,5 +1,5 @@
 ---
-title: "Reactive Apps with Model-View-Intent - Part4: Independent UI Components"
+title: "Reactive Apps with Model-View-Intent - Part 4: Independent UI Components"
 date: 2017-02-25T10:00:00+01:00
 description: "Model-View-Intent MVI on Android by using Mosby 3. Focusing on Independent UI Components and state managment in MVI"
 type: "post"

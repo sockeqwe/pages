@@ -1,7 +1,7 @@
 ---
-title: "Reactive Apps with Model-View-Intent - Part1: Model"
+title: "Reactive Apps with Model-View-Intent - Part 1: Model"
 date: 2017-01-09T10:00:00+01:00
-description: "Model-View-Intent MVI on Android by using Mosby 3"
+description: "Model-View-Intent MVI on Android by using Mosby 3. What is a model in MVI? What are the benefits of MVI compared to MVVM or MVP"
 type: "post"
 url: "android/mosby3-mvi-1"
 categories: 

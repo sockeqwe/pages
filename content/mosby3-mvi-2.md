@@ -1,5 +1,5 @@
 ---
-title: "Reactive Apps with Model-View-Intent - Part2: View and Intent"
+title: "Reactive Apps with Model-View-Intent - Part 2: View and Intent"
 date: 2017-01-17T10:00:00+01:00
 description: "Model-View-Intent MVI on Android by using Mosby 3. Focusing on View and Intnet in this post."
 type: "post"

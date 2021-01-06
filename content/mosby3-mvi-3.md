@@ -1,5 +1,5 @@
 ---
-title: "Reactive Apps with Model-View-Intent - Part3: State Reducer"
+title: "Reactive Apps with Model-View-Intent - Part 3: State Reducer"
 date: 2017-01-19T10:00:00+01:00
 description: "Model-View-Intent MVI on Android by using Mosby 3. Focusing on state reducer on Android with MVI"
 type: "post"
