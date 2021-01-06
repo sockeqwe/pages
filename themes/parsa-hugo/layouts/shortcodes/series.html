@@ -1,9 +1,9 @@
 {{ if $.Page.Params.series }}
     {{ $name := index $.Page.Params.series 0 }}
     <div class="series-box">
-        <p>This is a post in the 
-        <b>{{$name}}</b> series.
-        Other posts in this series:</p>
+        <h5>This is a post in the 
+        <u>{{$name}}</u> series.</span></h5>
+        <p>Other posts in this series:</p>
 
         {{ $name := $name | urlize }}
         {{ $series := index .Site.Taxonomies.series $name }}
