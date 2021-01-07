@@ -9,6 +9,7 @@ categories:
 tags:
   - "android"
   - "software-architecture"
+series: ["Refactoring Plaid App"]  
 ---
 
 This is the second part of how we could refactor the [Plaid](https://github.com/nickbutcher/plaid) app open sourced by Nick Butcher. In this part we are going to enhance the MVP architecture described in the [first part]({{< ref Refactoring_Plaid_1.md >}}) to become truly reactive.
@@ -534,3 +535,5 @@ Please note that the source code is far away from being perfect and I'm pretty s
 Nevertheless, I'm willing to clean up my code and to make a [pull request](https://github.com/nickbutcher/plaid/issues/49) to Nick Butcher's original repository. However, I don't expect that this "Reactive MVP approach" will be merged into the Plaid apps source code. I do understand that my approach is for advanced developers. Furthermore, I use some third party libraries and kotlin, which may not everybody has knowledge of. Therefore my code is not ideal for all kind of developers, which without any doubt Nick Butcher as a Google employee wants to reach with his awesome app. It's good and important to have such an open source app with an inspiring UI / UX understandable for both android beginners and experts.
 
 I also wanna catch the opportunity to talk about an idea I have in mind for almost two years: It would be very nice to have an app (Plaid alike) with different sources of android development bundled into one app. For example the app could display some tweets and Google+ posts from android dev super stars like Jesse Wilson, Jake Wharton, Matthias Käppler, Piwai, Dan Lew, Corey Latislaw, Cyril Mottier, Lisa Wray, Artem Zinnatullin and others (forgive me if I have forget to mention your name here) but also some other sources like Reddit [/r/androiddev](https://www.reddit.com/r/androiddev/), Stackoverflow, YouTube channels, podcasts etc. bundled into one nice app with an outstanding UI / UX as Plaid. I don't think that this is something a single developer can develop in his spare time (and the experience from refactoring the plaid app gives me right). But if we could find a handful developers interessted in such an app developed by the community for the community I'm definetly willing to contribute as well.
+
+{{< series >}}

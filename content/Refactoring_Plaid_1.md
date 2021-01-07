@@ -9,6 +9,7 @@ categories:
 tags:
   - "android"
   - "software-architecture"
+series: ["Refactoring Plaid App"]  
 ---
 
 Nick Butcher has open sourced on [github](https://github.com/nickbutcher/plaid) an awesome app called Plaid. The app is pretty cool and has an outstanding UI / UX. Whenever source code of such awesome apps are available developers start to copy code and best practice tips from it. So I did the same and decided to dive into the code of Plaid. As always, you will find some parts of the code that you think could be implemented or be written in another way. So instead of just talking about code I have decided to spend some of my spare time to refactor some parts of Plaid's source code. This blog post is the first part of a series of 3 posts of how I would refactor the Plaid app and to share my thoughts.
@@ -433,3 +434,5 @@ As always, there are better ways to implement such an app. Especially, the **Ite
 As always, feedback and suggestions are very welcome!
 
 In the [next (second) part]({{< ref Refactoring_Plaid_2.md >}}) of this series of blog posts about refactoring the Plaid app we will go "truly reactive" by using the real power of RxJava. Stay tuned.
+
+{{< series >}}
