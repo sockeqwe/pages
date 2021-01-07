@@ -42,7 +42,7 @@
           <ul class="list-inline tag-list">
             {{- range $name, $items := site.Taxonomies.tags }}
             <li class="list-inline-item m-1"><a
-                href="{{ "tags/" | relLangURL }}{{ $name | urlize | lower }}">{{ $name | humanize }}</a></li>
+                href="{{ "tags/" | relLangURL }}{{ $name | urlize | lower }}">{{ $name }}</a></li>
             {{- end }}
           </ul>
           {{- end }}
