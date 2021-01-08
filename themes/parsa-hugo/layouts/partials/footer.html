@@ -21,7 +21,7 @@
           <ul class="list-inline tag-list">
             {{- range $name, $items := site.Taxonomies.categories }}
             <li class="list-inline-item m-1"><a
-                href="{{ "categories/" | relLangURL }}{{ $name | urlize | lower }}">{{ $name | title | humanize }}</a>
+                href="{{ "categories/" | relLangURL }}{{ $name | urlize | lower }}">{{ $name | title }}</a>
             </li>
             {{- end }}
           </ul>
