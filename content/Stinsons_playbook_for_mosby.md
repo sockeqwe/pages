@@ -1,6 +1,6 @@
 ---
 title: "Stinson's Playbook for Mosby"
-date: 2015-03-25T10:00:00+01:00
+date: 2015-05-09T10:00:00+01:00
 description: "Ted Mosby - Software Architect. A library for MVP on Android. Model-View-Presenter Android. MVP Best practices by implementing a mail client for Android"
 type: "post"
 url: "android/mosby-playbook"

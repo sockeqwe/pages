@@ -3,7 +3,7 @@
 
   // Preloader js    
   $(window).on('load', function () {
-    $('.preloader').fadeOut(300);
+    $('.preloader').fadeOut(120);
   });
 
   // headroom js
