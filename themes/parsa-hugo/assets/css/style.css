@@ -731,7 +731,7 @@ textarea.form-control {
 }
 
 .article-full-width .post-content {
-  width: 50%;
+  width: 100%;
 }
 
 @media (max-width: 767px) {
@@ -745,7 +745,7 @@ textarea.form-control {
 }
 
 .article-full-width .post-meta {
-  width: 250px;
+  width: 100%;
 }
 
 @media (max-width: 991px) {
