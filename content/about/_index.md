@@ -11,8 +11,8 @@ I'm part of a cross-functional team (iOS, android, web and backend engineers) te
 
 Although I consider myself T-shaped and enjoy working on multiple platforms a I keep the green little robot very close to my heart. You will find a lot of technical articles related to android development.
 
-If I'm not on a hike or I'm not on the football field then I'm probably recording a new episode of [TheContext Podcast](https://thecontext.github.io/).
+If I'm not on a hike or I'm not on the football field then I'm probably recording a new episode of [TheContext Podcast](https://thecontext.github.io/) or I am contributing to some open source project on [Github](https://github.com/sockeqwe).
 
-I live in the beatiful city of Munich, Germany.
+I live in the beautiful city of Munich, Germany.
 
-_All of the content on this site is made available at no charge, for the benefit of the community. Please don’t reproduce the entire content (or very substantial portions) of any article without asking first._
+_All of the content on this site is made available at no charge, for the benefit of the community. Please don’t reproduce the entire content (or very substantial portions) of any article without [asking first]({{< ref "contact" >}}) ._
