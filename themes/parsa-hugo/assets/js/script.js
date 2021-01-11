@@ -16,6 +16,7 @@
     });
   });
 
+  /*
   $('.featured-post-slider').slick({
     dots: false,
     speed: 300,
@@ -51,10 +52,10 @@
       columnWidth: 1
     });
   }, 500);
-
+*/
 
   // instafeed
-  {{ if site.Params.instafeed.enable }}
+  /*
   if (($('#instafeed').length) !== 0) {
     var accessToken = $('#instafeed').attr('data-accessToken');
     var userFeed = new Instafeed({
@@ -95,7 +96,7 @@
       ]
     });
   }, 1500);
-{{ end }}
+*/ 
 
   // article reading time
   /*
