@@ -1,10 +1,10 @@
 # default config
 baseurl = "http://localhost:1313"
 languageCode = "en-us"
-title = "Hannes Dorfmann Blog"
+title = "Hannes Dorfmann"
 theme = "parsa-hugo"
-summaryLength = "10"
-paginate = 6
+summaryLength = "50"
+paginate = 10
 
 # output
 [outputs]
