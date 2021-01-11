@@ -1,0 +1,24 @@
+{{ define "main" }}
+
+<section class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h2 class="mb-4">{{.Title }}</h2>
+        <img src="{{.Params.Image | absURL }}" alt="{{site.Params.author}}" class="img-fluid w-100 mb-4">
+        {{ .Content }}
+
+        <ul>
+          {{ range .Pages }}
+          <li>
+            <a href="{{ .Permalink }}"> {{ .PublishDate.Format "Jan 02, 2006" }}: {{ .Title }} ({{ .Params.Location }})</a>
+          </li>
+          {{ end }}
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{ end }}

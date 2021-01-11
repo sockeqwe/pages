@@ -47,17 +47,6 @@ link = "plugins/search/search.js"
 name = "Home"
 url = ""
 weight = 1
-hasChildren = false
-#
-#  [[menu.main]]
-#  parent = "Homepage"
-#  name = "Homepage 1"
-#  url = "homepage/home-1"
-
-#  [[menu.main]]
-#  parent = "Homepage"
-#  name = "Homepage 2"
-#  url = "homepage/home-2"
 
 [[menu.main]]
 name = "About"
@@ -65,9 +54,14 @@ url = "about"
 weight = 2
 
 [[menu.main]]
+name = "Presentations"
+url = "presentations"
+weight = 3
+
+[[menu.main]]
 name = "Contact"
 url = "contact"
-weight = 3
+weight = 4
 
 # deult parameter
 [params]
