@@ -83,8 +83,8 @@ preloader = false
 search = true
 # about author
 author = "Hannes Dorfmann"
-author_image = "images/hannes-banner.png"
-bio = "I'm writing about software engineering, mainly android developement, leadership and other random stuff. I'm co-host of [TheContext Podcast](https://thecontext.github.io/website/) and speaker at conferences. I love football and enjoy hiking.\n\n I'm an Engineering Manager at Freeletics."
+author_image = "images/about/hannes-banner.png"
+bio = "I'm writing about software engineering, mainly android developement, leadership and other random stuff. I'm co-host of [TheContext Podcast](https://thecontext.github.io/) and speaker at conferences. I love football and enjoy hiking.\n\n I'm an Engineering Manager at Freeletics."
 # Contact info
 mobile = "+90 000 333 22"
 email = "exmaple@ymail.com"
