@@ -54,6 +54,7 @@
 
 
   // instafeed
+  {{ if site.Params.instafeed.enable }}
   if (($('#instafeed').length) !== 0) {
     var accessToken = $('#instafeed').attr('data-accessToken');
     var userFeed = new Instafeed({
@@ -94,8 +95,10 @@
       ]
     });
   }, 1500);
+{{ end }}
 
   // article reading time
+  /*
   $('article').each(function () {
 
     let _this = $(this);
@@ -106,6 +109,7 @@
       remoteTarget: _this.attr('data-target')
     });
   });
+  */
 
 
 })(jQuery);
