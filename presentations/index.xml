@@ -42,10 +42,10 @@ We also introduced a library to help us build state machines with RxJava called 
     
     <item>
       <title>Demystifying RxJava by reimplementing it from scratch</title>
-      <link>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101-copy/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2018-04-20-demystifying-rxjava/</link>
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101-copy/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2018-04-20-demystifying-rxjava/</guid>
       <description>There are no slides available because it was actually a live coding session where we reimplemented RxJava&amp;rsquo;s basic of observers, subscriber and operators.</description>
     </item>
     
@@ -71,20 +71,20 @@ However, from the software architecture’s point of view, the architecture of t
     
     <item>
       <title>Android Software Architecutre by Example</title>
-      <link>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</link>
-      <pubDate>Thu, 02 Jun 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</guid>
-      <description>Writing Java application can be annoying because the Java programming language requires to write boilerplate code. Writing Android apps makes no difference. Moreover, on Android you have to write a lot of code for doing simple things like setting up a Fragment with arguments, implement the Parcelable interface, define ViewHolder classes for RecyclerViews and so on.</description>
-    </item>
-    
-    <item>
-      <title>Android Software Architecutre by Example</title>
       <link>https://sockeqwe.github.io/pages/presentations/2016-06-02-android-architecture-by-example/</link>
       <pubDate>Thu, 02 Jun 2016 00:00:00 +0000</pubDate>
       
       <guid>https://sockeqwe.github.io/pages/presentations/2016-06-02-android-architecture-by-example/</guid>
       <description>Comparing some architectural design patterns like MVC, MVP, MVVM, Redux, Flux, MVI and how they could be applied on existing open source applications.</description>
+    </item>
+    
+    <item>
+      <title>Annotation Processing 101</title>
+      <link>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</link>
+      <pubDate>Thu, 02 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</guid>
+      <description>Writing Java application can be annoying because the Java programming language requires to write boilerplate code. Writing Android apps makes no difference. Moreover, on Android you have to write a lot of code for doing simple things like setting up a Fragment with arguments, implement the Parcelable interface, define ViewHolder classes for RecyclerViews and so on.</description>
     </item>
     
   </channel>
