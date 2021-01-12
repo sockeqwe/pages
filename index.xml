@@ -191,15 +191,6 @@ However, from the software architecture’s point of view, the architecture of t
     </item>
     
     <item>
-      <title>Annotation Processing 101</title>
-      <link>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</link>
-      <pubDate>Thu, 02 Jun 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</guid>
-      <description>Writing Java application can be annoying because the Java programming language requires to write boilerplate code. Writing Android apps makes no difference. Moreover, on Android you have to write a lot of code for doing simple things like setting up a Fragment with arguments, implement the Parcelable interface, define ViewHolder classes for RecyclerViews and so on.</description>
-    </item>
-    
-    <item>
       <title>From Prefab House to Lego House</title>
       <link>https://sockeqwe.github.io/pages/android/from-prefabricated-house-to-lego-house/</link>
       <pubDate>Fri, 13 May 2016 10:00:00 +0100</pubDate>
@@ -321,6 +312,15 @@ Once upon a time Joe Somebody, an android developer, was working for a young sta
       <guid>https://sockeqwe.github.io/pages/android/sqlbrite-dao/</guid>
       <description>Earlier this year, one day before Valentine&amp;rsquo;s Day to be precise, I had the glorious idea (ironie) to surprise my lovely girlfriend with a special android app on Valentine&amp;rsquo;s Day. Who said computer science can&amp;rsquo;t be romantic?
 The idea was simple: I wanted to build an android app that imitates and looks like Tinder but instead of displaying real people nearby, I faked everything so that only my profile gets displayed so she only can choose me.</description>
+    </item>
+    
+    <item>
+      <title>Annotation Processing 101</title>
+      <link>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</link>
+      <pubDate>Fri, 05 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</guid>
+      <description>Writing Java application can be annoying because the Java programming language requires to write boilerplate code. Writing Android apps makes no difference. Moreover, on Android you have to write a lot of code for doing simple things like setting up a Fragment with arguments, implement the Parcelable interface, define ViewHolder classes for RecyclerViews and so on.</description>
     </item>
     
     <item>
