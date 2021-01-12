@@ -11,7 +11,7 @@
         <ul>
           {{ range .Pages }}
           <li>
-            <a href="{{ .Permalink }}"> {{ .PublishDate.Format "Jan 02, 2006" }}: {{ .Title }} ({{ .Params.Location }})</a>
+            {{ .PublishDate.Format "Jan 02, 2006" }}: <a href="{{ .Permalink }}">{{ .Title }} ({{ .Params.Location }})</a>
           </li>
           {{ end }}
           
