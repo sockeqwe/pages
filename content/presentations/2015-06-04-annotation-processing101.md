@@ -1,5 +1,5 @@
 ---
-title: Android Software Architecutre by Example
+title: Annotation Processing 101
 date: 2016-06-02
 location: Berlin, Droidcon 2015
 youtube: 43FFfTyDYEg
