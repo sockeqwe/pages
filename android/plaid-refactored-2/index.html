@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Refactoring Plain App by Nick Butcher by applying MVP with Reactive Streams - RxJava">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Refactoring Plaid App - A reactive MVP Approach (Part 2)</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Dec 02, 2015</li>
+        </ul>
+        <article class="content">
+          
+          <p>This is the second part of how we could refactor the <a href="https://github.com/nickbutcher/plaid">Plaid</a> app open sourced by Nick Butcher. In this part we are going to enhance the MVP architecture described in the <a href="http://127.0.0.1:1313/android/plaid-refactored-1/">first part</a> to become truly reactive.</p>
+<p><strong>Preface:</strong> I started the refactoring with the strong belief that I can refactor the whole app. Surprisingly (ironic), it turns out that I was a very naive man. I simply have underestimated the complexity of the app and the number of features. Therefore, I have started writing this blog post even if not everything described here is implemented (refactored). I just want to give some ideas how this could be implemented. My refactored code can be found on <a href="https://github.com/sockeqwe/plaid">github</a> as well.</p>
+<h2 id="recap-from-first-part">Recap from first part</h2>
+<p>This is the second part of a blog series about refactoring plaid app. In the <a href="http://127.0.0.1:1313/android/plaid-refactored-1/">first part</a> we have applied Model-View-Presenter and have introduced an <strong>ItemsLoader</strong> for loading items from different backend endpoints by invoking <strong>RouteCallers</strong>. Please read the <a href="http://127.0.0.1:1313/android/plaid-refactored-1/">first part</a> for more details.</p>
+<p>People also aksed me if there is a need for yet another MVP blog post as there are already many of them availabale. Well, my intention is not write about MVP. Rather I want to discuss how to build a &ldquo;truly reactive&rdquo; app (with MVP on top). Let&rsquo;s continue where we left off.</p>
+<h2 id="source---filter">Source - Filter</h2>
+<p>In the app&rsquo;s home screen you can open a drawer on the right side of the screen (or by clicking on the filter icon in the Toolbar) to enable/disable different backend endpoints we load items from. We call a backend endpoint <strong>Source</strong>. So we have sources like &ldquo;Dribbble Popular&rdquo;, &ldquo;Dribbble Recent&rdquo;, &ldquo;Designer News Popular&rdquo; and so on.</p>
+<p><img src="/images/plaid/source-filters.png" alt="Recap"></p>
+<p>Please raise your hand if you have used <strong>SharedPreferences</strong> to save bunch of data and not only &ldquo;user preferences&rdquo;. I&rsquo;m definitely guilty of having uses SharedPreferences for that kind of stuff, so did Nick Butcher for storing <strong>Sources</strong>. The problem is that the user can add (we will talk about this in a minute), update (enable / disable) and remove <strong>Sources</strong>. Sounds that a database suits better, right?</p>
+<h3 id="database">Database</h3>
+<p>Let&rsquo;s refactor that and replace <strong>SharedPreferences</strong> with a <strong>SQLiteDatabase</strong>. Databases are hard. So we could either write pure sql statements or choose the right library to deal with databases. There are many libraries out there, some are better than the others. Since we use RxJava we certainly want to use a library with first class RxJava support. In my opinion ORM are not the right way to go. Why? Because usually ORMs have to be designed to work well on the average use case. But almost every app has a special use case. For example writing an efficient query which resolves relations to other objects (SQL joins?) is already hard enough in native SQL. But how do you do that when using a certain ORM library? You have to spend a lot of time to learn how the ORM library works to write efficient queries. Whenever you change ORM library you have to learn the new ORM library again and again. Therefore, I prefer to work without ORM libraries and to write raw SQL queries and the only thing I have to know is SQL.</p>
+<p>Hence, we will use <a href="https://github.com/square/sqlbrite">SQLBrite</a> from Square which is a lightweight wrapper around <strong>SQLiteOpenHelper</strong> with support for RxJava. We don&rsquo;t want to deal with <strong>Cursors</strong> and <strong>ContentValues</strong>. Therefore, we use <a href="https://github.com/sockeqwe/sqlbrite-dao">SQLBrite-DAO</a> which provides some abstractions like DAO (Data Access Object) and an annotation processor based tiny object mapper (Cursor to object, not ORM) and <strong>ContentValues</strong> generator. If you are looking for a more high level solution with similar functionality you should have a look at <a href="https://github.com/pushtorefresh/storio">StorIO</a>, but I&rsquo;m more a low level guy so we will use <strong>SQLBrite + SQLBrite-DAO</strong>.</p>
+<p>We define a class <strong>Source</strong> like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@ObjectMappable</span>
+<span class="k">class</span> <span class="nc">Source</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// Unfortunately data class are not supported yet by sqlbrite-dao
+</span><span class="c1"></span>
+    <span class="k">object</span> <span class="nc">ID</span> <span class="p">{</span> <span class="c1">// ID&#39;s for predefined Sources
+</span><span class="c1"></span>        <span class="k">const</span> <span class="k">val</span> <span class="py">UNKNOWN_ID</span> <span class="p">=</span> <span class="p">-</span><span class="m">1L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DESIGNER_NEWS_POPULAR</span> <span class="p">=</span> <span class="p">-</span><span class="m">2L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DESIGNER_NEWS_RECENT</span> <span class="p">=</span> <span class="p">-</span><span class="m">3L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DRIBBBLE_POPULAR</span> <span class="p">=</span> <span class="p">-</span><span class="m">4L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DRIBBBLE_FOLLOWING</span> <span class="p">=</span> <span class="p">-</span><span class="m">5L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DRIBBLE_MY_SHOTS</span> <span class="p">=</span> <span class="p">-</span><span class="m">6L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DRIBBLE_MY_LIKES</span> <span class="p">=</span> <span class="p">-</span><span class="m">7L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DRIBBLE_RECENT</span> <span class="p">=</span> <span class="p">-</span><span class="m">8L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DRIBBLE_DEBUTS</span> <span class="p">=</span> <span class="p">-</span><span class="m">9L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DRIBBLE_ANIMATED</span> <span class="p">=</span> <span class="p">-</span><span class="m">10L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DRIBBLE_MATERIAL</span> <span class="p">=</span> <span class="p">-</span><span class="m">11L</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">PRODUCT_HUNT</span> <span class="p">=</span> <span class="p">-</span><span class="m">12L</span>
+    <span class="p">}</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">SourceDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">ID</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">id</span><span class="p">:</span> <span class="n">Long</span> <span class="p">=</span> <span class="n">ID</span><span class="p">.</span><span class="n">UNKNOWN_ID</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">SourceDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">ORDER</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">order</span><span class="p">:</span> <span class="n">Int</span> <span class="p">=</span> <span class="m">0</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">SourceDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">ENABLED</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">enabled</span><span class="p">:</span> <span class="n">Boolean</span> <span class="p">=</span> <span class="k">false</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">SourceDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">AUTH_REQUIRED</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">authenticationRequired</span> <span class="p">=</span> <span class="k">false</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">SourceDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">BACKEND_ID</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">backendId</span><span class="p">:</span> <span class="n">Int</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">SourceDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">NAME</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">SourceDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">NAME_RES</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">nameRes</span><span class="p">:</span> <span class="n">Int</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span>
+  <span class="p">}</span>
+</code></pre></div><p><strong>@ObjectMappable</strong> and <strong>@Column</strong> are annotations from the SQLBrite-DAO&rsquo;s annotation processor. Next we define a DAO to manipulate and query <strong>Source</strong> from database like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SourceDao</span> <span class="p">:</span> <span class="n">Dao</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="k">object</span> <span class="nc">COL</span> <span class="p">{</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">ID</span> <span class="p">=</span> <span class="s">&#34;id&#34;</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">ORDER</span> <span class="p">=</span> <span class="s">&#34;orderPosition&#34;</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">ENABLED</span> <span class="p">=</span> <span class="s">&#34;enabled&#34;</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">AUTH_REQUIRED</span> <span class="p">=</span> <span class="s">&#34;authRequired&#34;</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">BACKEND_ID</span> <span class="p">=</span> <span class="s">&#34;backendId&#34;</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">NAME</span> <span class="p">=</span> <span class="s">&#34;name&#34;</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">NAME_RES</span> <span class="p">=</span> <span class="s">&#34;nameRes&#34;</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">val</span> <span class="py">TABLE</span> <span class="p">=</span> <span class="s">&#34;Source&#34;</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createTable</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="n">SQLiteDatabase</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">CREATE_TABLE</span><span class="p">(</span>
+                <span class="n">TABLE</span><span class="p">,</span>
+                <span class="s">&#34;${COL.ID} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL&#34;</span><span class="p">,</span>
+                <span class="s">&#34;${COL.ENABLED} BOOLEAN&#34;</span><span class="p">,</span>
+                <span class="s">&#34;${COL.AUTH_REQUIRED} BOOLEAN&#34;</span><span class="p">,</span>
+                <span class="s">&#34;${COL.ORDER} INTEGER&#34;</span><span class="p">,</span>
+                <span class="s">&#34;${COL.BACKEND_ID} INTEGER NOT NULL&#34;</span><span class="p">,</span>
+                <span class="s">&#34;${COL.NAME} TEXT&#34;</span><span class="p">,</span>
+                <span class="s">&#34;${COL.NAME_RES} INTEGER&#34;</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">getAllSources</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Source</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">defer</span> <span class="p">{</span>
+            <span class="n">query</span><span class="p">(</span>
+                    <span class="n">SELECT</span><span class="p">(</span><span class="n">COL</span><span class="p">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">ENABLED</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">ORDER</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">BACKEND_ID</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">NAME</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">NAME_RES</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">FROM</span><span class="p">(</span><span class="n">TABLE</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">ORDER_BY</span><span class="p">(</span><span class="n">COL</span><span class="p">.</span><span class="n">ORDER</span><span class="p">)</span>
+            <span class="p">).</span><span class="n">run</span><span class="p">()</span>
+            <span class="p">.</span><span class="n">mapToList</span><span class="p">(</span><span class="n">SourceMapper</span><span class="p">.</span><span class="n">MAPPER</span><span class="p">)</span> <span class="c1">// annotation processor generates that
+</span><span class="c1"></span>        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">getSourcesForBackend</span><span class="p">(</span><span class="n">backendId</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Source</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">defer</span> <span class="p">{</span>
+            <span class="n">query</span><span class="p">(</span>
+                    <span class="n">SELECT</span><span class="p">(</span><span class="n">COL</span><span class="p">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">ENABLED</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">ORDER</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">BACKEND_ID</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">NAME</span><span class="p">,</span> <span class="n">COL</span><span class="p">.</span><span class="n">NAME_RES</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">FROM</span><span class="p">(</span><span class="n">TABLE</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">WHERE</span><span class="p">(</span><span class="s">&#34;${COL.BACKEND_ID} = ?&#34;</span><span class="p">)</span>
+                 <span class="p">).</span><span class="n">args</span><span class="p">(</span><span class="n">backendId</span><span class="p">.</span><span class="n">toString</span><span class="p">())</span>
+                 <span class="p">.</span><span class="n">run</span><span class="p">()</span>
+                 <span class="p">.</span><span class="n">mapToList</span><span class="p">(</span><span class="n">SourceMapper</span><span class="p">.</span><span class="n">MAPPER</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">insert</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">Long</span><span class="p">&gt;</span> <span class="p">{</span>
+
+      <span class="k">val</span> <span class="py">builder</span> <span class="p">=</span> <span class="n">SourceMapper</span><span class="p">.</span><span class="n">contentValues</span><span class="p">().</span>
+                      <span class="p">.</span><span class="n">id</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">enabled</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">enabled</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">name</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">nameRes</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">nameRes</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">order</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">order</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">authenticationRequired</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">authenticationRequired</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">backendId</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">backendId</span><span class="p">)</span>
+                      <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">defer</span> <span class="p">{</span> <span class="n">insert</span><span class="p">(</span><span class="n">TABLE</span><span class="p">,</span> <span class="n">cv</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">enableSource</span><span class="p">(</span><span class="n">sourceId</span><span class="p">:</span> <span class="n">Long</span><span class="p">,</span> <span class="n">enabled</span><span class="p">:</span> <span class="n">Boolean</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">Int</span><span class="p">&gt;</span> <span class="p">{</span>
+
+        <span class="k">val</span> <span class="py">cv</span> <span class="p">=</span> <span class="n">SourceMapper</span><span class="p">.</span><span class="n">contentValues</span><span class="p">()</span>
+                <span class="p">.</span><span class="n">enabled</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">defer</span> <span class="p">{</span> <span class="n">update</span><span class="p">(</span><span class="n">TABLE</span><span class="p">,</span> <span class="n">cv</span><span class="p">,</span> <span class="s">&#34;${COL.ID} = ?&#34;</span><span class="p">,</span> <span class="n">sourceId</span><span class="p">.</span><span class="n">toString</span><span class="p">())</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>SQLBrite-DAO provides a simple SQL syntax so auto completion in your IDE works and the annotation processor generates a class <strong>SourceMapper</strong> to deal with <strong>Cursor</strong> and <strong>ContetnValues</strong> and SQLBrite wraps that all into RxJava so we can work with Observable.</p>
+<h2 id="sourcefilterfragment-in-mvp">SourceFilterFragment in MVP</h2>
+<p>In the current implementation the right drawer with list of sources is integrated in <strong>HomeActivity</strong>. We will refactor that and apply MVP here as well. We implement <strong>SourceFilterFragment implmenets SourceFilterView</strong> and <strong>SourceFilterPresenter</strong> that subscribes to <strong>SourceDao</strong> like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SourceFilterPresenter</span><span class="p">(</span><span class="k">val</span> <span class="py">sourceDao</span><span class="p">:</span> <span class="n">SourceDao</span><span class="p">,</span> <span class="k">val</span> <span class="py">presentationModelMapper</span><span class="p">:</span> <span class="p">(</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Source</span><span class="p">&gt;)</span> <span class="p">-&gt;</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">SourceFilterPresentationModel</span><span class="p">&gt;)</span> <span class="p">:</span> <span class="n">RxPresenter</span><span class="p">&lt;</span><span class="n">SourceFilterView</span><span class="p">,</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">SourceFilterPresentationModel</span><span class="p">&gt;&gt;()</span> <span class="p">{</span>
+
+    <span class="k">fun</span> <span class="nf">loadSources</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="n">view</span><span class="o">?.</span><span class="n">showLoading</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
+
+        <span class="n">subscribe</span><span class="p">(</span>
+                <span class="n">sourceDao</span><span class="p">.</span><span class="n">getAllSources</span><span class="p">().</span><span class="n">map</span><span class="p">(</span><span class="n">presentationModelMapper</span><span class="p">),</span>
+                <span class="c1">// onError
+</span><span class="c1"></span>                <span class="p">{</span>
+                    <span class="n">view</span><span class="o">?.</span><span class="n">showError</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="k">false</span><span class="p">)</span>
+                <span class="p">},</span>
+                <span class="c1">// onNext
+</span><span class="c1"></span>                <span class="p">{</span>
+                    <span class="n">view</span><span class="o">?.</span><span class="n">setData</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+                    <span class="n">view</span><span class="o">?.</span><span class="n">showContent</span><span class="p">()</span>
+                <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">changeEnabled</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">SourceFilterPresentationModel</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">val</span> <span class="py">observable</span> <span class="p">=</span> <span class="n">sourceDao</span><span class="p">.</span><span class="n">enableSource</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">sourceId</span><span class="p">,</span> <span class="p">!</span><span class="n">source</span><span class="p">.</span><span class="n">enabled</span><span class="p">)</span>
+
+        <span class="n">subscribe</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span>
+                <span class="p">{</span> <span class="c1">// On Error
+</span><span class="c1"></span>                    <span class="n">view</span><span class="o">?.</span><span class="n">showError</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span>
+                <span class="p">})</span> <span class="c1">// OnNext not needed
+</span><span class="c1"></span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>The original intention of MVP was that the Presenter transforms the Model into a <strong>PresentationModel</strong> which will be displayed in the View. We don&rsquo;t display <strong>List<!-- raw HTML omitted --></strong> in <strong>SourceFilerView</strong> but rather <strong>SourceFilterPresentationModel</strong>. This presentation model is optimized for the view. Do we always need a PresentationModel in MVP? It depends. If your Model is just a POJO than it should be fine to display the Model directly in the View, but please don&rsquo;t &ldquo;leak&rdquo; application layer models into the view. Soon or later you will call a method of the application layer model from the View. By having a PresentationModel the view has absolutely no knowledge of the application layer models. However, we use a <strong>SourceFilterPresentationModel</strong> because we have the problem that our <strong>Source</strong> is simply not ready to be displayed in a RecyclerView. The Source class can either have a <strong>int nameRes</strong> (which is <strong>R.string.something</strong>) in case that it is a predefined Source or a <strong>String name</strong> if the Source has been added by the user of the app (more about that later). Furthermore, Source class only contains a <strong>backendId</strong> but we want to display a cell with an icon and title like this:</p>
+<p><img src="/images/plaid/source-filter-item.png" alt="SourceFilterItem"></p>
+<p>To display such an item we have to &ldquo;map&rdquo; the <strong>backendId</strong> to an icon and for the title &ldquo;map&rdquo; <strong>nameRes</strong> to a String or use <strong>name</strong> as the title. Of course you can do that in RecyclerView&rsquo;s adapter in <strong>onBindViewHolder()</strong> but then the complexity of the adapter increases. Furthermore, if you do that in adapters onBindViewHolder() method this &ldquo;mapping&rdquo; will be done on androids main ui thread and will be executed during scrolling. That might not be an issue in our use case, but if you have to do some more complex things like sorting elements or compute some properties to be displayed, then you can run into trouble. So we pass a function <strong>presentationModelMapper: (List&lt;Source&gt;) -&gt; List&lt;SourceFilterPresentationModel&gt;</strong> as constructor parameter of <strong>SourceFilterPresenter</strong> and then use RxJava&rsquo;s <strong>map()</strong> operator to map <strong>List&lt;Source&gt;</strong> to <strong>List&lt;SourceFilterPresentationModel&gt;</strong>. Another nice thing about RxJava is it&rsquo;s threading model. Actually, we are doing this mapping async on the background thread that is querying the database and then give the view the resulting PresentationModel on the main ui thread. This mapping function looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">BackendManager</span> <span class="p">{</span>
+
+    <span class="k">object</span> <span class="nc">ID</span> <span class="p">{</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DRIBBBLE</span> <span class="p">=</span> <span class="m">0</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">DESIGNER_NEWS</span> <span class="p">=</span> <span class="m">1</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">PRODUCT_HUNT</span> <span class="p">=</span> <span class="m">2</span>
+    <span class="p">}</span>
+
+    <span class="k">val</span> <span class="py">getBackendIconRes</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">backendId</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">=</span> <span class="k">when</span> <span class="p">(</span><span class="n">backendId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ID</span><span class="p">.</span><span class="n">DRIBBBLE</span> <span class="p">-&gt;</span> <span class="n">R</span><span class="p">.</span><span class="n">drawable</span><span class="p">.</span><span class="n">ic_dribbble</span>
+        <span class="n">ID</span><span class="p">.</span><span class="n">DESIGNER_NEWS</span> <span class="p">-&gt;</span> <span class="n">R</span><span class="p">.</span><span class="n">drawable</span><span class="p">.</span><span class="n">ic_designer_news</span>
+        <span class="n">ID</span><span class="p">.</span><span class="n">PRODUCT_HUNT</span> <span class="p">-&gt;</span> <span class="n">R</span><span class="p">.</span><span class="n">drawable</span><span class="p">.</span><span class="n">ic_product_hunt</span>
+        <span class="k">else</span> <span class="p">-&gt;</span> <span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s">&#34;Unknown Backend for id = ${backendId}&#34;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// We pass BackendManager.getBackendIconRes() as backendToIconMap function
+</span><span class="c1"></span><span class="k">class</span> <span class="nc">SourceToPresentationModelMapper</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="k">private</span> <span class="k">val</span> <span class="py">backendToIconMap</span><span class="p">:</span> <span class="p">(</span><span class="n">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Source</span><span class="p">&gt;)</span> <span class="p">-&gt;</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">SourceFilterPresentationModel</span><span class="p">&gt;</span> <span class="p">{</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">(</span><span class="n">sources</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Source</span><span class="p">&gt;):</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">SourceFilterPresentationModel</span><span class="p">&gt;</span> <span class="p">{</span>
+
+        <span class="k">val</span> <span class="py">presentationModels</span> <span class="p">=</span> <span class="n">ArrayList</span><span class="p">&lt;</span><span class="n">SourceFilterPresentationModel</span><span class="p">&gt;()</span>
+        <span class="n">sources</span><span class="p">.</span><span class="n">forEach</span> <span class="p">{</span> <span class="n">source</span> <span class="p">-&gt;</span>
+
+            <span class="k">val</span> <span class="py">name</span> <span class="p">=</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">context</span><span class="p">.</span><span class="n">resources</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">nameRes</span><span class="p">)</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="n">source</span><span class="p">.</span><span class="n">name</span><span class="o">!!</span>
+                    <span class="p">}</span>
+
+            <span class="n">presentationModels</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">SourceFilterPresentationModel</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">backendToIconMap</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">backendId</span><span class="p">),</span> <span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="p">.</span><span class="n">enabled</span><span class="p">))</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">presentationModels</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>This is yet another way to define a function (as an class) in kotlin. I just wanted to play around a little bit with kotlin.</p>
+<h2 id="lets-get-reactive">Let&rsquo;s get reactive</h2>
+<p>Many developers are excited about Rx programming, because Rx programming offers functional alike operators like <strong>flatMap()</strong> etc. Many of them don&rsquo;t understand that by using RxJava they are observing data. Therefore, they don&rsquo;t understand Rx programming at all. It is not only about transforming data. Rx implements the observer pattern. You are subscribing to an observable to get updates. That may be a one time consumable data stream like a http response, but the real power of the observer pattern and RxJava can be seen and used by making a data source observable that can emit items more than once.</p>
+<h3 id="observable-database">Observable Database</h3>
+<p>We haven&rsquo;t talked much about SQLBrite yet, but the biggest advantage of SQLBrite is that whenever we change a database table&rsquo;s dataset (insert, update or delete row) we get notified through SQLBrite and RxJava. <strong>SourceFilterPresenter.loadSources()</strong> subscribes to <strong>sourceDao.getAllSources()</strong> which returns an <strong>Observable&lt;List&lt;Source&gt;&gt;</strong>. But that is not just a &ldquo;single onetime&rdquo; observable to run the query and complete once the query result has been emitted. No, this Observable will remain subscribed (until unsubscribed) and SQLBrite will recognize table changes and simply rerun the sql query and calls <strong>onNext()</strong> with the new query result set.</p>
+<p>We also haven&rsquo;t discussed yet how <strong>SourceFilterPresenter</strong> actually works when subscribing to the <strong>SourceDao</strong>:</p>
+<ol>
+<li>When <strong>SourceFilterFragment</strong> starts the <strong>SourceFilterPresenter</strong> get&rsquo;s instantiated and <strong>SourceFilterPresenter.loadSources()</strong> gets called. This calls <strong>SourceDao.getAllSources()</strong> which basically runs <strong>SELECT * FROM Source</strong> and returns an Observable. The Presenter subscribes himself on this observable and <strong>onNext()</strong> gets called with the sql query result. The presenter then tells the view to displays the Sources (PresentationModel) i.e. in a RecyclerView.</li>
+<li>When the user clicks on a &ldquo;source item&rdquo; in the RecyclerView to enable or disable this source then the view calls <strong>presenter.changeEnabled()</strong>. This will basically do an update on the database like <strong>UPDATE Source SET enabled = ? WHERE id = ?</strong></li>
+<li>SQLBrite will recognize that the dataset of table &ldquo;Source&rdquo; has been updated (step 2). Therefore, SQLBrite checks if there are Observable with Subscribers on the same Table and detect that the Observable from step 1 (<strong>SELECT * FROM Source</strong>) is still &ldquo;alive&rdquo;. Hence, SQLBrite will rerun this sql query and emit the new query result (with the updated source). The presenter receives the new result in subscribers <strong>onNext()</strong> and then updates the view.</li>
+</ol>
+<p>An important thing to note is that by clicking in the RecyclerView on an item to enable / disable a Source, the Source object itself in the adapter will not be updated. As discussed above, the query will rerun and emit an entirely new <strong>List&lt;Source&gt;</strong> which then will be mapped to an entirely new <strong>List&lt;SourceFilterPresentationModel&gt;</strong> which then will be displayed in the RecyclerView (replaces the previous List<!-- raw HTML omitted -->). This is by design! By doing so this is the first step to ensure to have immutable objects.</p>
+<p>Immutability prevents that someone else is touching your object. You can think of it as watching a baseball game in a stadium. You are sitting somewhere in the middle of the tribune. As the game goes on you get hungry. Luckily there is a vendor nearby selling hot dogs, but he stands some seats away from you. Nevertheless, you order a hot dog. The vendor will give your hot dog to the first person in the row you are sitting and he will pass it to his neighbor, that person will pass your hot dog to his next neighbor and so on until you finally get your hot dog. I&rsquo;m pretty sure you don&rsquo;t want that someone else has eaten a piece of your hot dog during the way from vendor to you. You want an immutable hot dog! Same is valid for our data objects. We don&rsquo;t want that other components (especially other threads) can change our data objects. You might have already noticed that this means that our <strong>Source</strong> class shouldn&rsquo;t have setters, but actually has. This is my fault in combination with <strong>SQLBrite-DAO</strong> which not fully supports kotlin yet and requires a public setter method for his annotation processor. If you work on a real app I recommend to use Google&rsquo;s <a href="https://github.com/google/auto/tree/master/value">auto-value</a> to create immutable objects.</p>
+<h3 id="adding-a-source">Adding a Source</h3>
+<p>If you open the search you can &ldquo;save&rdquo; this search (click on the fab). That means we create a &ldquo;Source&rdquo; with the search string as name (hence a Source can have either nameRes=R.string.foo or name =&quot;Hello&rdquo;):</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/PPwNV45L3T0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>What actually happens under the hood with SQLBrite + RxJava is pretty the same as described before ( enabling / disabling a Source):</p>
+<p><img src="/images/plaid/inserting-source.png" alt="Recap"></p>
+<h3 id="reactive-routing">Reactive Routing</h3>
+<p>As already said: this is the second part of a blog series about refactoring plaid app. In the <a href="http://hannesdorfmann.com/android/plaid-refactored-1">first part</a> we have applied Model-View-Presenter and have introduced an <strong>ItemsLoader</strong> for loading items from different backend endpoints by invoking <strong>RouteCallers</strong>. Please read the <a href="http://hannesdorfmann.com/android/plaid-refactored-1">first part</a> if you haven&rsquo;t yet for more details. Summarizing, the home screen is build like this:</p>
+<p><img src="/images/plaid/part1-recap.png" alt="Recap"></p>
+<p>Please note that we have established an observable unidirectional bottom-up dataflow by using RxJava. We already have discussed that we store <strong>Sources</strong> in a database and that the user can enable and disable sources dynamically. Whenever the user enables / disables a Source in <strong>SourceFilterView</strong> we have to reload the items in the <strong>HomeView</strong>, right? We have seen that the <strong>HomePresenter</strong> is responsible to load data items by using an <strong>ItemsLoader</strong>. So how do we notify the HomePresenter that a Source has been enabled / disabled? Using an EventBus in such a scenario is a common solution.</p>
+<p>But there is a better way, a truly reactive way: We don&rsquo;t have to tell the <strong>HomePresenter</strong> about changes at all. How? Well, the HomePresenter is already observing <strong>ItemsLoader</strong>. So the <strong>HomePresenter</strong> doesn&rsquo;t really care about &ldquo;source changes&rdquo;. All the HomePresenter is interested in is receiving items from his <strong>onNext()</strong> subscriber-callback and display them via <strong>HomeView</strong>. So when a <strong>Source</strong> is changed new items to display will be emitted. Easy (in theory), right? But what does it actually takes to build something like that? Good news: We already have almost everything we need. The <strong>RouteCallerFatory.getAllBackendCallers()</strong> already returns an <strong>Observable&lt;List&lt;RouteCaller&gt;&gt;</strong> (please note that this is an <strong>Observable</strong>). The <strong>Router</strong> passes this Observable to the ItemsLoader and the HomePresenter subscribes on it. So as already said, to bring new items to the HomePresenter&rsquo;s <strong>onNext()</strong> callback we have to emit new items. Which kind of items? New <strong>List&lt;RouteCaller&amp;rt;</strong> because each RouteCaller will be executed by <strong>ItemsLoader</strong> (Page) to load Items from backend endpoints and finally emit the loaded items to <strong>HomePresenter</strong>. In other words: To make the Routing &ldquo;reactive&rdquo; we have to make our <strong>RouteCallerFatory</strong> &ldquo;reactive&rdquo; by observing the database (SQLBrite) and emitting the updated <strong>RouteCaller</strong> when a Source has been enabled or disabled:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">HomeDribbbleCallerFactory</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">backend</span><span class="p">:</span> <span class="n">DribbbleService</span><span class="p">,</span> <span class="n">sourceDao</span><span class="p">:</span> <span class="n">SourceDao</span><span class="p">)</span> <span class="p">:</span> <span class="n">RouteCallerFactory</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+
+    <span class="k">private</span> <span class="k">val</span> <span class="py">backendCalls</span> <span class="p">=</span> <span class="n">ArrayMap</span><span class="p">&lt;</span><span class="n">Long</span><span class="p">,</span> <span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;&gt;()</span>
+    <span class="k">private</span> <span class="k">val</span> <span class="py">sources</span><span class="p">:</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Source</span><span class="p">&gt;&gt;</span>
+
+    <span class="n">init</span> <span class="p">{</span>
+        <span class="c1">// Observable for the Database
+</span><span class="c1"></span>        <span class="n">sources</span> <span class="p">=</span> <span class="n">defer</span> <span class="p">{</span>
+            <span class="n">sourceDao</span><span class="p">.</span><span class="n">getSourcesForBackend</span><span class="p">(</span><span class="n">BackendManager</span><span class="p">.</span><span class="n">ID</span><span class="p">.</span><span class="n">DRIBBBLE</span><span class="p">).</span><span class="n">share</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">fun</span> <span class="nf">createCaller</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">):</span> <span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">RouteCaller</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">ITEMS_PER_PAGE</span><span class="p">,</span> <span class="n">getBackendMethodToInvoke</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Find the method to invoke (retrofit backend endpoint call) for a given Source
+</span><span class="c1"></span>    <span class="k">private</span> <span class="k">fun</span> <span class="nf">getBackendMethodToInvoke</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">):</span>
+            <span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">=</span> <span class="k">when</span> <span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Predefined Sources
+</span><span class="c1"></span>        <span class="n">Source</span><span class="p">.</span><span class="n">ID</span><span class="p">.</span><span class="n">DRIBBBLE_POPULAR</span> <span class="p">-&gt;</span> <span class="n">getPopular</span>
+        <span class="n">Source</span><span class="p">.</span><span class="n">ID</span><span class="p">.</span><span class="n">DRIBBBLE_FOLLOWING</span> <span class="p">-&gt;</span> <span class="n">getFollowing</span>
+        <span class="n">Source</span><span class="p">.</span><span class="n">ID</span><span class="p">.</span><span class="n">DRIBBLE_ANIMATED</span> <span class="p">-&gt;</span> <span class="n">getAnimated</span>
+        <span class="n">Source</span><span class="p">.</span><span class="n">ID</span><span class="p">.</span><span class="n">DRIBBLE_DEBUTS</span> <span class="p">-&gt;</span> <span class="n">getDebuts</span>
+        <span class="n">Source</span><span class="p">.</span><span class="n">ID</span><span class="p">.</span><span class="n">DRIBBLE_RECENT</span> <span class="p">-&gt;</span> <span class="n">getRecent</span>
+        <span class="n">Source</span><span class="p">.</span><span class="n">ID</span><span class="p">.</span><span class="n">DRIBBLE_MY_LIKES</span> <span class="p">-&gt;</span> <span class="n">getMyLikes</span>
+        <span class="n">Source</span><span class="p">.</span><span class="n">ID</span><span class="p">.</span><span class="n">DRIBBLE_MY_SHOTS</span> <span class="p">-&gt;</span> <span class="n">getUserShots</span>
+
+        <span class="c1">// Custom Source created by user by searching.
+</span><span class="c1"></span>        <span class="k">else</span> <span class="p">-&gt;</span> <span class="n">SearchFunc</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">name</span><span class="o">!!</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getAllBackendCallers</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">sources</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapSourcesToBackendCalls</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Map Sources from Database to corresponding RouteCaller
+</span><span class="c1"></span>    <span class="k">val</span> <span class="py">mapSourcesToBackendCalls</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">sources</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Source</span><span class="p">&gt;):</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">val</span> <span class="py">calls</span> <span class="p">=</span> <span class="n">ArrayList</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;&gt;()</span>
+        <span class="n">sources</span><span class="p">.</span><span class="n">forEach</span> <span class="p">{</span> <span class="n">source</span> <span class="p">-&gt;</span>
+
+            <span class="k">val</span> <span class="py">call</span> <span class="p">=</span> <span class="n">backendCalls</span><span class="p">[</span><span class="n">source</span><span class="p">.</span><span class="n">id</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">call</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// New source added
+</span><span class="c1"></span>                <span class="k">if</span> <span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">enabled</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">val</span> <span class="py">newCall</span> <span class="p">=</span> <span class="n">createCaller</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+                    <span class="n">backendCalls</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">newCall</span><span class="p">)</span>
+                    <span class="n">calls</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">newCall</span><span class="p">)</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="c1">// Already existing source
+</span><span class="c1"></span>
+                <span class="k">if</span> <span class="p">(!</span><span class="n">source</span><span class="p">.</span><span class="n">enabled</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// Source has been disabled
+</span><span class="c1"></span>                    <span class="n">backendCalls</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="n">calls</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">calls</span>
+    <span class="p">}</span>
+
+
+    <span class="c1">//
+</span><span class="c1"></span>    <span class="c1">// Backend endpoint calls
+</span><span class="c1"></span>    <span class="c1">//
+</span><span class="c1"></span>
+    <span class="k">val</span> <span class="py">getPopular</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">backend</span><span class="p">.</span><span class="n">getPopular</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">val</span> <span class="py">getFollowing</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">backend</span><span class="p">.</span><span class="n">getFollowing</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">val</span> <span class="py">getAnimated</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">backend</span><span class="p">.</span><span class="n">getAnimated</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">val</span> <span class="py">getDebuts</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">backend</span><span class="p">.</span><span class="n">getDebuts</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">val</span> <span class="py">getRecent</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">backend</span><span class="p">.</span><span class="n">getRecent</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">val</span> <span class="py">getMyLikes</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">backend</span><span class="p">.</span><span class="n">getUserLikes</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">val</span> <span class="py">getUserShots</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">backend</span><span class="p">.</span><span class="n">getUserShots</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">class</span> <span class="nc">SearchFunc</span><span class="p">(</span><span class="k">val</span> <span class="py">queryString</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">pageLimit</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+
+            <span class="k">return</span> <span class="n">Observable</span><span class="p">.</span><span class="n">defer</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+                <span class="k">try</span> <span class="p">{</span>
+                    <span class="c1">// Dribbble API doesn&#39;t provide a search endpoint.
+</span><span class="c1"></span>                    <span class="c1">// Therefore, parse HTML search result manually
+</span><span class="c1"></span>                    <span class="n">Observable</span><span class="p">.</span><span class="n">just</span><span class="p">(</span><span class="n">DribbbleSearch</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">queryString</span><span class="p">,</span> <span class="n">DribbbleSearch</span><span class="p">.</span><span class="n">SORT_RECENT</span><span class="p">,</span> <span class="n">pageOffset</span><span class="p">))</span>
+                <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">Observable</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div><p>As you see, our <strong>HomeDribbbleCallerFactory</strong> is observing our database (<strong>sourceDao.getSourcesForBackend()</strong>) and whenever the database has been changed because the user has enabled/disabled a Source or have added a new one (custom search) <strong>sources.map(mapSourcesToBackendCalls)</strong> will be called again and emits a new <strong>List&lt;RouteCaller&gt;</strong> with the updated routes to call. Next the <strong>ItemsLoader</strong> (via <strong>Router</strong> and <strong>FirstPage</strong>) will reacting on the new emitted <strong>List&lt;RouteCaller&gt;</strong> and load new Items which finally triggers <strong>HomePresenter&rsquo;s onNext()</strong> callback with the new loaded items. It sounds more complicated than it actually is. Have a look at the following graphically representation:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/pmWjwrLVDdA" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>The yellow circle represents the data flow. You see that SQLBrite will rerun all queries and inform the subscribers. Since <strong>HomeDribbbleCallerFactory</strong> is an subscriber to the database this component gets notified when a <strong>Source</strong> has been enabled/dispable and automatically adjust the Router. Thanks to RxJava and SQLBrite we can build a <strong>truly reactive application</strong> where the app reacts on changes and at the end updates the UI &ldquo;magically&rdquo; by still having an unidirectional data flow (unlikely using an EventBus).</p>
+<h3 id="posting-items-to-designernews">Posting items to DesignerNews</h3>
+<p>If you haven&rsquo;t noticed yet: You can submit news to DesignerNews site directly from Plaid app (Floating-Action-Button on home screen). Nick Butcher uses an <strong>IntentService</strong> to execute the http call and a <strong>LocalBroadcastReceiver</strong> (kind of <strong>EventBus</strong>) to notify the <strong>HomeActivity</strong> whether the story has been submitted successfully or not:</p>
+<p><img src="/images/plaid/posting-old.png" alt="Recap"></p>
+<p>Using an android <strong>Service</strong> is definitely the way to go to ensure that the story will be posted independent from activities lifecycle. However, there is a small issue with the current implementation: If the user submits a post <strong>PostStoryService</strong> gets started, but this Service will only inform <strong>HomeActivity</strong> after having uploaded successfully and then HomeActivity displays the uploaded item in the RecyclerView with the other uploaded. The problem is that if you have a slow internet connection (i.e. executing the http call to submit the post to DesignerNews takes 10 seconds) the user has no clue or visual feedback whats going on. A good idea would be to display the item immediately in HomeActivity&rsquo;s RecyclerView with a ProgressBar in the items layout (ViewHolder) and simply hide that ProgressBar once the post has been submitted successfully (http call successful). In case of error it would be nice if the failed item in HomeActivity&rsquo;s RecyclerView will be highlighted with an error icon and a retry button. Even better would be to add offline support (no network connection). Sounds very complex, doesn&rsquo;t it? How do you implement that? Using an EventBus?</p>
+<p>Don&rsquo;t worry, we can implement that in a &ldquo;truly reactive&rdquo; way without additional work to integrate it into our already refactored code. Let&rsquo;s do it step by step. First we have to implement offline support, so we have to save the story we will post on Designer News somehow locally on our device: We use a SQLite database for that and SQLBrite + SQLBrite-DAO again. Let&rsquo;s define a simple data class <strong>NewDesignerNewsStory</strong> that represents a story that we will post on Designer News afterwards:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@ObjectMappable</span>
+<span class="k">class</span> <span class="nc">NewDesignerNewsStory</span> <span class="p">:</span> <span class="n">PlaidItem</span> <span class="p">{</span>
+
+    <span class="k">object</span> <span class="nc">State</span> <span class="p">{</span> <span class="c1">// ID&#39;s for predefined Sources
+</span><span class="c1"></span>        <span class="k">const</span> <span class="k">val</span> <span class="py">NOT_SUBMITTED</span> <span class="p">=</span> <span class="m">0</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">IN_PROGRESS</span> <span class="p">=</span> <span class="m">1</span>
+        <span class="k">const</span> <span class="k">val</span> <span class="py">FAILED</span> <span class="p">=</span> <span class="m">2</span>
+    <span class="p">}</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">StoryDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">ID</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">id</span> <span class="p">:</span> <span class="n">Long</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">StoryDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">TITLE</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">title</span><span class="p">:</span> <span class="n">String</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">StoryDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">COMMENT</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">comment</span><span class="p">:</span> <span class="n">String</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">StoryDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">URL</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">url</span><span class="p">:</span> <span class="n">String</span>
+
+    <span class="n">@Column</span><span class="p">(</span><span class="n">StoryDao</span><span class="p">.</span><span class="n">COL</span><span class="p">.</span><span class="n">STATE</span><span class="p">)</span>
+    <span class="k">var</span> <span class="py">state</span> <span class="p">=</span> <span class="n">State</span><span class="p">.</span><span class="n">NOT_SUBMITTED</span>
+  <span class="p">}</span>
+</code></pre></div><p>Furthermore, we implement <strong>StoryDao</strong> which is responsible to insert a <strong>NewDesignerNewsStory</strong>, update the state of a <strong>NewDesignerNewsStory</strong>. I&rsquo;m not going to show the code for that because I guess you know how this SQL statements will look like. Next we will refactor <strong>PostStoryService</strong> to use <strong>StoryDao</strong> to query the local database for not submitted Posts and post them:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">PostStoryService</span> <span class="p">:</span> <span class="n">IntentService</span> <span class="p">(</span><span class="s">&#34;PostStoryService&#34;</span><span class="p">)</span> <span class="p">{</span>
+
+   <span class="n">@Inject</span> <span class="k">lateinit</span> <span class="k">var</span> <span class="py">storyDao</span> <span class="p">:</span> <span class="n">StoryDao</span>
+   <span class="n">@Inject</span> <span class="k">lateinit</span> <span class="k">var</span> <span class="py">backend</span> <span class="p">:</span> <span class="n">DesignerNewsService</span>
+
+   <span class="k">fun</span> <span class="nf">onHandleIntent</span><span class="p">(</span><span class="n">i</span> <span class="p">:</span> <span class="n">Intent</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">val</span> <span class="py">toSubmit</span>  <span class="p">=</span> <span class="n">storyDao</span><span class="p">.</span><span class="n">getAllNotInProgress</span><span class="p">()</span> <span class="c1">// List&lt;StoryDao&gt; of NOT_SUBMITTED and FAILED
+</span><span class="c1"></span>      <span class="n">toSubmit</span><span class="p">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">submit</span><span class="p">)</span>
+   <span class="p">}</span>
+
+   <span class="k">private</span> <span class="k">val</span> <span class="py">submit</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">story</span> <span class="p">:</span> <span class="n">NewDesignerNewsStory</span><span class="p">){</span>
+     <span class="k">try</span> <span class="p">{</span>
+       <span class="n">storyDao</span><span class="p">.</span><span class="n">setUploadInProgress</span><span class="p">(</span><span class="n">story</span><span class="p">.</span><span class="n">id</span><span class="p">)</span> <span class="c1">// Mark Story as in progress
+</span><span class="c1"></span>       <span class="n">backend</span><span class="p">.</span><span class="n">postNewStory</span><span class="p">(</span><span class="n">story</span><span class="p">)</span>  <span class="c1">// Blocking retrofit call
+</span><span class="c1"></span>       <span class="n">storyDao</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">story</span><span class="p">.</span><span class="n">id</span><span class="p">)</span> <span class="c1">// successfully so remove this from database
+</span><span class="c1"></span>     <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span> <span class="p">:</span> <span class="n">IOException</span><span class="p">){</span>
+       <span class="n">storyDao</span><span class="p">.</span><span class="n">setFailed</span><span class="p">(</span><span class="n">story</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+     <span class="p">}</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Nick Butcher has already implemented a <strong>PostNewDesignerNewsStoryActivity</strong> to have a UI to submit a story. We will refactor this as well and apply MVP as already done with other components before. So at the end there will be a <strong>PostNewDesignerNewsStoryActivity</strong> (View), a <strong>PostNewDesignerNewsStoryPresenter</strong> that will be save  a <strong>NewDesignerNewsStory</strong> into the local database by using <strong>StoryDao</strong>. The idea is to store every new story the user of the plaid app wants to submit into database rather then executing the http call directly and then afterwards start <strong>PostStoryService</strong> to execute the http call. As you see in the code snipped above we will update the state (IN_PROGRESS / FAILED) while trying to submit the story and save that persistently into database. In a nutshell:</p>
+<p><img src="/images/plaid/offline-support.png" alt="Recap"></p>
+<p>All right, but you might ask yourself now: How the hack do we display that items from database in our HomeActivity? Well, it&rsquo;s easier than you might have thought. We already have implemented a very flexible routing mechanism which we are already using in <strong>HomeActivity</strong>. So we will simply add another route to our Router: But rather then making http calls to a backend we add a route to our local (offline) database. All it takes is to define a <strong>RouteCallerFactory</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">OfflineStoryCallerFactory</span> <span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">storyDao</span> <span class="p">:</span> <span class="n">StoryDao</span><span class="p">)</span> <span class="p">:</span> <span class="n">RouteCallerFactory</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;{</span>
+
+  <span class="k">private</span> <span class="k">val</span> <span class="py">callers</span> <span class="p">=</span> <span class="n">arrayListOf</span><span class="p">(</span><span class="n">RouteCaller</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="n">callFunc</span><span class="p">))</span>
+
+  <span class="k">private</span> <span class="k">val</span> <span class="py">callFunc</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">pageOffset</span> <span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">limit</span> <span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">storyDao</span><span class="p">.</span><span class="n">getAll</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">getAllBackendCallers</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;&gt;&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">callers</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div><p>Easy right? Let&rsquo;s add the <strong>OfflineStoryCallerFactory</strong> to the <strong>Router</strong> used for the home screen. In <a href="http://hannesdorfmann.com/android/plaid-refactored-1">part 1</a> we have already discussed that we can do that configuration in the corresponding dagger module:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@Module</span><span class="p">(</span>
+    <span class="n">injects</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="n">HomePresenter</span><span class="p">.</span><span class="k">class</span>
+    <span class="err">},</span>
+    <span class="n">addsTo</span> <span class="p">=</span> <span class="n">ApplicationModule</span><span class="p">.</span><span class="k">class</span> <span class="err">// </span><span class="nc">contains</span> <span class="n">Retrofit</span> <span class="n">interfaces</span>
+<span class="p">)</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">HomeModule</span> <span class="p">{</span>
+
+  <span class="n">@Provides</span> <span class="n">@Singleton</span> <span class="n">HomePresenter</span> <span class="n">provideSearchPresenter</span><span class="p">(</span><span class="n">SourceDao</span> <span class="n">sourceDao</span><span class="p">,</span>
+      <span class="n">StoryDao</span> <span class="n">storyDao</span><span class="p">,</span>
+      <span class="n">DribbbleService</span> <span class="n">dribbbleBackend</span><span class="p">,</span>
+      <span class="n">DesignerNewsService</span> <span class="n">designerNewsBackend</span><span class="p">,</span>
+      <span class="n">ProductHuntService</span> <span class="n">productHuntBackend</span> <span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// Create the router
+</span><span class="c1"></span>    <span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCallerFactory</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;?</span> <span class="n">extends</span> <span class="n">PlaidItem</span><span class="p">&gt;&gt;&gt;</span> <span class="n">routeCallerFactories</span> <span class="p">=</span> <span class="n">new</span> <span class="n">ArrayList</span><span class="p">&lt;&gt;(</span><span class="m">3</span><span class="p">);</span>
+    <span class="n">routeCallerFactories</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">new</span> <span class="n">HomeDribbbleCallerFactory</span><span class="p">(</span><span class="n">dribbbleBackend</span><span class="p">,</span> <span class="n">sourceDao</span><span class="p">));</span>
+    <span class="n">routeCallerFactories</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">new</span> <span class="n">HomeDesingerNewsCallerFactory</span><span class="p">(</span><span class="n">designerNewsBackend</span><span class="p">,</span> <span class="n">sourceDao</span><span class="p">));</span>
+    <span class="n">routeCallerFactories</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">new</span> <span class="n">HomeProductHuntCallerFactory</span><span class="p">(</span><span class="n">productHuntBackend</span><span class="p">,</span> <span class="n">sourceDao</span><span class="p">));</span>
+
+    <span class="c1">// Add the new route to local database
+</span><span class="c1"></span>    <span class="n">routeCallerFactories</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">new</span> <span class="n">OfflineStoryCallerFactory</span><span class="p">(</span><span class="n">storyDao</span><span class="p">));</span>
+
+    <span class="n">Router</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;?</span> <span class="n">extends</span> <span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="n">router</span> <span class="p">=</span> <span class="n">new</span> <span class="n">Router</span><span class="p">&lt;&gt;(</span><span class="n">routeCallerFactories</span><span class="p">);</span>
+
+    <span class="n">ItemsLoader</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;?</span> <span class="n">extends</span> <span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="n">itemsLoader</span> <span class="p">=</span> <span class="n">new</span> <span class="n">ItemsLoader</span><span class="p">&lt;&gt;(</span><span class="n">router</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">new</span> <span class="n">HomePresenterImpl</span><span class="p">(</span><span class="n">itemsLoader</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>So at the end we have a <strong>HomePresenter</strong> that gets items from an <strong>ItemsLoader</strong> which <strong>Router</strong> enables him to load and displays items from <strong>Dribbble</strong> (HomeDribbbleCallerFactory), <strong>Designer News</strong> (HomeDesingerNewsCallerFactory), <strong>Product Hunt</strong> (HomeProductHuntCallerFactory) and from the users local (offline) database via <strong>OfflineStoryCallerFactory</strong>. Since <strong>PostStoryService</strong>, <strong>PostNewDesignerNewsStoryPresenter</strong> and <strong>OfflineStoryCallerFactory</strong> use <strong>StoryDao</strong> which is build on top of SQLBrite + RxJava the whole thing is reactive. That means, whenever we add a new Story to our local database by using <strong>StoryDao</strong>, the <strong>HomePresenter</strong> will automatically be notified as well. It&rsquo;s the same principle as described before when enabling / disabling sources.</p>
+<p><img src="/images/plaid/posting-new.png" alt="Recap"></p>
+<p>Note also that <strong>PostStoryService</strong> is changing the the state of a <strong>NewDesignerNewsStory</strong> which will result in updating the UI of <strong>HomeView</strong> (show / hide a ProgressBar on the item that will be uploaded). We also get error handling for free: i.e. when an <strong>NewDesignerNewsStory</strong> couldn&rsquo;t be submitted to Designer News backend we can show a retry button on this item displayed in HomeActivity&rsquo;s RecyclerView. By clicking on the retry button we can simply start <strong>PostStoryService</strong> again which will try to upload that item again. Please note also that we still have an unidirectional data flow.
+We can improve that even more by starting <strong>PostStoryService</strong> with an exponential back off in case of bad network connection or use <strong>JobSchedulers</strong> or <strong>GcmNetworkManager</strong> to start <strong>PostStoryService</strong> only when it makes sense (save battery).</p>
+<h2 id="conclusion-of-part-2">Conclusion of Part 2</h2>
+<p>In this part we have shown that RxJava (or Rx programming in general) is more than just concatenating Retrofit http calls and transforming data. The observer pattern is nothing new, but that is what makes RxJava so beautiful. Establishing an unidirectional data flow is the key for having clean and easy to debug and maintain architecture. That might be the biggest difference between using RxJava base Observable (once again: OBSERVER PATTERN) and an EventBus, which could do the job as well but you might not have an unidirectional data flow. We could also apply the reactive pattern to authentication which I haven&rsquo;t covered at all.</p>
+<p>Please note that the source code is far away from being perfect and I&rsquo;m pretty sure you will find bugs. So please don&rsquo;t copy &amp; paste blindly this code into your app. I simply hadn&rsquo;t time to cover all cases and refactor all things. I had to publish that blog post to stop myself to spend more days and weeks on the refactoring of this app. You can see the ideas and code posted in this blog as some kind of &ldquo;prove of concept&rdquo; of a &ldquo;truly reactive&rdquo; app. Once again I want to point out the importance of immutable objects and <a href="https://en.wikipedia.org/wiki/Pure_function">pure functions</a>. Unluckily my source code is not as immutable as it should be. As already said, the focus was set on writing a &ldquo;reactive&rdquo; app.</p>
+<p>Nevertheless, I&rsquo;m willing to clean up my code and to make a <a href="https://github.com/nickbutcher/plaid/issues/49">pull request</a> to Nick Butcher&rsquo;s original repository. However, I don&rsquo;t expect that this &ldquo;Reactive MVP approach&rdquo; will be merged into the Plaid apps source code. I do understand that my approach is for advanced developers. Furthermore, I use some third party libraries and kotlin, which may not everybody has knowledge of. Therefore my code is not ideal for all kind of developers, which without any doubt Nick Butcher as a Google employee wants to reach with his awesome app. It&rsquo;s good and important to have such an open source app with an inspiring UI / UX understandable for both android beginners and experts.</p>
+<p>I also wanna catch the opportunity to talk about an idea I have in mind for almost two years: It would be very nice to have an app (Plaid alike) with different sources of android development bundled into one app. For example the app could display some tweets and Google+ posts from android dev super stars like Jesse Wilson, Jake Wharton, Matthias Käppler, Piwai, Dan Lew, Corey Latislaw, Cyril Mottier, Lisa Wray, Artem Zinnatullin and others (forgive me if I have forget to mention your name here) but also some other sources like Reddit <a href="https://www.reddit.com/r/androiddev/">/r/androiddev</a>, Stackoverflow, YouTube channels, podcasts etc. bundled into one nice app with an outstanding UI / UX as Plaid. I don&rsquo;t think that this is something a single developer can develop in his spare time (and the experience from refactoring the plaid app gives me right). But if we could find a handful developers interessted in such an app developed by the community for the community I&rsquo;m definetly willing to contribute as well.</p>
+
+    
+    <div class="series-box">
+        <h5>This is a post in the 
+        <u>Refactoring Plaid App</u> series.</span></h5>
+        <p>Other posts in this series:</p>
+
+        
+        
+        <ul>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/plaid-refactored-1/">Refactoring Plaid App - A reactive MVP Approach (Part 1)</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/plaid-refactored-2/">Refactoring Plaid App - A reactive MVP Approach (Part 2)</a>
+            </li>
+        
+        </ul>
+    </div>
+ 
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

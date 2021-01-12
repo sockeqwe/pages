@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Why a library developer should use abstract class instead of interface, in java and android">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Why a library developer should use abstract class instead of interface</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Oct 13, 2016</li>
+        </ul>
+        <article class="content">
+          
+          <p>Use interfaces for java development they said. It will be more flexible they said. Well, that all might be true but for library projects that doesn&rsquo;t necessarily has to be true as well. In this post I will explain you why I have switched from <code>interface</code> to an <code>abstract class</code> as base class in one of my library projects called <a href="https://github.com/sockeqwe/AdapterDelegates">AdapterDelegates 3.0</a>.</p>
+<p>To give you some background information: AdapterDelegates is a small library I have written to create composable Adapters for Android&rsquo;s RecyclerView (favor composition over inheritance). I have described the idea and the reason why we need such a library in a previous blog post: <a href="http://hannesdorfmann.com/android/adapter-delegates">Joe&rsquo;s great adapter hell escape</a>.</p>
+<p>AdapterDelegates (before version 3.0) had an interface called <em>AdapterDelegate</em> like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="cm">/**
+</span><span class="cm"> * @param &lt;T&gt; the type of adapters data source i.e. List&lt;Foo&gt;
+</span><span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AdapterDelegate</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Called to determine whether this AdapterDelegate is the responsible for the given data
+</span><span class="cm">   * element.
+</span><span class="cm">   *
+</span><span class="cm">   * @param items The data source of the Adapter
+</span><span class="cm">   * @param position The position in the datasource
+</span><span class="cm">   * @return true, if this item is responsible,  otherwise false
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isForViewType</span><span class="o">(</span><span class="n">T</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">);</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Creates the  {@link RecyclerView.ViewHolder} for the given data source item
+</span><span class="cm">   *
+</span><span class="cm">   * @param parent The ViewGroup parent of the given datasource
+</span><span class="cm">   * @return The new instantiated {@link RecyclerView.ViewHolder}
+</span><span class="cm">   */</span>
+  <span class="nd">@NonNull</span> <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">);</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Called to bind the {@link RecyclerView.ViewHolder} to the item of the datas source set
+</span><span class="cm">   *
+</span><span class="cm">   * @param items The data source
+</span><span class="cm">   * @param position The position in the datasource
+</span><span class="cm">   * @param holder The {@link RecyclerView.ViewHolder} to bind
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="n">T</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>So for every view type you want to display in a <code>RecyclerView</code> you had to define your own class implementing <code>AdapterDelegate</code> interface and then you could plug-in multiple  AdapterDelegates into a RecyclerView&rsquo;s Adapter to display different kind of items (view types). Moreover, you could reuse the same AdapterDelegate for multiple Adapters.</p>
+<h2 id="class-vs-interface">class vs. interface</h2>
+<p>One may ask: Why have you defined interface <code>AdapterDelegate&lt;T&gt;</code> and not simply <code>class AdapterDelegate&lt;T&gt;</code>? Well, an AdapterDelegate is just a contract (or a protocol) that says this methods have to be implemented. That is exactly what interfaces are good for. Furthermore, we should program against interfaces, right? Instead of writing your classes in a way that says <em>&ldquo;I depend on this specific class to do my work&rdquo;</em>  with interfaces it&rsquo;s more like <em>&ldquo;I depend on any class that does this stuff to do my work&rdquo;.</em> By doing so we don&rsquo;t rely on implementation details, are more flexible and loosely coupled.</p>
+<h2 id="interface-vs-abstract-class">interface vs. abstract class</h2>
+<p>That is a little bit more tricky although the same arguments as in the <em>&ldquo;class vs. interface&rdquo;</em> paragraph from above are still valid. I would like to add that an abstract class let you define some behaviors and forces your subclasses to provide others (abstract methods). Unfortunately that is also a problem at the same time. Inheritance (in contrast to implementing an interface) might introduce a shared state and behavior relation between super class and subclass because the state of the overall object relies on implementation of both, the super class and the subclass. Moreover, that means that if your are extending from an abstract class and you are not implementing the abstract methods as intended by the author of the super class (which might not be you) you may break internal state and behavior of your subclass. What I&rsquo;m trying to say is: if you don&rsquo;t know all the implementation details of your super class, you can&rsquo;t be sure that your subclass is working correctly. I&rsquo;m pretty sure you have extended from abstract classes and have implemented the missing abstract methods before but have you ever checked the source code of the super class to be sure that your implementation of those abstract methods are as intended by the author of the super class? By the way, the source code of a super class  could have been changed with every update. You might have to look at the source code again to verify that your subclass implementation still conforms with the intention of the super class.</p>
+<h2 id="abstract-classes-allow-default-implementations">Abstract classes allow default implementations</h2>
+<p>With that said, you are wondering why I have switched from <code>interface AdapterDelegate&lt;T&gt;</code> to <code>abstract class AdapterDelegate&lt;T&gt;</code> in AdapterDelegates version 3.0, aren&rsquo;t you? For a library abstract classes do make sense <strong>if your libraries public API changes frequently</strong> and if you are not under full control of how and when the API will be changed.</p>
+<p>That is exactly the case for my AdapterDelegates library. I depend on the RecyclerView&rsquo;s Adapter API which, obviously, is not designed nor maintained by me. Concrete example:
+Few releases back a new method <code>onBindViewHolder(VH holder, int position, List payloads)</code> has been added to <code>RecyclerView.Adapter</code> class to support payloads. AdapterDelegates 2.0 interface only contained the method signature <code>onBindViewHolder(VH holder, int position)</code> (without payloads).  If I want to add this method to <code>interface AdapterDelegate&lt;T&gt;</code> in version 2.1 everybody using my library would have to go into his source code and implement this method too. Otherwise his / her code wouldn&rsquo;t compile.</p>
+<p>What if you decide to update your app to version 2.1 (with payload support) but a third party library of your app still depends on version 2.0 (without payload support)?</p>
+<p><img src="/images/adapterdelegates/dependencies.png" alt="dependencies"></p>
+<p>Then your code will compile but your app will crash at runtime. Why? Because the third party library is already compiled. Hence, no compile time error will be thrown but gradle will pack version 2.1 (can&rsquo;t pack both 2.1 and 2.0 in the same apk, therefore uses the newer one) into your final android APK file. When invoking <code>onBindViewHolder(VH holder, int position, List payloads)</code> on a third party library component a <code>NoSuchMethodError</code> will be thrown at runtime. The android SDK faces the same issue. LINT warns you to add a check like if (Build.VERSION.SDK_INT &gt;= 21) but there is no such mechanism for libraries packed in your code.</p>
+<p>To avoid such problems Jake Wharton suggested to change package name and maven group id in his blog post <a href="http://jakewharton.com/java-interoperability-policy-for-major-version-updates/">Java Interoperability Policy for Major Version Updates</a>.
+That is a very good strategy you should follow when publishing your own library. But what is a major version update? In my case, every time RecyclerView&rsquo;s Adapter API changes that would be a major version update for my AdapterDelegates library too because I may have to add new methods to the <code>interface AdapterDelegate&lt;T&gt;</code>. That wouldn&rsquo;t be very convenient for the users of my library.</p>
+<p>Therefore, I have decided to switch to <code>abstract class AdapterDelegate&lt;T&gt;</code> because most likely the development team behind RecyclerView will add new methods to introduce new optional features. At least that was the case in the past. By using abstract class instead of an interface I can add this methods &ldquo;silently&rdquo; in a minor version update (not major version update) by providing a default implementation, which abstract classes allow me to do, but interfaces don&rsquo;t (before java 8, available in android starting at API level 24).</p>
+<p>Now you may roll your eyes and ask: What about all that inheritance shared state and behavior nonsense you told me before and that I can&rsquo;t be sure that by inheriting from a super class I am not breaking something without checking the source code of the super class.</p>
+<p>Well, that still is true. However, I as a library developer restrict myself to define <code>abstract class AdapterDelegate&lt;T&gt;</code> just like I would define an interface by using abstract methods except the fact that for newer optional features I will provide an empty default implementation:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AdapterDelegate</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">protected</span> <span class="kd">abstract</span> <span class="kt">boolean</span> <span class="nf">isForViewType</span><span class="o">(</span><span class="n">T</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">);</span>
+
+  <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">);</span>
+
+  <span class="kd">protected</span> <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="n">T</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">payloads</span><span class="o">);</span>
+
+  <span class="kd">protected</span> <span class="kt">boolean</span> <span class="nf">onFailedToRecycleView</span><span class="o">(</span><span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onViewAttachedToWindow</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">)</span> <span class="o">{</span>
+  <span class="o">}</span>
+
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onViewDetachedFromWindow</span><span class="o">(</span><span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">)</span> <span class="o">{</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>So you, as user of this library, can checkout the source code and understand easily that there is no shared state or behavior with your own subclass.</p>
+<p>TL;DR: For a library project it is okay to use abstract class instead of interface, if you restrict yourself to design abstract classes like interfaces and only add empty default implementations but no default implementation that changes state or behavior of this class (and in consequence of all subclasses).</p>
+<p>Please note that this is very specific to library projects and not a general advise to prefer abstract classes over interfaces. Furthermore, please note that there no one size fits all. I&rsquo;m just sharing my personal experience I have faced while maintaining and developing  libraries.</p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

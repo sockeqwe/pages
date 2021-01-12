@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="SwipeBack">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>FragmentArgs</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Sep 15, 2014</li>
+        </ul>
+        <article class="content">
+          
+          <p>Developing for Android is sometimes painful. You have to write lot of code to do simple things like setting up a Fragment. Fortunately java supports a powerful tool: <strong>Annotation Processors</strong></p>
+<blockquote>
+<p>This post is part of a series of posts about useful annotation processors like <a href="http://hannesdorfmann.com/android/ParcelablePlease">ParcelablePlease</a> or <a href="http://hannesdorfmann.com/android/AnnotatedAdapter">AnnotatedAdapter</a></p>
+</blockquote>
+<p>The Problem with Fragments is that you have to set arguments (the parameters) for a fragment to make them work correctly. Many new android developers that write the first fragment do something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">title</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">MyFragment</span> <span class="nf">newInstance</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="n">String</span> <span class="n">title</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">MyFragment</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyFragment</span><span class="o">();</span>
+    <span class="n">f</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+    <span class="n">f</span><span class="o">.</span><span class="na">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">;</span>
+    <span class="k">return</span> <span class="n">f</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span>
+        <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getActivity</span><span class="o">(),</span> <span class="s">&#34;Hello &#34;</span> <span class="o">+</span> <span class="n">title</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">3</span><span class="o">),</span>
+                <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+      <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><blockquote>
+<p>What&rsquo;s wrong with that? I have tested it on my device and it worked like a charm?</p>
+</blockquote>
+<p>It may have worked, but did you try to rotate your device from portrait to landscape? Your app will crash with <strong>NullPointerException</strong> as soon as you try to access <em>id or title</em> .</p>
+<blockquote>
+<p>It&rsquo;s ok, my app is locked in portrait. So I will never run into this problem.</p>
+</blockquote>
+<p><strong>You will!</strong> Android is a real multitasking operating system. Multiple apps run at the same time and the android os will destroy activities (and the containing fragments) if memory is needed. Probably you will never notice that during daily app development. However, once the app is published in the play store you will get notified that your app is crashing and you may wonder why. Your app users use multiple apps at the same time and it&rsquo;s very likely that your app is going to be destroyed in the background. Example: a user of your app opens your app and <em>MyFrament</em> is displayed on screen. Next the user will press the home button (your app is going in the background) and opens any other app. Your app will be destroyed in the background to free memory. Later on the user comes back to your app, for example by pressing the multitasking button. So what does Android do right now? Android restores the previous app state and restores <em>MyFragment</em> and that&rsquo;s the problem. The fragment tries to access <em>title</em> which is null because it had not been stored persistently.</p>
+<blockquote>
+<p>I see, so I have to save them in onSaveInstanceState(Bundle)?</p>
+</blockquote>
+<p><strong>NO</strong>. The official docs are a little bit unclear, but <strong>onSaveInstanceState(Bundle)</strong> should be used exactly the same way you do with <strong>Activity.onSaveInstanceState(Bundle)</strong>: you use this method to save the instance state &ldquo;temporarly&rdquo;, for instance to handle screen orientation changes (from portrait to landscape and vice versa). That means the fragments instance state is not stored persistently which is required when the app is killed in the background and restored when it comes back to the foreground again. It&rsquo;s pretty the same as activities work: <strong>Activity.onSaveInstanceState(Bundle)</strong> is used for &ldquo;temporarly&rdquo; saving the instance state, whereas the long persistent parameters are passed through the intents extra data.</p>
+<blockquote>
+<p>So should I save these Fragment arguments in the Activities Intent?</p>
+</blockquote>
+<p>No, Fragment has it&rsquo;s own mechanism for this. There are two methods: <strong>Fragment.setArguments(Bundle)</strong> and <strong>Fragment.getArguments()</strong> and you have to use these methods to ensure that the arguments will be stored persistently, even if the app is destroyed and restored. But that&rsquo;s the painful part I have mentioned above. It&rsquo;s a lot of code you have to write. First, you have to create a <strong>Bundle</strong>, then you have to set the key / value pairs and finally to call <strong>Fragment.setArguments()</strong>. Unfortunately you are not done yet but you have to read the values out of the Bundle with <strong>Fragment.getArguments()</strong>. Something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">KEY_ID</span> <span class="o">=</span><span class="s">&#34;key.id&#34;</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">KEY_TITLE</span> <span class="o">=</span> <span class="s">&#34;key.title&#34;</span><span class="o">;</span>
+
+  <span class="kd">private</span> <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">title</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">MyFragment</span> <span class="nf">newInstance</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="n">String</span> <span class="n">title</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">MyFragment</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyFragment</span><span class="o">();</span>
+    <span class="n">Bundle</span> <span class="n">b</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bundle</span><span class="o">();</span>
+    <span class="n">b</span><span class="o">.</span><span class="na">putInt</span><span class="o">(</span><span class="n">KEY_ID</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
+    <span class="n">b</span><span class="o">.</span><span class="na">putString</span><span class="o">(</span><span class="n">KEY_TITLE</span><span class="o">,</span> <span class="n">title</span><span class="o">);</span>
+    <span class="n">f</span><span class="o">.</span><span class="na">setArguments</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">f</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+      <span class="c1">// onCreate it&#39;s a good point to read the arguments
+</span><span class="c1"></span>      <span class="n">Bundle</span> <span class="n">b</span> <span class="o">=</span> <span class="n">getArguments</span><span class="o">();</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span><span class="n">KEY_ID</span><span class="o">);</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">title</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="n">KEY_TITLE</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span>
+        <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="c1">// No NullPointer here, because onCreate() is called before this
+</span><span class="c1"></span>            <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getActivity</span><span class="o">(),</span> <span class="s">&#34;Hello &#34;</span> <span class="o">+</span> <span class="n">title</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">3</span><span class="o">),</span>
+                <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+      <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>I hope you understand now what I mean with &ldquo;painful&rdquo;. There&rsquo;s a lot of code you have to write for any single fragment in your application. Wouldn&rsquo;t it be nice if someone else could write that code for you? Annotation Processing allows you to generate java code at compile time. Note that we are not talking about evaluating annotations at run time by using reflections.</p>
+<h2 id="fragmentargs">FragmentArgs</h2>
+<p>FragmentArgs is a lightweight library that generates exactly this java code for your fragments. Have a look at this code:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">com.hannesdorfmann.fragmentargs.FragmentArgs</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.hannesdorfmann.fragmentargs.annotation.Arg</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+
+	<span class="nd">@Arg</span>
+	<span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+
+	<span class="nd">@Arg</span>
+	<span class="n">String</span> <span class="n">title</span><span class="o">;</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">){</span>
+		<span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+		<span class="n">FragmentArgs</span><span class="o">.</span><span class="na">inject</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="c1">// read @Arg fields
+</span><span class="c1"></span>	<span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span>
+		<span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+
+      		<span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getActivity</span><span class="o">(),</span> <span class="s">&#34;Hello &#34;</span> <span class="o">+</span> <span class="n">title</span><span class="o">,</span>
+      			<span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+      <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p><strong>FragmentArgs</strong> generates the boilerplate code for you just by annotating fields of your Fragment class. In your Activity you will use the generated <strong>Builder</strong> class <em>(the name of your fragment with &ldquo;Builder&rdquo; suffix)</em> instead of <strong>new MyFragment()</strong> or a static <strong>MyFragment.newInstance(int id, String title)</strong> method.</p>
+<p>For example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyActivity</span> <span class="kd">extends</span> <span class="n">Activity</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">){</span>
+		<span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+
+		<span class="kt">int</span> <span class="n">id</span> <span class="o">=</span> <span class="n">123</span><span class="o">;</span>
+		<span class="n">String</span> <span class="n">title</span> <span class="o">=</span> <span class="s">&#34;test&#34;</span><span class="o">;</span>
+
+		<span class="c1">// Using the generated Builder
+</span><span class="c1"></span>		<span class="n">Fragment</span> <span class="n">fragment</span> <span class="o">=</span>
+			<span class="k">new</span> <span class="n">MyFragmentBuilder</span><span class="o">(</span><span class="n">id</span><span class="o">,</span> <span class="n">title</span><span class="o">)</span>
+			<span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+		<span class="c1">// Fragment Transaction
+</span><span class="c1"></span>		<span class="n">getFragmentManager</span><span class="o">()</span>
+			<span class="o">.</span><span class="na">beginTransaction</span><span class="o">()</span>
+			<span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">container</span><span class="o">,</span> <span class="n">fragment</span><span class="o">)</span>
+			<span class="o">.</span><span class="na">commit</span><span class="o">();</span>
+	<span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>You may have noticed the statement <strong>FragmentArgs.inject(this);</strong> in  <strong>Fragment.onCreate(Bundle)</strong>. In this call your fragment gets connected to the generated code. You may ask yourself: <em>&ldquo;Do I have to override onCreate(Bundle) in every Fragment to add the inject() method call?&quot;</em> . The answer is no. A powerful feature is that <strong>FragmentArgs.inject(this);</strong> supports inheritance. You simply need to insert this line into your <em>base fragment</em> and extend all your fragments from this base fragment:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BaseFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">){</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+        <span class="n">FragmentArgs</span><span class="o">.</span><span class="na">inject</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="c1">// read @Arg fields
+</span><span class="c1"></span>    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyFragment</span> <span class="kd">extends</span> <span class="n">BaseFragment</span> <span class="o">{</span>
+
+  <span class="nd">@Arg</span>
+  <span class="n">String</span> <span class="n">title</span><span class="o">;</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span>
+    <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+
+      <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getActivity</span><span class="o">(),</span> <span class="s">&#34;Hello &#34;</span> <span class="o">+</span> <span class="n">title</span><span class="o">,</span>
+        <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p><strong>Credits:</strong> Parts of the annotation processing code are based on Hugo Visser&rsquo;s <a href="https://bitbucket.org/hvisser/bundles">Bundles</a> project.</p>
+<p>In my <a href="http://hannesdorfmann.com/android/ParcelablePlease">next blog post</a> I want to compare annotation processors for generating Parcelable&rsquo;s and tell you why I ended up writing my own Annotation Processor called <a href="https://github.com/sockeqwe/ParcelablePlease">ParcelablePlease</a></p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

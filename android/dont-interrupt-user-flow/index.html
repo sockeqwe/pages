@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Use RecyclerView ItemAnimator to create an outstanding user experience UX">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Don&#39;t interrupt the user&#39;s flow</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Aug 18, 2015</li>
+        </ul>
+        <article class="content">
+          
+          <p>From my point of view user experience is a very important topic but sometimes doesn&rsquo;t get the attention it deserves. In this blog post I want to show you how to use <strong>RecyclerView</strong> to build an user experience that is not interrupting the user&rsquo;s flow.</p>
+<p>I&rsquo;m very lucky to work in a very talented team at <a href="https://www.tickaroo.com">Tickaroo</a> where we are building and maintaining the android and iOS apps for kicker, one of the most important football magazine in Europe (even though the main language is German). The app basically displays news about football (but also about other sports), live scores &amp; live updates (push notifications), statistics, videos, photo galleries and so on and so forth. A few days ago we published an update for the <a href="https://play.google.com/store/apps/details?id=com.netbiscuits.kicker">kicker android app</a> where we integrated a new interactive feature: tip game (betting game, footy tipping, tip guessing or whatever the name for that is in your local area). So the idea is that the users of the kicker app try to guess the results of football games and get points when the guessed results are correct.</p>
+<p>When starting the kicker app you see a <strong>RecyclerView</strong> displaying different items, amongst others news articles, game results and upcoming games. The first question is how do we integrate the new tip game feature? Next, how does the user can submit &ldquo;tips&rdquo; (try to guess the result) for a game? We could have made our life easy (from developers point of view) and simply start a new Activity to display a list of games the user can submit &ldquo;tips&rdquo; for (try to guess the result). But we decided to implement two <em>&ldquo;modes&rdquo;</em> because we already display the last results and upcoming games in the RecyclerView: The <em>&ldquo;normal&rdquo;</em> mode where our users see the upcoming games or results of the last games and the <em>&ldquo;tip&rdquo;</em> mode where users can submit a tip (guess the result) and see if their guess was correct after the game is finished. So the final result looks like this:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/7XAe3zd0fdU" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>Instead of interrupting the users flow by starting a new Activity we decided to switch between both modes with a flip animation by pressing the &ldquo;tippen&rdquo; (german for &ldquo;guessing results&rdquo;) and &ldquo;schließen&rdquo; (german for &ldquo;close&rdquo;) button.</p>
+<p>How did we implement that? Obviously I can&rsquo;t share the whole source code, but I will give you some insights and pitfalls we have faced.</p>
+<h2 id="flip-items">Flip items</h2>
+<p>As you have seen in the video shown above we are animating the items of the <strong>RecyclerView</strong>. We started by using a layout file containing both child layouts for normal mode and tip mode, like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"> <span class="nt">&lt;FrameLayout&gt;</span>
+    <span class="nt">&lt;LinearLayout</span>
+      <span class="na">android:id=</span><span class="s">&#34;normalMode&#34;</span>
+      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+      <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span><span class="nt">&gt;</span>
+        ...
+    <span class="nt">&lt;/LinearLayout&gt;</span>
+
+    <span class="nt">&lt;LinearLayout</span>
+      <span class="na">android:id=</span><span class="s">&#34;tipMode&#34;</span>
+      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+      <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+      <span class="na">android:visibility=</span><span class="s">&#34;invisible&#34;</span><span class="nt">&gt;</span>
+        ...
+    <span class="nt">&lt;/LinearLayout&gt;</span>
+
+ <span class="nt">&lt;/FrameLayout&gt;</span>
+</code></pre></div><p>Then the ViewHolder in the RecyclerView will have a reference to <em>&ldquo;normalMode&rdquo;</em> and <em>&ldquo;tipMode&rdquo;</em> layout. Flipping the views is simply a <strong>rotationX()</strong> animation as shown below (don&rsquo;t forget to set the visibility from &ldquo;visible&rdquo; to &ldquo;invisible&rdquo; and vice versa):</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">animateToTipMode</span><span class="o">(</span><span class="n">TipViewHolder</span> <span class="n">holder</span><span class="o">,</span> <span class="kt">int</span> <span class="n">delay</span><span class="o">){</span>
+ <span class="kt">int</span> <span class="n">duration</span> <span class="o">=</span> <span class="n">100</span><span class="o">;</span>
+ <span class="c1">// Flip the &#34;normalMode&#34; View &#34;out&#34;
+</span><span class="c1"></span> <span class="n">ViewCompat</span><span class="o">.</span><span class="na">animate</span><span class="o">(</span><span class="n">viewHolder</span><span class="o">.</span><span class="na">normalMode</span><span class="o">)</span>
+          <span class="o">.</span><span class="na">rotationX</span><span class="o">(</span><span class="n">90</span><span class="o">)</span> <span class="c1">// Animate from 0 to 90
+</span><span class="c1"></span>          <span class="o">.</span><span class="na">setDuration</span><span class="o">(</span><span class="n">duration</span><span class="o">)</span>
+          <span class="o">.</span><span class="na">setStartDelay</span><span class="o">(</span><span class="n">delay</span><span class="o">)</span>
+          <span class="o">.</span><span class="na">setListener</span><span class="o">(</span><span class="k">new</span> <span class="n">ViewPropertyAnimatorListenerAdapter</span><span class="o">(){</span>
+              <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onAnimationEnd</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">viewHolder</span><span class="o">.</span><span class="na">normalMode</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">INVISIBLE</span><span class="o">);</span>
+              <span class="o">}</span>
+            <span class="o">})</span>
+          <span class="o">.</span><span class="na">start</span><span class="o">();</span>
+
+  <span class="c1">// Flip the &#34;topMode&#34; View &#34;in&#34;
+</span><span class="c1"></span>  <span class="n">ViewCompat</span><span class="o">.</span><span class="na">setRotationX</span><span class="o">(</span><span class="n">holder</span><span class="o">.</span><span class="na">tipMode</span><span class="o">,</span> <span class="o">-</span><span class="n">90</span><span class="o">);</span>
+  <span class="n">ViewCompat</span><span class="o">.</span><span class="na">animate</span><span class="o">(</span><span class="n">viewHolder</span><span class="o">.</span><span class="na">tipMode</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">rotationX</span><span class="o">(</span><span class="n">0</span><span class="o">)</span> <span class="c1">// Animate from -90 to 0
+</span><span class="c1"></span>           <span class="o">.</span><span class="na">setDuration</span><span class="o">(</span><span class="n">duration</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">setStartDelay</span><span class="o">(</span><span class="n">delay</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">setListener</span><span class="o">(</span><span class="k">new</span> <span class="n">ViewPropertyAnimatorListenerAdapter</span><span class="o">(){</span>
+               <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onAnimationEnd</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
+                 <span class="n">viewHolder</span><span class="o">.</span><span class="na">normalMode</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+               <span class="o">}</span>
+             <span class="o">})</span>
+           <span class="o">.</span><span class="na">start</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div><p>So basically the animation runs from 0 to 90 for animating view out and from -90 to 0 for animating the view in. The wave alike execution of the flip animation is done by adding a start delay and increase that delay for each item. So all we have to do is to collect those items above the button that triggers the switch between both modes. <strong>TipViewHolder</strong> is the ViewHolder for the xml layout containing normalMode and tipMode child layouts. In the old days of <strong>ListView</strong> we would have done that simply by iterating over its children with <strong>ListView.getChildAt(index)</strong>, but <strong>RecyclerView</strong> internally handles its children different (with a LayoutManager). Hence, <strong>RecyclerView.getChildAt(index)</strong> doesn&rsquo;t return the views in the expected order as the <strong>ListView</strong> does.
+When working with <strong>RecyclerView</strong> you have to work with <strong>ViewHolder</strong> as well. <strong>ViewHolder</strong> is not just a plain old class to hold references to the child views and to reduce <strong>findViewById()</strong> operations, no, <strong>ViewHolder</strong> knows more about how it is used internally in the parent <strong>RecyclerView</strong>. So you can query the current adapter position of a ViewHolder with <strong>ViewHolder.getAdapterPosition()</strong>. We use that to get the adapter position of the button that starts the flip animation (have a look at the video shown above: there is a button to start the flip animation to switch between &ldquo;normal mode&rdquo; and &ldquo;tip mode&rdquo;). In our app we know that all  games (<strong>TipViewHolder</strong>) are above the clicked button, so we just have to iterate from button position up in adapters dataset. We also can assume that between two groups of games / tips is at least one other type of ViewHolder, hence we can use <strong>instanceof TipViewHolder</strong> to dertermine where the wave animation should stop:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSwitchToTipModeClicked</span><span class="o">(</span><span class="n">ViewHolder</span> <span class="n">buttonViewHolder</span><span class="o">){</span>
+
+  <span class="kt">int</span> <span class="n">adapterPosition</span> <span class="o">=</span> <span class="n">buttonViewHolder</span><span class="o">.</span><span class="na">getAdapterPosition</span><span class="o">();</span>
+  <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">adapterPosition</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span>
+  <span class="kt">int</span> <span class="n">delay</span> <span class="o">=</span> <span class="n">70</span><span class="o">;</span>
+
+  <span class="k">while</span> <span class="o">(</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">0</span><span class="o">){</span>
+    <span class="n">ViewHolder</span> <span class="n">vh</span> <span class="o">=</span> <span class="n">recyclerView</span><span class="o">.</span><span class="na">findViewHolderForAdapterPosition</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
+
+    <span class="k">if</span> <span class="o">(!</span> <span class="o">(</span><span class="n">vh</span> <span class="k">instanceof</span> <span class="n">TipViewHolder</span><span class="o">)</span> <span class="o">){</span>
+       <span class="k">break</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">animateToTipMode</span><span class="o">((</span><span class="n">TipViewHolder</span><span class="o">)</span> <span class="n">vh</span><span class="o">,</span> <span class="n">delay</span> <span class="o">*</span> <span class="o">(</span><span class="n">adapterPosition</span> <span class="o">-</span> <span class="n">index</span><span class="o">));</span>
+    <span class="n">index</span> <span class="o">--;</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>We use to <strong>viewHolder.getAdapterPosition()</strong> to determine the start position and then we step up in the adapter and check if the ViewHolder at the given index is of type <strong>TipViewHolder</strong>. We can get the ViewHolder at the given adapter position by using <strong>RecyclerView.findViewHolderForAdapterPosition(index)</strong>. Note that this returns <strong>null</strong> if there is no ViewHolder for that adapter index because the item with the given adapter index is not visible on screen (item is above or below the visible rectangle of RecyclerView, the user have to scroll to bring that item into RecyclerViews visible rectangle). Please note also that <strong>null instanceof Something</strong> returns false.</p>
+<p>Another thing developers should take more care of when building their UI is that animations can be used to &ldquo;hide&rdquo; that the app is loading data. In our app when the user switches from &ldquo;normal mode&rdquo; to &ldquo;tip mode&rdquo; we execute a http request to load the previously guessed results (if there are any) in background. Usually, our users don&rsquo;t notice that data has been loaded because we don&rsquo;t show a loading indicator. We use the time the wave alike animation takes to load the data. This gives the user of our app the impression that our app works lightning fast because there is no visual interruption by displaying a loading indicator. What if the user has a slow internet connection? Then yes, we display a loading indicator after the wave animation is finished.</p>
+<h2 id="the-downside">The downside</h2>
+<p>What is the downside of this approach? The layout file contains a huge view hierarchy since it displays both &ldquo;normalMode&rdquo; and &ldquo;tipMode&rdquo;. That wouldn&rsquo;t be a problem if the majority of our users would use high level devices like a Galaxy S6 or even devices comparable with Nexus 4. Unfortunately it turns out that decent devices like the Samsung Galaxy S3 Mini are the most used devices of our users. What does that mean? Huge view hierarchy leads to bad scroll performance, especially noticeable on low-end devices. The tip game is an optional feature of our app mainly used by power users. I, personally, expect that about 30% of our users will participate in the tip game. That would mean that 70% of the users may face scroll performance issues because of the tip game even if they don&rsquo;t participate in the tip game at all. Hence, we decided to implement the flip animation in a different way: Instead of having one single xml layout for both modes (normal and tip mode) we decided to split them into two layout files and define two view types in our adapter.</p>
+<p><strong>Disclaimer:</strong> This might be an overkill if your layout files are already flat enough then the solution described above should just work. However, for us it was necessary to work with different view types to guarantee acceptable scroll performance even on decent devices.</p>
+<p>Let me explain you how we have implement the same wave alike animation as described in the previous solution: Fortunately, RecyclerView is really powerful and open for extensions. We have implemented a custom <strong>ItemAnimator</strong> that executes the flip animation (still the same rotationX animation as shown before, from 0 to 90 and -90 to 0). Writing a custom <strong>ItemAnimator</strong> is not rocket science but it takes some time to dive into the methods you have to implement to make the <strong>ItemAnimator</strong> work properly. You may be confused why we need an <strong>ItemAnimator</strong>. An ItemAnimator allows you do define animations to run when new items are inserted, moved or removed from RecyclerViews Adapter. So what we do is we modify the adapters dataset. The idea is the same as shown in the previous solution: we iterate over the adapters dataset, but this time instead of checking for the <strong>ViewHolder</strong> and starting the flip animation manually we remove the <strong>Game</strong> items (displaying items in &ldquo;normal mode&rdquo;) from adapters dataset and replace them with <strong>Tip</strong> items (displaying items in &ldquo;tip mode&rdquo;). How is it related to <strong>ItemAnimator</strong>? If you haven&rsquo;t noticed yet, RecyclerView offers two methods <strong>notifyItemRangeRemoved()</strong> and <strong>notifyItemRangeInserted()</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSwitchToTipModeClicked</span><span class="o">(</span><span class="n">ViewHolder</span> <span class="n">buttonViewHolder</span><span class="o">,</span> <span class="n">List</span> <span class="n">dataset</span><span class="o">){</span>
+
+  <span class="kt">int</span> <span class="n">MIN_DEVICE_YEAR</span> <span class="o">=</span> <span class="n">2012</span><span class="o">;</span>
+
+  <span class="kt">int</span> <span class="n">adapterPosition</span> <span class="o">=</span> <span class="n">buttonViewHolder</span><span class="o">.</span><span class="na">getAdapterPosition</span><span class="o">();</span>
+  <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">adapterPosition</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span>
+  <span class="kt">int</span> <span class="n">bottomIndex</span> <span class="o">=</span> <span class="n">index</span><span class="o">;</span>
+  <span class="kt">int</span> <span class="n">invisibleStartIndex</span> <span class="o">=</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span>
+
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Tip</span><span class="o">&gt;</span> <span class="n">tipsToInsert</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+  <span class="k">while</span> <span class="o">(</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">0</span><span class="o">){</span>
+    <span class="n">Object</span> <span class="n">item</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
+
+    <span class="k">if</span> <span class="o">(!</span> <span class="o">(</span><span class="n">item</span> <span class="k">instanceof</span> <span class="n">Game</span><span class="o">)</span> <span class="o">){</span>
+       <span class="k">break</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">Game</span> <span class="n">game</span> <span class="o">=</span> <span class="o">(</span><span class="n">Game</span><span class="o">)</span> <span class="n">item</span><span class="o">;</span>
+
+    <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">viewHolder</span> <span class="o">=</span>
+            <span class="n">recyclerView</span><span class="o">.</span><span class="na">findViewHolderForAdapterPosition</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">viewHolder</span> <span class="o">==</span> <span class="kc">null</span><span class="o">){</span>
+      <span class="c1">// Element not visible on screen, so we can replace the item directly
+</span><span class="c1"></span>      <span class="n">dataset</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">index</span><span class="o">,</span> <span class="n">game</span><span class="o">.</span><span class="na">getTip</span><span class="o">());</span>
+
+      <span class="k">if</span> <span class="o">(</span><span class="n">invisibleStartIndex</span> <span class="o">==</span> <span class="o">-</span><span class="n">1</span><span class="o">){</span>
+        <span class="n">invisibleStartIndex</span> <span class="o">=</span> <span class="n">index</span><span class="o">;</span>
+      <span class="o">}</span>
+
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="c1">// Element is visible on screen
+</span><span class="c1"></span>      <span class="n">viewHolder</span><span class="o">.</span><span class="na">itemView</span><span class="o">.</span><span class="na">setTag</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">adapterIndexWorkaround</span><span class="o">,</span> <span class="n">adapterPosition</span><span class="o">);</span> <span class="c1">// Workaround
+</span><span class="c1"></span>      <span class="n">tipsToInsert</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">game</span><span class="o">.</span><span class="na">getTip</span><span class="o">());</span> <span class="c1">// Keep the order
+</span><span class="c1"></span>    <span class="o">}</span>
+
+    <span class="n">index</span><span class="o">--;</span>
+  <span class="o">}</span>
+
+  <span class="kt">int</span> <span class="n">topIndex</span> <span class="o">=</span> <span class="n">invisibleStartIndex</span> <span class="o">&gt;=</span>  <span class="n">0</span> <span class="o">?</span> <span class="n">invisibleStartIndex</span> <span class="o">:</span>  <span class="n">index</span> <span class="o">+</span> <span class="n">1</span> <span class="o">;</span>
+
+  <span class="c1">// Remove old visible &#34;Game&#34; items
+</span><span class="c1"></span>  <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">bottomIndex</span><span class="o">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">topIndex</span><span class="o">;</span> <span class="n">i</span><span class="o">--)</span> <span class="o">{</span>
+      <span class="n">dataset</span><span class="o">.</span><span class="na">removeItem</span><span class="o">(</span><span class="n">i</span><span class="o">);</span> <span class="c1">// Reason for workaround
+</span><span class="c1"></span>  <span class="o">}</span>
+
+  <span class="k">if</span> <span class="o">(</span><span class="n">deviceYear</span> <span class="o">&gt;=</span> <span class="n">MIN_DEVICE_YEAR</span><span class="o">){</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">notifyItemRangeRemoved</span><span class="o">(</span><span class="n">topIndex</span><span class="o">,</span> <span class="n">tipsToInsert</span><span class="o">.</span><span class="na">size</span><span class="o">());</span> <span class="c1">// Triggers remove flip animation
+</span><span class="c1"></span>  <span class="o">}</span>
+
+  <span class="c1">// Insert visible &#34;Tip&#34; items
+</span><span class="c1"></span>  <span class="n">dataset</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">topIndex</span><span class="o">,</span> <span class="n">tipsToInsert</span><span class="o">);</span>
+
+  <span class="k">if</span> <span class="o">(</span><span class="n">deviceYear</span> <span class="o">&gt;=</span> <span class="n">MIN_DEVICE_YEAR</span><span class="o">){</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">notifyItemRangeInserted</span><span class="o">(</span><span class="n">topIndex</span><span class="o">,</span> <span class="n">tipsToInsert</span><span class="o">.</span><span class="na">size</span><span class="o">());</span> <span class="c1">// Triggers insert flip animation
+</span><span class="c1"></span>  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="c1">// Without animations because of low-end device
+</span><span class="c1"></span>    <span class="n">adapter</span><span class="o">.</span><span class="na">notifyDataSetChanged</span><span class="o">();</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>Let&rsquo;s discuss the code shown above: Similar to the first discussed solution we start at the adapter position of the button to switch between the normal and tip mode. Since we can assume that the button is visible in the RecyclerView (otherwise it couldn&rsquo;t be clicked right?) and all <strong>Games</strong> of this group are above the button we just have to iterate from bottom to top in adapters dataset. We use the check <strong>item instanceof Game</strong> to determine where the group of games finishes (in our app we always have at least one different item between a group of games). Next we check if <strong>viewHolder == null</strong> which means that the item is not visible in RecyclerView. In that case we can directly replace the <strong>Game</strong> item with the corresponding <strong>Tip</strong> item. We also note the index where the first not visible item begins by storing the list position into <strong>invisibleStartIndex</strong>. If the item is visible then we add the corresponding tip into <strong>tipsToInsert</strong>. We also have to implement a little workaround to keep the original adapter&rsquo;s position by using <strong>setTag()</strong> which allows to store data in an internally <strong>Map&lt;Integer, Object&gt;</strong> every <strong>android.view.View</strong> has (it&rsquo;s recommended to use <strong>R.id.something</strong> as key). Why do we need this workaround? Well, we want that our <strong>ItemAnimator</strong> flips the items in a wave alike manner. To schedule the single animations for each item correctly it&rsquo;s important to know the index. Every <strong>ViewHolder</strong> knows it&rsquo;s index by using <strong>viewHolder.getAdapterPosition()</strong>, but that method will return <strong>-1</strong> as we have removed the item from adapters dataset. Usually <strong>ItemAnimator</strong> could use <strong>viewHolder.getOldPosition()</strong> which would return the previous position (before removing item from adapters dataset). But the problem is that in our concrete use case all <strong>viewHolder.getOldPosition()</strong> return the same value. Why? Because we are removing every item manually in a for loop (because <strong>List</strong> lacks a method to remove a multiple items at once similar to <strong>list.addAll()</strong>). Hence, our <strong>ItemAnimator</strong> have to use that workaround to schedule the flip animation properly. Last, you may have noticed <strong>MIN_DEVICE_YEAR</strong>. I can&rsquo;t remember what the problem exactly was (I should note down such things), but on very old devices you can run into the problem that the RecyclerView reaches an insane internal state (which can lead to crashes) if the item animation takes to long because of low-end hardware. To avoid that we use <a href="https://github.com/facebook/device-year-class">Facebook&rsquo;s Device Year Class</a> library to detect old devices and simply don&rsquo;t run the flip animation on those devices by directly calling <strong>adapter.notifyDataSetChanged()</strong>.</p>
+<h2 id="submit-a-tip">Submit a tip</h2>
+<p>Next you may be wondering how you can submit a tip. We started by implementing a dialog with number pickers. But the problem was that you have to open the dialog for a game to submit a tip, close the dialog and open the next tip dialog for the next tip. This was definitely not the user experience we wanted. So we improved that by passing a list of games the user can guess results for to a single dialog to avoid opening and closing the dialog for each game:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/5Vk6ZLNm-l8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<h2 id="guessing-in-a-rush">Guessing in a rush</h2>
+<p>However, a Dialog is still interrupting the user&rsquo;s experience. So we came up with the idea to use swipe gestures. This allows the user to guess results on the fly without interrupting the user&rsquo;s flow by displaying a Dialog. Have a look at the final result:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/ZOXh1KWzTWk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>By swiping the item to the right the user can increase the score of the home team while swiping the item left increases the away team score. Implementing that is straight forward if you have ever worked with <strong>MotionEvents</strong> on android before. In a nutshell: every android ViewGroup offers two methods that are called during dispatching MotionEvents: In <strong>boolean onInterceptTouchEvent()</strong> you get some MotionEvents to decide if that ViewGroup should intercept and consume all following MotionEvents afterwards in <strong>void onTouchEvent()</strong>. It&rsquo;s like ordering a good bottle of wine in a restaurant. The waiter brings you the bottle and a wine glass and offers you a sip of the ordered wine. After taking a small sniff, inspecting the color, swirling the wine in the glass you decide whether to keep the wine or not (returning true or false in <strong>onInterceptTouchEvent()</strong>). If yes, you consume the wine (<strong>onTouchEvent()</strong>). Working with <strong>RecyclerView</strong> is no different. Fortunately, you don&rsquo;t have to subclass RecyclerView and override that methods because those methods are already used to detect scroll and fling events. RecyclerView offers you to add an <strong>OnItemTouchListener</strong> to intercept <strong>MotionEvents</strong> on the displayed itmes in the RecyclerView.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">TipSwipeListener</span> <span class="kd">implements</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">OnItemTouchListener</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">threshold</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kt">float</span> <span class="n">xStart</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kt">float</span> <span class="n">yStart</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">TipViewHolder</span> <span class="n">startViewHolder</span><span class="o">;</span>
+
+  <span class="kd">private</span> <span class="kt">int</span> <span class="n">increaseMaxSwipeDistance</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">onInterceptTouchEvent</span><span class="o">(</span><span class="n">RecyclerView</span> <span class="n">rv</span><span class="o">,</span> <span class="n">MotionEvent</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="kd">final</span> <span class="kt">int</span> <span class="n">action</span> <span class="o">=</span> <span class="n">MotionEventCompat</span><span class="o">.</span><span class="na">getActionMasked</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+
+    <span class="c1">// Touching somewhere in the RecyclerView
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">action</span> <span class="o">==</span> <span class="n">MotionEvent</span><span class="o">.</span><span class="na">ACTION_DOWN</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">xStart</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getX</span><span class="o">();</span>
+      <span class="n">yStart</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getY</span><span class="o">();</span>
+
+      <span class="c1">// Determine the View we touch
+</span><span class="c1"></span>      <span class="n">View</span> <span class="n">startTouchedView</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="na">findChildViewUnder</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">getX</span><span class="o">(),</span> <span class="n">e</span><span class="o">.</span><span class="na">getY</span><span class="o">());</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">startTouchedView</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+      <span class="o">}</span>
+
+      <span class="c1">// Determine the ViewHolder that has been touched
+</span><span class="c1"></span>      <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">vh</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="na">getChildViewHolder</span><span class="o">(</span><span class="n">startTouchedView</span><span class="o">);</span>
+
+      <span class="k">if</span> <span class="o">(</span><span class="n">vh</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">vh</span> <span class="k">instanceof</span> <span class="n">TipViewHolder</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">startViewHolder</span> <span class="o">=</span> <span class="o">(</span><span class="n">TipViewHolder</span><span class="o">)</span> <span class="n">vh</span><span class="o">;</span>
+      <span class="o">}</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Move the finger on the screen (not released finger from screen yet)
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">action</span> <span class="o">==</span> <span class="n">MotionEvent</span><span class="o">.</span><span class="na">ACTION_MOVE</span> <span class="o">&amp;&amp;</span> <span class="n">startViewHolder</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+
+      <span class="kt">float</span> <span class="n">xDif</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">abs</span><span class="o">(</span><span class="n">xStart</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="na">getX</span><span class="o">());</span>
+      <span class="kt">float</span> <span class="n">yDif</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">abs</span><span class="o">(</span><span class="n">yStart</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="na">getY</span><span class="o">());</span>
+
+      <span class="k">if</span> <span class="o">(</span><span class="n">xDif</span> <span class="o">&gt;=</span> <span class="n">threshold</span> <span class="o">&amp;&amp;</span> <span class="n">xDif</span> <span class="o">&gt;</span> <span class="n">yDif</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// finger is moving horizontally
+</span><span class="c1"></span>        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+      <span class="o">}</span>
+
+      <span class="c1">// finger is moving vertically
+</span><span class="c1"></span>      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// releasing finger from screen
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">action</span> <span class="o">==</span> <span class="n">MotionEvent</span><span class="o">.</span><span class="na">ACTION_UP</span> <span class="o">||</span> <span class="n">action</span> <span class="o">==</span> <span class="n">MotionEvent</span><span class="o">.</span><span class="na">ACTION_CANCEL</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">reset</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onTouchEvent</span><span class="o">(</span><span class="n">RecyclerView</span> <span class="n">rv</span><span class="o">,</span> <span class="n">MotionEvent</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="kd">final</span> <span class="kt">int</span> <span class="n">action</span> <span class="o">=</span> <span class="n">MotionEventCompat</span><span class="o">.</span><span class="na">getActionMasked</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+
+    <span class="kt">float</span> <span class="n">xDif</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getX</span><span class="o">()</span> <span class="o">-</span> <span class="n">xStart</span><span class="o">;</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">action</span> <span class="o">==</span> <span class="n">MotionEvent</span><span class="o">.</span><span class="na">ACTION_MOVE</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">startViewHolder</span><span class="o">.</span><span class="na">getTippView</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">xDif</span> <span class="o">&lt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">startViewHolder</span><span class="o">.</span><span class="na">translateXAwayTeam</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
+          <span class="n">startViewHolder</span><span class="o">.</span><span class="na">translateXHomeTeam</span><span class="o">(</span><span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">xDif</span><span class="o">,</span> <span class="o">-</span><span class="n">increaseMaxSwipeDistance</span><span class="o">));</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">xDif</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">startViewHolder</span><span class="o">.</span><span class="na">translateXHomeTeam</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
+          <span class="n">startViewHolder</span><span class="o">.</span><span class="na">translateXAwayTeam</span><span class="o">(</span><span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">xDif</span><span class="o">,</span> <span class="n">increaseMaxSwipeDistance</span><span class="o">));</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+          <span class="n">startViewHolder</span><span class="o">.</span><span class="na">getTippView</span><span class="o">().</span><span class="na">translateXHomeTeam</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
+          <span class="n">startViewHolder</span><span class="o">.</span><span class="na">getTippView</span><span class="o">().</span><span class="na">translateXAwayTeam</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+    <span class="o">}</span> <span class="k">else</span>
+      <span class="c1">// Released or Canceled swipe gesture
+</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">action</span> <span class="o">==</span> <span class="n">MotionEvent</span><span class="o">.</span><span class="na">ACTION_UP</span> <span class="o">||</span> <span class="n">action</span> <span class="o">==</span> <span class="n">MotionEvent</span><span class="o">.</span><span class="na">ACTION_CANCEL</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">xDif</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">increaseMaxSwipeDistance</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">onIncreaseAwayScoreSwipe</span><span class="o">();</span> <span class="c1">// Swiped far enough
+</span><span class="c1"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">xDif</span> <span class="o">&gt;</span> <span class="n">increaseMaxSwipeDistance</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">onIncreaseHomeScoreSwipe</span><span class="o">();</span> <span class="c1">// Swiped far enough
+</span><span class="c1"></span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+          <span class="n">animateToStartState</span><span class="o">(</span><span class="n">xDif</span><span class="o">);</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+  <span class="o">}</span>
+
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">onIncreaseAwayScoreSwipe</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// Increment away team&#39;s score
+</span><span class="c1"></span>    <span class="o">...</span>
+    <span class="n">reset</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">onIncreaseHomeScoreSwipe</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// Increment home team&#39;s score
+</span><span class="c1"></span>    <span class="o">...</span>
+    <span class="n">reset</span><span class="o">();</span>
+  <span class="o">}</span>
+
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">animateToStartState</span><span class="o">(</span><span class="kt">float</span> <span class="n">xDif</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// animate the X translation back to 0
+</span><span class="c1"></span>    <span class="o">...</span>
+
+    <span class="n">reset</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">reset</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">xStart</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="n">yStart</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+
+    <span class="n">startViewHolder</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>Most of the code should be self explaining. We simply start in <strong>onInterceptTouchEvent()</strong> by checking if the user is touching on a <strong>Tip</strong> item by querying the touched view  <strong>recyclerView.findChildViewUnder(x, y)</strong> and then check if the corresponding ViewHolder is a <strong>TipViewHolder</strong> by using <strong>recyclerView.getChildViewHolder(view)</strong>. Next we check if the user is moving his finger to left or right. Please note that <strong>onInterceptTouchEvent()</strong> is called multiple times and we need to inspect more than one passed <strong>MotionEvent</strong> (parameter) to determine if the user is moving his finger to left or right (wine tasting). If the finger has been moved on x-achsis beyond a threshold, we return <strong>true</strong> to claim that we want continue to consume this gesture in <strong>onTouchEvent()</strong>.</p>
+<p>In <strong>onTouchEvent()</strong> we simply set <strong>translationX</strong> property according the distance and direction the user has moved his finger. <strong>increaseMaxSwipeDistance</strong> is the max distance the user can translate the views, which is half of the width of the box displaying the guessed result. And where does the <em>+1</em> comes from while swiping? This is just a TextView which always was there hidden behind the box displaying the guessed result. By translating the view on x-achsis this TextView becomes visible. Actually, in our app we have overridden <strong>onDraw()</strong> to draw the <em>+1</em> directly on the canvas of a custom parent layout to keep the layout hierarchy flat.</p>
+<p>Adding an <strong>ItemTouchListener</strong> to a RecyclerView is quite easy: <strong>recyclerView.addOnItemTouchListener()</strong>. Last, you may be wondering if this horizontal swipe listener can be used in a <strong>ViewPager</strong>. It turns out that this is easier than expected. ViewPager, like any other ViewGroup, allows it&rsquo;s children to claim that they don&rsquo;t want that the parent intercepts touch events by calling <a href="https://developer.android.com/reference/android/view/ViewGroup.html#requestDisallowInterceptTouchEvent(boolean)">ViewPager.requestDisallowInterceptTouchEvent(boolean)</a>. So a good place to set <strong>requestDisallowInterceptTouchEvent()</strong> to true would be in <strong>onInterceptTouchEvent()</strong> right before returning true and release it in <strong>reset()</strong>, called when finger has been moved up. By the way, if you don&rsquo;t know if you have a ViewPager in your view hierarchy you can iterate recursively from bottom to top in your view hierarchy by using <strong>view.getParent()</strong> (do it only once and not every time you move your finger).</p>
+<p>A disadvantage of our swipe approach is that the user can not decrease the guessed score since both x-achsis directions are already used. So we decided to keep the Dialog for that use case and for those not nimble-fingered users.</p>
+<p><strong>Side note:</strong> By using <a href="http://hannesdorfmann.com/android/adapter-delegates">AdapterDelegates</a> (favor composition over inheritance) we were able to bring the flip animation to switch between normal and tip mode to almost all RecyclerViews in our whole app without having code clones.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>The less the user&rsquo;s flow is interrupted, the better the experience. Other great examples  following this principle are the <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.photos">Google Photos</a> and <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.inbox">Inbox</a>. With some gestures and animation those apps are able to give their users an outstanding user experience. Whether or not you like our flip animation approach I hope you get an idea how <strong>ItemAnimator</strong> and <strong>OnTouchListener</strong> could be used together with <strong>RecyclerView</strong> to create an user experience that tries to interrupt the user&rsquo;s flow as less as possible. By the way, the <a href="https://play.google.com/store/apps/details?id=com.netbiscuits.kicker">kicker app</a> looks much better on a real device than on a youtube video.</p>
+<p><em>PS: The credit for the described user experience in this blog post goes to the whole Tickaroo team and not only to me. We  have developed this user experience together. Our designer had some initial thoughts and ideas, the iOS developers put some things into and we android developers as well during prototyping phase.</em></p>
+<h4 id="additional-resources">Additional Resources</h4>
+<ul>
+<li>RecyclerView Animations <a href="http://www.birbit.com/recyclerview-animations-part-1-how-animations-work/">Part1</a> <a href="http://www.birbit.com/recyclerview-animations-part-2-behind-the-scenes/">Part2</a></li>
+<li>Some inspiration how to write a custom ItemAnimator <a href="https://github.com/wasabeef/recyclerview-animators">on Github</a></li>
+<li><a href="https://developer.android.com/training/gestures/viewgroup.html">Managing Touch Events in a ViewGroup</a></li>
+</ul>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

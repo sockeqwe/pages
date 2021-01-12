@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Model-View-Intent MVI on Android by using Mosby 3. How MVI solves the SingleLiveEvent problem">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Sep 13, 2017</li>
+        </ul>
+        <article class="content">
+          
+          <p>In my <a href="http://hannesdorfmann.com/android/arch-components-purist">previous</a> blog post we discussed the importance of proper state management and why I think introducing a SingleLiveEvent as <a href="https://github.com/googlesamples/android-architecture-components/issues/63">discussed in Google&rsquo;s Architecture Components GitHub repo</a> is not a good idea because it just hides the real underlying problem: state management.
+In this blog post I would like to discuss how the problem SingleLiveEvent claims to solve can be solved with Model-View-Intent and proper state management.</p>
+<p>A common scenario that illustrates this problem is a <code>Snackbar</code> that is displayed if an error has occurred.
+A Snackbar is not meant to be persistent but rather should just display the error message for a few seconds and then disappear.
+The problem is how do we model this error state and &ldquo;disappearing&rdquo;?</p>
+<p>Take a look at this video to better understand what I&rsquo;m talking about:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/8r7UgJg6d2s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>This sample app displays a list of countries that are loaded from a <code>CountriesRepository</code>.
+If we click on a country we start a second Activity that just displays the &ldquo;details&rdquo; (just the country&rsquo;s name).
+When we navigate back to the list of countries, we expect to see the same &ldquo;state&rdquo; displayed on the screen as before clicking on a country.
+So far so good, but what happens if we trigger a pull-to-refresh and an error occurres while loading data which eventually will display a Snackbar displaying the error message on the screen.
+As you see in the video above, whenever we come back to the list of countries the Snackbar is shown again but that is ususally not the behavior the user expects, right?</p>
+<p>The problem is that this screen is in the &ldquo;show error state&rdquo;.
+Google&rsquo;s Architecture Components Example based on ViewModel and LiveData uses a <code>SingleLiveEvent</code> to workaround this issue.
+The idea is: whenever the View resubscribes (after coming back from &ldquo;details&rdquo; screen) to his ViewModel, SingleLiveEvent ensures that &ldquo;error state&rdquo; is not emitted again.
+While this prevents reappearing Snackbar, does it really solves the problem?</p>
+<h2 id="timing-is-everything-for-snackbars">Timing is Everything (for Snackbars)</h2>
+<p>Again, I still think that such &ldquo;workarounds&rdquo; are not the proper way.
+Can we do it better? I think that proper state management and a unidirectional data flow is a better solution.
+Model-View-Intent is an architectural pattern that follows these principles.
+So how do we solve the &ldquo;Snackbar problem&rdquo; in MVI?
+First, let&rsquo;s Model state:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CountriesViewState</span> <span class="o">{</span>
+
+  <span class="c1">// True if progressbar should be displayed
+</span><span class="c1"></span>  <span class="kt">boolean</span> <span class="n">loading</span><span class="o">;</span>
+
+  <span class="c1">// List of countries (country names)  if loaded
+</span><span class="c1"></span>  <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">;</span>
+
+  <span class="c1">// true if pull to refresh indicator should be displayed
+</span><span class="c1"></span>  <span class="kt">boolean</span> <span class="n">pullToRefresh</span><span class="o">;</span>
+
+  <span class="c1">// true if an error has occurred while pull to refresh -&gt; Show Snackbar.
+</span><span class="c1"></span>  <span class="kt">boolean</span> <span class="n">pullToRefreshError</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><p>The idea in MVI is that the View layer gets an (immutable) CountriesViewState and just displays that one. So if <code>pullToRefreshError</code> is true then display a Snackbar, otherwise don&rsquo;t.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CountriesActivity</span> <span class="kd">extends</span> <span class="n">MviActivity</span><span class="o">&lt;</span><span class="n">CountriesView</span><span class="o">,</span> <span class="n">CountriesPresenter</span><span class="o">&gt;</span>
+    <span class="kd">implements</span> <span class="n">CountriesView</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">Snackbar</span> <span class="n">snackbar</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">ArrayAdapter</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">adapter</span><span class="o">;</span>
+
+  <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">refreshLayout</span><span class="o">)</span> <span class="n">SwipeRefreshLayout</span> <span class="n">refreshLayout</span><span class="o">;</span>
+  <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">listView</span><span class="o">)</span> <span class="n">ListView</span> <span class="n">listView</span><span class="o">;</span>
+  <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">progressBar</span><span class="o">)</span> <span class="n">ProgressBar</span> <span class="n">progressBar</span><span class="o">;</span>
+
+   <span class="o">...</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">render</span><span class="o">(</span><span class="n">CountriesViewState</span> <span class="n">viewState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">viewState</span><span class="o">.</span><span class="na">isLoading</span><span class="o">())</span> <span class="o">{</span>
+      <span class="n">progressBar</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+      <span class="n">refreshLayout</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="c1">// show countries
+</span><span class="c1"></span>      <span class="n">progressBar</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+      <span class="n">refreshLayout</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+      <span class="n">adapter</span><span class="o">.</span><span class="na">setCountries</span><span class="o">(</span><span class="n">viewState</span><span class="o">.</span><span class="na">getCountries</span><span class="o">());</span>
+      <span class="n">refreshLayout</span><span class="o">.</span><span class="na">setRefreshing</span><span class="o">(</span><span class="n">viewState</span><span class="o">.</span><span class="na">isPullToRefresh</span><span class="o">());</span>
+
+      <span class="k">if</span> <span class="o">(</span><span class="n">viewState</span><span class="o">.</span><span class="na">isPullToRefreshError</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">showSnackbar</span><span class="o">();</span>
+      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="n">dismissSnackbar</span><span class="o">();</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">dismissSnackbar</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">snackbar</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+      <span class="n">snackbar</span><span class="o">.</span><span class="na">dismiss</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">showSnackbar</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">snackbar</span> <span class="o">=</span> <span class="n">Snackbar</span><span class="o">.</span><span class="na">make</span><span class="o">(</span><span class="n">refreshLayout</span><span class="o">,</span> <span class="s">&#34;An Error has occurred&#34;</span><span class="o">,</span> <span class="n">Snackbar</span><span class="o">.</span><span class="na">LENGTH_INDEFINITE</span><span class="o">);</span>
+    <span class="n">snackbar</span><span class="o">.</span><span class="na">show</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>The important bit here is <code>Snackbar.LENGTH_INDEFINITE</code> which means Snackbar stays until we dismiss it.
+So we don&rsquo;t let android animate the Snackbar in and out.
+Moreover, we don&rsquo;t let android mess up with state nor let android introduce a state for UI that is different from the state of business logic.
+Instead of using <code>Snackbar.LENGTH_SHORT</code> which would display Snackbar for two seconds,
+we rather let the business logic take care of setting <code>CountriesViewState.pullToRefreshError</code> to true for two seconds and then set it to false.</p>
+<p>How do we do that in RxJava? We can use <code>Observable.timer()</code> and <code>startWith()</code> operator.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CountriesPresenter</span> <span class="kd">extends</span> <span class="n">MviBasePresenter</span><span class="o">&lt;</span><span class="n">CountriesView</span><span class="o">,</span> <span class="n">CountriesViewState</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">CountriesRepositroy</span> <span class="n">repositroy</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CountriesRepositroy</span><span class="o">();</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">bindIntents</span><span class="o">()</span> <span class="o">{</span>
+
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">RepositoryState</span><span class="o">&gt;</span> <span class="n">loadingData</span> <span class="o">=</span>
+        <span class="n">intent</span><span class="o">(</span><span class="n">CountriesView</span><span class="o">::</span><span class="n">loadCountriesIntent</span><span class="o">).</span><span class="na">switchMap</span><span class="o">(</span><span class="n">ignored</span> <span class="o">-&gt;</span> <span class="n">repositroy</span><span class="o">.</span><span class="na">loadCountries</span><span class="o">());</span>
+
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">RepositoryState</span><span class="o">&gt;</span> <span class="n">pullToRefreshData</span> <span class="o">=</span>
+        <span class="n">intent</span><span class="o">(</span><span class="n">CountriesView</span><span class="o">::</span><span class="n">pullToRefreshIntent</span><span class="o">).</span><span class="na">switchMap</span><span class="o">(</span>
+            <span class="n">ignored</span> <span class="o">-&gt;</span> <span class="n">repositroy</span><span class="o">.</span><span class="na">reload</span><span class="o">().</span><span class="na">switchMap</span><span class="o">(</span><span class="n">repoState</span> <span class="o">-&gt;</span> <span class="o">{</span>
+              <span class="k">if</span> <span class="o">(</span><span class="n">repoState</span> <span class="k">instanceof</span> <span class="n">PullToRefreshError</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// Let&#39;s show Snackbar for 2 seconds and then dismiss it
+</span><span class="c1"></span>                <span class="k">return</span> <span class="n">Observable</span><span class="o">.</span><span class="na">timer</span><span class="o">(</span><span class="n">2</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">ignoredTime</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ShowCountries</span><span class="o">())</span> <span class="c1">// Show just the list
+</span><span class="c1"></span>                    <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="n">repoState</span><span class="o">);</span> <span class="c1">// repoState == PullToRefreshError
+</span><span class="c1"></span>              <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">Observable</span><span class="o">.</span><span class="na">just</span><span class="o">(</span><span class="n">repoState</span><span class="o">);</span>
+              <span class="o">}</span>
+            <span class="o">}));</span>
+
+    <span class="c1">// Show Loading as inital state
+</span><span class="c1"></span>    <span class="n">CountriesViewState</span> <span class="n">initialState</span> <span class="o">=</span> <span class="n">CountriesViewState</span><span class="o">.</span><span class="na">showLoadingState</span><span class="o">();</span>
+
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">CountriesViewState</span><span class="o">&gt;</span> <span class="n">viewState</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">loadingData</span><span class="o">,</span> <span class="n">pullToRefreshData</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">scan</span><span class="o">(</span><span class="n">initialState</span><span class="o">,</span> <span class="o">(</span><span class="n">oldState</span><span class="o">,</span> <span class="n">repoState</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">repoState</span><span class="o">.</span><span class="na">reduce</span><span class="o">(</span><span class="n">oldState</span><span class="o">))</span>
+
+    <span class="n">subscribeViewState</span><span class="o">(</span><span class="n">viewState</span><span class="o">,</span> <span class="n">CountriesView</span><span class="o">::</span><span class="n">render</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p><code>CountriesRepositroy</code> has a method reload() that returns an <code>Observable&lt;RepoState&gt;</code>.
+RepoState (was named PartialViewState in previous posts in this MVI series) is just a POJO class that indicates if the repository is fetching data, has loaded data successfully or an error has occurred (<a href="https://github.com/sockeqwe/mvi-timing/blob/41095bdecf32c149c1d81b3d773937e7c08d4bdf/app/src/main/java/com/hannesdorfmann/mvisnackbar/RepositoryState.java">source code</a>).
+Then we use a <a href="http://127.0.0.1:1313/android/mosby3-mvi-3/">State Reducer</a> to compute the View State (<code>scan()</code> operator).
+This should be familiar if you have read the previous blog posts of my MVI series.
+The &ldquo;new&rdquo; thing is:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">repositroy</span><span class="o">.</span><span class="na">reload</span><span class="o">().</span><span class="na">switchMap</span><span class="o">(</span><span class="n">repoState</span> <span class="o">-&gt;</span> <span class="o">{</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">repoState</span> <span class="k">instanceof</span> <span class="n">PullToRefreshError</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Let&#39;s show Snackbar for 2 seconds and then dismiss it
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">Observable</span><span class="o">.</span><span class="na">timer</span><span class="o">(</span><span class="n">2</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">ignoredTime</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ShowCountries</span><span class="o">())</span> <span class="c1">// Show just the list
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="n">repoState</span><span class="o">);</span> <span class="c1">// repoState == PullToRefreshError
+</span><span class="c1"></span>  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">Observable</span><span class="o">.</span><span class="na">just</span><span class="o">(</span><span class="n">repoState</span><span class="o">);</span>
+  <span class="o">}</span>
+</code></pre></div><p>This piece of code does the following:
+If we run into an error (repoState instanceof PullToRefreshError) then we emit this error state (PullToRefreshError) which then causes the state reducer to set <code>CountriesViewState.pullToRefreshError = true</code>. After 2 seconds Observable.timer() emits ShowCountries state that causes the state reducer to set  <code>CountriesViewState.pullToRefreshError = false</code>.</p>
+<p>Et voilà, this is how we show and hide Snackbar in MVI.</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/ykDnwZYY9tk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>Please note that this is not a workaround like SingleLiveEvent. It&rsquo;s proper state management and the View is just displaying or &ldquo;rendering&rdquo; the given state.
+So once the user of our app comes back from the details screen to the list of countries he doesn&rsquo;t see the Snackbar anymore because the state has changed in the meantime to <code>CountriesViewState.pullToRefreshError = false</code>. Thus Snackbar doesn&rsquo;t get displayed.</p>
+<h2 id="user-dismisses-snackbar">User dismisses Snackbar</h2>
+<p>What if we want to allow the user to dismiss the Snackbar with a swipe gesture.
+Well, that&rsquo;s pretty straight forward. Dismissing the snackbar is yet another intent to change the state.
+To put this into the existing code we just have to ensure that either the timer or the swipe to dismiss intent sets <code>CountriesViewState.pullToRefreshError = false</code>. The only thing we have to keep in mind is that if swipe to dismiss intent triggers before the timer we have to cancel the timer.
+That sounds complex but actually it isn&rsquo;t thanks to RxJava&rsquo;s great api and operators:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Observable</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">dismissPullToRefreshErrorIntent</span> <span class="o">=</span> <span class="n">intent</span><span class="o">(</span><span class="n">CountriesView</span><span class="o">::</span><span class="n">dismissPullToRefreshErrorIntent</span><span class="o">)</span>
+
+<span class="o">...</span>
+
+<span class="n">repositroy</span><span class="o">.</span><span class="na">reload</span><span class="o">().</span><span class="na">switchMap</span><span class="o">(</span><span class="n">repoState</span> <span class="o">-&gt;</span> <span class="o">{</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">repoState</span> <span class="k">instanceof</span> <span class="n">PullToRefreshError</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Let&#39;s show Snackbar for 2 seconds and then dismiss it
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">Observable</span><span class="o">.</span><span class="na">timer</span><span class="o">(</span><span class="n">2</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">mergeWith</span><span class="o">(</span><span class="n">dismissPullToRefreshErrorIntent</span><span class="o">)</span> <span class="c1">// merge timer and dismiss intent
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">take</span><span class="o">(</span><span class="n">1</span><span class="o">)</span> <span class="c1">// Only take the one who triggers first (dismiss intent or timer)
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">ignoredTime</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ShowCountries</span><span class="o">())</span> <span class="c1">// Show just the list
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="n">repoState</span><span class="o">);</span> <span class="c1">// repoState == PullToRefreshError
+</span><span class="c1"></span>  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">Observable</span><span class="o">.</span><span class="na">just</span><span class="o">(</span><span class="n">repoState</span><span class="o">);</span>
+  <span class="o">}</span>
+</code></pre></div>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/NYEZTXirGuA" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>With <code>mergeWith()</code> we combine the timer and dismiss intent into one observable and then with <code>take(1)</code> we take the first one that emits. If swipe to dismiss triggers before the timer then <code>take(1)</code> cancels the timer and vice versa: if timer triggers first, don&rsquo;t react on dismiss intent.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>So let&rsquo;s try to mess up our UI. Let&rsquo;s do a pull to refresh, dismiss snackbar and also let the timer do it&rsquo;s thing:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/UAiT2LSl6ik" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>As you can see in the video above: no matter how hard we try, the View displays the UI widgets properly because of the unidirectional data flow and state driven by business logic (View layer is stateless, View gets the state from underlying layer and just displays it).
+For example: we never see pull to refresh indicator and snackbar at the same time (except a small overlap while animating snackbar out).</p>
+<p>Of course this Snackbar example is very simplistic but I think it demonstrates the power of such architectural patterns like Model-View-Intent that take state management serious.
+It&rsquo;s not too hard to imagine how well this pattern will work out for more complex screens and use cases.</p>
+<p>The source code for this demo app can be found <a href="https://github.com/sockeqwe/mvi-timing">on Github</a>.</p>
+
+    
+    <div class="series-box">
+        <h5>This is a post in the 
+        <u>Reactive Apps with Model-View-Intent</u> series.</span></h5>
+        <p>Other posts in this series:</p>
+
+        
+        
+        <ul>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">Reactive Apps with Model-View-Intent - Part 1: Model</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-2/">Reactive Apps with Model-View-Intent - Part 2: View and Intent</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-3/">Reactive Apps with Model-View-Intent - Part 3: State Reducer</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-4/">Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-5/">Reactive Apps with Model-View-Intent - Part 5: Debugging with ease</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-6/">Reactive Apps with Model-View-Intent - Part 6: Restoring State</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a>
+            </li>
+        
+        </ul>
+    </div>
+ 
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

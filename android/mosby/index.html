@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Ted Mosby - Software Architect. A library for MVP on Android. Model-View-Presenter Android">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Ted Mosby - Software Architect</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Mar 25, 2015</li>
+        </ul>
+        <article class="content">
+          
+          <img src="http://127.0.0.1:1313/images/mosby/mosby-intro.jpg" alt="post-thumb" class="img-fluid rounded float-left mr-5 mb-4">
+          
+          <p>Ted Mosby, architect in <em>How I met your mother</em> (one of my favorite tv shows) was the inspiration for the name of this android library I&rsquo;m going to talk about in this blog post. This library helps you to build good, robust and reusable software by implementing <strong>M</strong>odel-<strong>V</strong>iew-<strong>P</strong>resenter pattern on android along with some nice features like <em>ViewState</em> for handling screen orientation changes easily. This blog post gives you an introduction to Mosby. The next blog post gives you some tips related to Mosby by showing how to implement a mail client on android: <a href="http://127.0.0.1:1313/android/mosby-playbook/">Stinson&rsquo;s playbook for Mosby</a></p>
+<h2 id="model-view-presenter-mvp">Model-View-Presenter (MVP)</h2>
+<p>The <strong>M</strong>odel-<strong>V</strong>iew-<strong>P</strong>resenter design pattern is a modern pattern to separate the view from the underlying model. MVP is a derivative of the model–view–controller (MVC) software pattern, also used mostly for building user interfaces.</p>
+<ul>
+<li>The <strong>model</strong> is the data that will be displayed in the view (user interface).</li>
+<li>The <strong>view</strong> is an interface that displays data (the model) and routes user commands (events) to the presenter to act upon that data. The view usually  has a reference to its presenter.</li>
+<li>The <strong>presenter</strong> is the &ldquo;middle-man&rdquo; (played by the controller in MVC) and has references to both, view and model. <strong>Please note that the word &ldquo;Model&rdquo;</strong> is not correct. It should rather be <strong>business logic that retrieves or manipulates a Model</strong> For instance: If you have a database with <strong>User</strong> and your View wants to display a list of User, then the Presenter would have a reference to your database business logic (like a DAO) from where the presenter will query a list of Users.</li>
+</ul>
+<p><img src="/images/mosby/mvp-overview.png" alt="Model-View-Presenter"></p>
+<p>A concrete workflow of querying and displaying a list of users from a database could work like this:</p>
+<p><img src="/images/mosby/mvp-workflow.png" alt="Model-View-Presenter"></p>
+<p>The workflow Image shown above should be self-explaining. However here are some additional thoughts:</p>
+<ul>
+<li>The <strong>Presenter</strong> is not a <strong>OnClickListener</strong>. The <strong>View</strong> is responsible for handling user input and invoking the corresponding method of the presenter. Why not eliminating this &ldquo;forwarding&rdquo; process by making the <strong>Presenter</strong> an <strong>OnClickListener</strong>? If doing so the presenter needs to have knowledge about views internals. For instance, if a View has two buttons and the view registers the <strong>Presenter</strong> as <strong>OnClickListener</strong> on both, how could the <strong>Presenter</strong> distinguish which button has been clicked on a click event (without knowing views internals like the references to the button)? Model, View and Presenter should be decoupled.
+Furthermore, by letting <strong>Presenter</strong> implement <strong>OnClickListener</strong> the Presenter is bound to the android platform. In theory the presenter and business logic could be plain old java code, which could be shared with a desktop application or any other java application.</li>
+<li>The <strong>View</strong> is only doing what the <strong>Presenter</strong> tells the <strong>View</strong> to do like you can see in step 1 and step 2: After the user has clicked on the <em>&ldquo;load user button&rdquo;</em> (step 1) the view doesn&rsquo;t show the loading animation directly. It&rsquo;s the presenter (step 2) who explicitly tells the view to show the loading animation. This variant of Model-View-Presenter is called <strong>MVP Passive View</strong>. The view should be as dumb as possible. Let the presenter control the view in an abstract way. For instance: presenter invokes <strong>view.showLoading()</strong> but presenter should not control view specific things like animations. So presenter should not invoke methods like <strong>view.startAnimation()</strong> etc.</li>
+<li>By implementing MVP Passive View it&rsquo;s much easier to handle concurrency and multithreading. Like you can see in step 3 the database query runs async an the presenter is a Listener / Observer and gets notified when data is ready to display.</li>
+</ul>
+<h2 id="mvp-on-android">MVP on Android</h2>
+<p>So far so good. but how do you apply MVP on your own Android app? The first question is, where should we apply the MVP pattern? On an Activity, Fragment or a ViewGroup like a RelativeLayout?
+Let&rsquo;s have a look at the at the Gmail Android tablet app:</p>
+<p><img src="/images/mosby/mvp-gmail.png" alt="Model-View-Presenter"></p>
+<p>From my point of view, there are 4 independent MVP candidates on the screen. With MVP candidate I mean UI element(s) displayed on the screen that logically belongs together and therefore can be seen as a single UI unit where we could apply MVP.</p>
+<p><img src="/images/mosby/mvp-gmail-candidates.png" alt="Model-View-Presenter"></p>
+<p>It seems that Activities and especially Fragments are good candidates. Usually a Fragment is responsible to just display a single content like a ListView. For example <strong>InboxView</strong>, controlled by an <strong>InboxPresenter</strong> which uses <strong>MailProvider</strong> to get a List of <strong>Mails</strong>. However, MVP is not limited to Fragments or Activities. You can also apply this design Pattern on <strong>ViewGroups</strong> like shown in <strong>SearchView</strong>. In the most of my apps I use Fragments as MVP candidates. However it&rsquo;s up to you to find MVP candidates. Just ensure that the view is independent so that one presenter can control that View without getting in conflict with another Presenter.</p>
+<p><strong>Why should you implement MVP?</strong></p>
+<p>How would you implement the inbox view in a traditional Fragment without MVP to display a list of emails that needs to be merged from two sources like a local sql database (on your device) and an IMAP mail server connected over internet. How would your code of the fragment looks like? You would start two <strong>AsyncTasks</strong> and have to implement a &ldquo;wait mechanism&rdquo; (wait until both tasks have finished to merged the loaded data of both tasks to a single list of mails). You also have to take care of displaying a loading animation (ProgressBar) while loading and replace that one with a ListView afterwards. Would you put all that code into the Fragment? What about errors while loading? What about screen orientation changes? Who is responsible to cancel <strong>AsyncTasks</strong>? This kind of problems can be addressed and solved with MVP. Say goodbye to activities and fragments with 1000+ lines of spaghetti code.</p>
+<p>But before we dive deeper in how to implement MVP on Android we have to clarify if an Activity or Fragment is a <strong>View</strong> or a <strong>Presenter</strong>. Activity and Fragment seems to be both, because they have lifecycle callbacks like <strong>onCreate()</strong> or <strong>onDestroy()</strong> as well as responsibilities of View things like switching from one UI widget to another UI widget (like showing a ProgressBar while loading and then displaying a ListView with data). You may say that these sounds like an Activity or Fragment is a Controller and I guess that was the original intention. However, after some years of experience in developing Android apps I came to the conclusion that Activity and Fragment should be treated like a (dumb) <strong>View and not a Presenter</strong>. You will see why afterwards.</p>
+<p>With that said, I want to introduce <strong>Mosby</strong> a library for creating MVP based apps on android.</p>
+<h2 id="mosby">Mosby</h2>
+<p>Mosby can be found on <a href="https://github.com/sockeqwe/mosby">Github</a> and is available in maven central. Mosby is divided into serval submodules so you can pick that components that you need. Let&rsquo;s review the most important one.</p>
+<h3 id="core---module">Core - Module</h3>
+<p>Ted Mosby in How I met your mother wants to create a skyscraper. Building such a impressive building needs a good fundament. Same is valid for Android apps. Basically, the <strong>Core Module</strong>  offers two classes: <strong>MosbyActivity</strong> and <strong>MosbyFragment</strong>. These are the base classe (the fundament) for all other activity or fragment subclasses. Both use well known <a href="http://hannesdorfmann.com/annotation-processing/annotationprocessing101">annotation processors</a> to reduce writing boilerplate code. <em>MosbyActivity</em> and <em>MosbyFragment</em> use <a href="http://jakewharton.github.io/butterknife/">Butterknife</a> for view &ldquo;injection&rdquo;, <a href="https://github.com/frankiesardo/icepick">Icepick</a> for saving and restoring instance state to a bundle and <a href="https://github.com/sockeqwe/fragmentargs">FragmentArgs</a> for injecting Fragment arguments. You don&rsquo;t have to call the injecting methods like <strong>Butterknife.inject(this)</strong>. This kind of code is already included in <em>MosbyActivity</em> and <em>MosbyFragment</em>. It just works out of the box. The only thing you have to do is to use the corresponding annotations in your subclasses. The <em>Core - Module</em> is not related to MVP. It&rsquo;s just the fundament to build skyscraper apps on it.</p>
+<h3 id="mvp---module">MVP - Module</h3>
+<p>Mosby&rsquo;s MVP module uses generics to ensure type safety. The base class for all views is <strong>MvpView</strong>. Basically it&rsquo;s just an empty interface. The base class for presenters is <strong>MvpPresenter</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MvpView</span> <span class="o">{</span> <span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MvpPresenter</span><span class="o">&lt;</span><span class="n">V</span> <span class="kd">extends</span> <span class="n">MvpView</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">attachView</span><span class="o">(</span><span class="n">V</span> <span class="n">view</span><span class="o">);</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">detachView</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">retainInstance</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>As already mentioned before we treat Activity and Fragment as Views. Therefore Mobsby&rsquo;s MVP module provides <strong>MvpActivity</strong> and <strong>MvpFragment</strong> which are <strong>MvpViews</strong> as base classes for Activities and Fragments:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">MvpActivity</span><span class="o">&lt;</span><span class="n">V</span> <span class="kd">extends</span> <span class="n">MvpView</span><span class="o">,</span> <span class="n">P</span> <span class="kd">extends</span> <span class="n">MvpPresenter</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">MosbyActivity</span> <span class="kd">implements</span> <span class="n">MvpView</span> <span class="o">{</span>
+
+  <span class="kd">protected</span> <span class="n">P</span> <span class="n">presenter</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+    <span class="n">presenter</span> <span class="o">=</span> <span class="n">createPresenter</span><span class="o">();</span>
+    <span class="n">presenter</span><span class="o">.</span><span class="na">attachView</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onDestroy</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onDestroy</span><span class="o">();</span>
+    <span class="n">presenter</span><span class="o">.</span><span class="na">detachView</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">P</span> <span class="nf">createPresenter</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">MvpFragment</span><span class="o">&lt;</span><span class="n">V</span> <span class="kd">extends</span> <span class="n">MvpView</span><span class="o">,</span> <span class="n">P</span> <span class="kd">extends</span> <span class="n">MvpPresenter</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">MosbyFragment</span> <span class="kd">implements</span> <span class="n">MvpView</span> <span class="o">{</span>
+
+  <span class="kd">protected</span> <span class="n">P</span> <span class="n">presenter</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onViewCreated</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onViewCreated</span><span class="o">(</span><span class="n">view</span><span class="o">,</span> <span class="n">savedInstanceState</span><span class="o">);</span>
+
+    <span class="c1">// Create the presenter if needed
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">presenter</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">presenter</span> <span class="o">=</span> <span class="n">createPresenter</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="n">presenter</span><span class="o">.</span><span class="na">attachView</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onDestroyView</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onDestroyView</span><span class="o">();</span>
+    <span class="n">presenter</span><span class="o">.</span><span class="na">detachView</span><span class="o">(</span><span class="n">getRetainInstance</span><span class="o">());</span>
+  <span class="o">}</span>
+
+
+  <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">P</span> <span class="nf">createPresenter</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div><p>The idea is that a <strong>MvpView</strong> (i.e. Fragment or Activity) gets attached to and detached from his <strong>MvpPresenter</strong>. Mosby takes Activities and Fragments lifecycle for doing so as you have seen in the code snipped above. Usually a presenter is bound to that lifecycle. So initializing and cleaning up things (like canceling async running tasks) should be done in <strong>presenter.onAttach()</strong> and <strong>presenter.onDetach()</strong>. We will discuss later how a presenter can &ldquo;escape&rdquo; this lifecycle in Fragments by using <strong>setRetainInstanceState(true)</strong>. You may have noticed that <strong>MvpPresenter</strong> is an interface. The MVP module provides <strong>MvpBasePresenter</strong>, a presenter implementation which uses <strong>WeakReference</strong> to hold the reference to the view (which is a Fragment or Activity) to avoid memory leaks. Therefore when your presenter wants to invoke a method of the view you always have to check if the view is attached to the presenter by checking <strong>isViewAttached()</strong> and using <strong>getView()</strong> to get the reference.</p>
+<h4 id="loading-content-error-lce">Loading-Content-Error (LCE)</h4>
+<p>Usually a Fragment is doing the same thing over and over again. It loads data in background, display a loading view (i.e ProgressBar) while loading, displays the loaded data on screen or displays an error view if loading failed. Nowadays supporting pull to refresh is easy as <strong>SwipeRefreshLayout</strong> is part of android&rsquo;s support library. To not reimplementing this workflow again and again Mosby&rsquo;s MVP module provides <strong>MvpLceView</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MvpLceView</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">MvpView</span> <span class="o">{</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Display a loading view while loading data in background.
+</span><span class="cm">   * &lt;b&gt;The loading view must have the id = R.id.loadingView&lt;/b&gt;
+</span><span class="cm">   *
+</span><span class="cm">   * @param pullToRefresh true, if pull-to-refresh has been invoked loading.
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">showLoading</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">pullToRefresh</span><span class="o">);</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Show the content view.
+</span><span class="cm">   *
+</span><span class="cm">   * &lt;b&gt;The content view must have the id = R.id.contentView&lt;/b&gt;
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">showContent</span><span class="o">();</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Show the error view.
+</span><span class="cm">   * &lt;b&gt;The error view must be a TextView with the id = R.id.errorView&lt;/b&gt;
+</span><span class="cm">   *
+</span><span class="cm">   * @param e The Throwable that has caused this error
+</span><span class="cm">   * @param pullToRefresh true, if the exception was thrown during pull-to-refresh, otherwise
+</span><span class="cm">   * false.
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">showError</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">e</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">pullToRefresh</span><span class="o">);</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The data that should be displayed with {@link #showContent()}
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setData</span><span class="o">(</span><span class="n">M</span> <span class="n">data</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>You can use <strong>MvpLceActivity implements MvpLceView</strong> and <strong>MvpLceFragment implements MvpLceView</strong> for that kind of view. Both assume that the inflated xml layout contains views with <strong>R.id.loadingView</strong>, <strong>R.id.contentView</strong> and <strong>R.id.errorView</strong>.</p>
+<h4 id="example">Example</h4>
+<p>In the following example (hosted on<a href="https://github.com/sockeqwe/mosby/tree/master/sample">Github</a> ) we are loading a list of <strong>Country</strong> by using <strong>CountriesAsyncLoader</strong> and display that in a <strong>RecyclerView</strong> in a Fragment. You can download the <a href="https://db.tt/ycrCwt1L">sample APK here</a>.</p>
+<p>Let&rsquo;s start by defining the view interface <strong>CountriesView</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">CountriesView</span> <span class="kd">extends</span> <span class="n">MvpLceView</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;&gt;</span> <span class="o">{</span>
+<span class="o">}</span>
+</code></pre></div><p>Why do I need to define interfaces for the View?</p>
+<ol>
+<li>Since it&rsquo;s an interface you can change the view implementation. You can simple move your code from something that extends Activity to something that extends Fragment.</li>
+<li>Modularity: You can move the whole business logic, Presenter and View Interface in a standalone library project. Then you can use this library with the containing Presenter in various apps. The following image shows the <a href="https://play.google.com/store/apps/details?id=com.netbiscuits.kicker">kicker app</a> on the left which uses an Activity while <a href="https://play.google.com/store/apps/details?id=com.tickaroo.meinverein">meinVerein app</a> uses a Fragment embedded in a ViewPager. Both use the same library where View-Interface and Presenter are defined and unit tested.
+<img src="/images/mosby/mvp-reuse.png" alt="Model-View-Presenter"></li>
+<li>You can easily write unit tests since you can mock views by implement the view interface. One could also introduce a java interface for the presenter to make unit testing by using mock presenter objects even more easy.</li>
+<li>Another very nice side effect of defining a interface for the view is that you don&rsquo;t get tempted to call methods of the activity / fragment directly from presenter. You get a clear separation because while implementing the presenter the only methods you see in your IDE&rsquo;s auto completion are those methods of the view interface. From my personal experiences I can say that this is very useful especially if you work in a team.</li>
+</ol>
+<p>Please note that we could also use <strong>MvpLceView&lt;List&lt;Country&gt;&gt;</strong> instead of defining an (empty, because inherits methods) interface <strong>CountriesView</strong>. But having an dedicated interface <strong>CountriesView</strong> improves code readability and we are more flexible to define more View related methods in the future.</p>
+<p>Next we define our views xml layout file with the required ids:</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;FrameLayout</span> <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+    <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+    <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+    <span class="nt">&gt;</span>
+
+  <span class="c">&lt;!-- Loading View --&gt;</span>
+  <span class="nt">&lt;ProgressBar</span>
+    <span class="na">android:id=</span><span class="s">&#34;@+id/loadingView&#34;</span>
+    <span class="na">android:layout_width=</span><span class="s">&#34;wrap_content&#34;</span>
+    <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span>
+    <span class="na">android:layout_gravity=</span><span class="s">&#34;center&#34;</span>
+    <span class="na">android:indeterminate=</span><span class="s">&#34;true&#34;</span>
+    <span class="nt">/&gt;</span>
+
+  <span class="c">&lt;!-- Content View --&gt;</span>
+  <span class="nt">&lt;android.support.v4.widget.SwipeRefreshLayout</span>
+    <span class="na">android:id=</span><span class="s">&#34;@+id/contentView&#34;</span>
+    <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+    <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+    <span class="nt">&gt;</span>
+
+    <span class="nt">&lt;android.support.v7.widget.RecyclerView</span>
+        <span class="na">android:id=</span><span class="s">&#34;@+id/recyclerView&#34;</span>
+        <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+        <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+        <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;/android.support.v4.widget.SwipeRefreshLayout&gt;</span>
+
+
+    <span class="c">&lt;!-- Error view --&gt;</span>
+    <span class="nt">&lt;TextView</span>
+      <span class="na">android:id=</span><span class="s">&#34;@+id/errorView&#34;</span>
+      <span class="na">android:layout_width=</span><span class="s">&#34;wrap_content&#34;</span>
+      <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span>
+      <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/FrameLayout&gt;</span>
+</code></pre></div><p>The <strong>CountriesPresenter</strong> controls <strong>CountriesView</strong> and starts the <strong>CountriesAsyncLoader</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CountriesPresenter</span> <span class="kd">extends</span> <span class="n">MvpBasePresenter</span><span class="o">&lt;</span><span class="n">CountriesView</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">loadCountries</span><span class="o">(</span><span class="kd">final</span> <span class="kt">boolean</span> <span class="n">pullToRefresh</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="n">getView</span><span class="o">().</span><span class="na">showLoading</span><span class="o">(</span><span class="n">pullToRefresh</span><span class="o">);</span>
+
+
+    <span class="n">CountriesAsyncLoader</span> <span class="n">countriesLoader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CountriesAsyncLoader</span><span class="o">(</span>
+        <span class="k">new</span> <span class="n">CountriesAsyncLoader</span><span class="o">.</span><span class="na">CountriesLoaderListener</span><span class="o">()</span> <span class="o">{</span>
+
+          <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="n">isViewAttached</span><span class="o">())</span> <span class="o">{</span>
+              <span class="n">getView</span><span class="o">().</span><span class="na">setData</span><span class="o">(</span><span class="n">countries</span><span class="o">);</span>
+              <span class="n">getView</span><span class="o">().</span><span class="na">showContent</span><span class="o">();</span>
+            <span class="o">}</span>
+          <span class="o">}</span>
+
+          <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onError</span><span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="n">isViewAttached</span><span class="o">())</span> <span class="o">{</span>
+              <span class="n">getView</span><span class="o">().</span><span class="na">showError</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">pullToRefresh</span><span class="o">);</span>
+            <span class="o">}</span>
+          <span class="o">}</span>
+        <span class="o">});</span>
+
+    <span class="n">countriesLoader</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>The <strong>CountriesFragment</strong> which implements <strong>CountriesView</strong> looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CountriesFragment</span>
+    <span class="kd">extends</span> <span class="n">MvpLceFragment</span><span class="o">&lt;</span><span class="n">SwipeRefreshLayout</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;,</span> <span class="n">CountriesView</span><span class="o">,</span> <span class="n">CountriesPresenter</span><span class="o">&gt;</span>
+    <span class="kd">implements</span> <span class="n">CountriesView</span><span class="o">,</span> <span class="n">SwipeRefreshLayout</span><span class="o">.</span><span class="na">OnRefreshListener</span> <span class="o">{</span>
+
+  <span class="nd">@InjectView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">recyclerView</span><span class="o">)</span> <span class="n">RecyclerView</span> <span class="n">recyclerView</span><span class="o">;</span>
+  <span class="n">CountriesAdapter</span> <span class="n">adapter</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onViewCreated</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstance</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onViewCreated</span><span class="o">(</span><span class="n">view</span><span class="o">,</span> <span class="n">savedInstance</span><span class="o">);</span>
+
+    <span class="c1">// Setup contentView == SwipeRefreshView
+</span><span class="c1"></span>    <span class="n">contentView</span><span class="o">.</span><span class="na">setOnRefreshListener</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+    <span class="c1">// Setup recycler view
+</span><span class="c1"></span>    <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CountriesAdapter</span><span class="o">(</span><span class="n">getActivity</span><span class="o">());</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setLayoutManager</span><span class="o">(</span><span class="k">new</span> <span class="n">LinearLayoutManager</span><span class="o">(</span><span class="n">getActivity</span><span class="o">()));</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span>
+    <span class="n">loadData</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">loadData</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">pullToRefresh</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">presenter</span><span class="o">.</span><span class="na">loadCountries</span><span class="o">(</span><span class="n">pullToRefresh</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="n">CountriesPresenter</span> <span class="nf">createPresenter</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">SimpleCountriesPresenter</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="c1">// Just a shorthand that will be called in onCreateView()
+</span><span class="c1"></span>  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">int</span> <span class="nf">getLayoutRes</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">countries_list</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setData</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">setCountries</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">notifyDataSetChanged</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRefresh</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">loadData</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Not that much code to write, right? It&rsquo;s because the base class  <strong>MvpLceFragment</strong> already implements the switching from loading view to content view or error view  for us. At first glance the list of generics parameter of <strong>MvpLceFragment</strong> may discourage you. Let me explain that: The first generics parameter is the type of the content view. The second is the Model that is displayed with this fragment. The third one is the View interface and the last one is the type of the Presenter. To summarize: <strong>MvpLceFragment&lt;AndroidView, Model, View, Presenter&gt;</strong></p>
+<p>Another thing you may have noticed is <strong>getLayoutRes()</strong>, which is a shorthand introduced in <strong>MosbyFragment</strong> for inflating a xml view layout:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span> <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">){</span>
+    <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">getLayoutRes</span><span class="o">(),</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>So instead of overriding <strong>onCreateView()</strong> you can override <strong>getLayoutRes()</strong>. In general <strong>onCreateView()</strong> should only create the view while <strong>onViewCreated()</strong> should be overridden to init things like Adapter for RecyclerView. <strong>Important: don&rsquo;t forget to call super.onViewCreated()</strong></p>
+<h3 id="viewstate---module">ViewState - Module</h3>
+<p>Now you should have an idea of how to use Mosby. Mosby&rsquo;s ViewState module helps you to solve on of the annoying things in android development: Handling screen orientation changes.</p>
+<p><strong>Question:</strong> What happens if we rotate our device from portrait to landscape that runs our countries example app and already displays a list of countries?</p>
+<p><strong>Answer:</strong> A new <strong>CountriesFragment</strong> gets instantiated and the app starts by showing the <strong>ProgressBar</strong> (and loads list of countries again) rather than displaying the list of countries in the <strong>RecyclerView</strong> (as it was before the screen rotation) as you can see in the video below:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/tSRoIwDXidQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<!-- raw HTML omitted -->
+<p>Mosby introduces <strong>ViewState</strong> to solve this problem. The idea is, that we track the methods the presenter invokes on the attached View. For instance the presenter calls <strong>view.showContent()</strong>. Once <strong>showContent()</strong> gets called the view knows that it&rsquo;s state is &ldquo;showing content&rdquo; and hence the view  stores this information into a <strong>ViewState</strong>. If the view gets destroyed during orientation changes, the ViewState gets stored into a bundle in <strong>Activity.onSaveInstanceState(Bundle)</strong> or <strong>Fragment.onSaveInstanceState(Bundle)</strong> and will be restored in <strong>Activity.onCreate(Bundle)</strong> or <strong>Fragment.onActivityCreated(Bundle)</strong>.</p>
+<p>Since not every kind of data (I&rsquo;m talking about the data type passed as parameter in <strong>view.setData()</strong> ) can be stored in a Bundle, different ViewState implementations are provided like <strong>ArrayListLceViewState</strong> for data of type <strong>ArrayList&lt;Parcelable&gt;</strong>, <strong>ParcelableDataLceViewState</strong> - for data of type <strong>Parcelable</strong> or <strong>SerializeableLceViewState</strong> - for data of type <strong>Serializeable</strong>. If you use a retaining Fragment (more about retaining Fragments below) then the <strong>ViewState</strong> is not destroyed during screen orientation changes and doesn&rsquo;t need to be saved into a Bundle. Hence it can store any type of data. In that case you should use <strong>RetainingFragmentLceViewState</strong>. Restoring a <strong>ViewState</strong> is easy. Since we have a clean architecture and an interface for our <strong>View</strong>, <strong>ViewState</strong> can restore the associated view by calling the same interface methods as the presenter does. For example <strong>MvpLceView</strong> basically has 3 states: it can display <strong>showContent()</strong>, <strong>showLoading()</strong> and <strong>showError()</strong> and hence the ViewState himself calls the corresponding method to restore the views state.</p>
+<p>That are just internals. You only need to know about that if you want to write your own custom ViewStates.
+Using <strong>ViewStates</strong> is pretty easy. Actually, to migrate an <strong>MvpLceFragment</strong> to an <strong>MvpLceViewStateFragment</strong> you only additionally have to implement <strong>createViewState()</strong> and <strong>getData()</strong>. Let&rsquo;s do that for our <strong>CountriesFragment</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CountriesFragment</span>
+    <span class="kd">extends</span> <span class="n">MvpLceViewStateFragment</span><span class="o">&lt;</span><span class="n">SwipeRefreshLayout</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;,</span> <span class="n">CountriesView</span><span class="o">,</span> <span class="n">CountriesPresenter</span><span class="o">&gt;</span>
+    <span class="kd">implements</span> <span class="n">CountriesView</span><span class="o">,</span> <span class="n">SwipeRefreshLayout</span><span class="o">.</span><span class="na">OnRefreshListener</span> <span class="o">{</span>
+
+  <span class="nd">@InjectView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">recyclerView</span><span class="o">)</span> <span class="n">RecyclerView</span> <span class="n">recyclerView</span><span class="o">;</span>
+  <span class="n">CountriesAdapter</span> <span class="n">adapter</span><span class="o">;</span>
+
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">LceViewState</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;,</span> <span class="n">CountriesView</span><span class="o">&gt;</span> <span class="nf">createViewState</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">RetainingFragmentLceViewState</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;,</span> <span class="n">CountriesView</span><span class="o">&gt;(</span><span class="k">this</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="nf">getData</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">adapter</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="n">adapter</span><span class="o">.</span><span class="na">getCountries</span><span class="o">();</span>
+  <span class="o">}</span>
+
+   <span class="c1">// The code below is the same as before
+</span><span class="c1"></span>
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onViewCreated</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstance</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onViewCreated</span><span class="o">(</span><span class="n">view</span><span class="o">,</span> <span class="n">savedInstance</span><span class="o">);</span>
+
+    <span class="c1">// Setup contentView == SwipeRefreshView
+</span><span class="c1"></span>    <span class="n">contentView</span><span class="o">.</span><span class="na">setOnRefreshListener</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+    <span class="c1">// Setup recycler view
+</span><span class="c1"></span>    <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CountriesAdapter</span><span class="o">(</span><span class="n">getActivity</span><span class="o">());</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setLayoutManager</span><span class="o">(</span><span class="k">new</span> <span class="n">LinearLayoutManager</span><span class="o">(</span><span class="n">getActivity</span><span class="o">()));</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span>
+    <span class="n">loadData</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+  <span class="o">}</span>
+
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">loadData</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">pullToRefresh</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">presenter</span><span class="o">.</span><span class="na">loadCountries</span><span class="o">(</span><span class="n">pullToRefresh</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="n">CountriesPresenter</span> <span class="nf">createPresenter</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">SimpleCountriesPresenter</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="c1">// Just a shorthand that will be called in onCreateView()
+</span><span class="c1"></span>  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">int</span> <span class="nf">getLayoutRes</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">countries_list</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setData</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">setCountries</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">notifyDataSetChanged</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRefresh</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">loadData</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>That&rsquo;s all. You don&rsquo;t have to change code of your presenter or something else. Here is a video of our CountriesFragment <strong>with ViewState</strong> support where you can see that now the view is still in the same &ldquo;state&rdquo; after orientation changes, i.e. the view  shows the list of Countries in portrait, then it also shows the list of Countries in landscape. The view shows the pull to refresh indicator in landscape and shows the pull to refresh indicator after changing to portrait as well.</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/Ni7e5NhUEUw" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<h4 id="writing-your-own-viewstate">Writing your own ViewState</h4>
+<p><strong>ViewState</strong> is a really powerful and flexible concept. So far you learned how easy it is to use one of the provided LCE (Loading-Content-Error) ViewsStates. Now lets write our own custom View and ViewState. Our View should only display two different kind of data objects <strong>A</strong> and <strong>B</strong>. The result should look like this:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/9iSBGEIZmUw" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>I know, it&rsquo;s not that impressive. It should just give you an idea of how easy it is to create your own ViewState.</p>
+<p>The View interface and the data objects (model) looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java">
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">A</span> <span class="kd">implements</span> <span class="n">Parcelable</span> <span class="o">{</span>
+  <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">A</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">B</span> <span class="kd">implements</span> <span class="n">Parcelable</span> <span class="o">{</span>
+  <span class="n">String</span> <span class="n">foo</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">B</span><span class="o">(</span><span class="n">String</span> <span class="n">foo</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">foo</span> <span class="o">=</span> <span class="n">foo</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getFoo</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">foo</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyCustomView</span> <span class="kd">extends</span> <span class="n">MvpView</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">showA</span><span class="o">(</span><span class="n">A</span> <span class="n">a</span><span class="o">);</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">showB</span><span class="o">(</span><span class="n">B</span> <span class="n">b</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>We don&rsquo;t have any business logic in this simple sample. Let&rsquo;s assume that in a real world app there would be a complex operation in our business logic to generate <strong>A</strong> or <strong>B</strong>. Our presenter looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomPresenter</span> <span class="kd">extends</span> <span class="n">MvpBasePresenter</span><span class="o">&lt;</span><span class="n">MyCustomView</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="n">Random</span> <span class="n">random</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">();</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doA</span><span class="o">()</span> <span class="o">{</span>
+
+    <span class="n">A</span> <span class="n">a</span> <span class="o">=</span> <span class="k">new</span> <span class="n">A</span><span class="o">(</span><span class="s">&#34;My name is A &#34;</span><span class="o">+</span><span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="n">10</span><span class="o">));</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">isViewAttached</span><span class="o">())</span> <span class="o">{</span>
+      <span class="n">getView</span><span class="o">().</span><span class="na">showA</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doB</span><span class="o">()</span> <span class="o">{</span>
+
+    <span class="n">B</span> <span class="n">b</span> <span class="o">=</span> <span class="k">new</span> <span class="n">B</span><span class="o">(</span><span class="s">&#34;I am B &#34;</span><span class="o">+</span><span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="n">10</span><span class="o">));</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">isViewAttached</span><span class="o">())</span> <span class="o">{</span>
+      <span class="n">getView</span><span class="o">().</span><span class="na">showB</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>We define <strong>MyCustomActivity</strong> which implements <strong>MyCustomView</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomActivity</span> <span class="kd">extends</span> <span class="n">MvpViewStateActivity</span><span class="o">&lt;</span><span class="n">MyCustomView</span><span class="o">,</span> <span class="n">MyCustomPresenter</span><span class="o">&gt;</span>
+    <span class="kd">implements</span> <span class="n">MyCustomView</span> <span class="o">{</span>
+
+  <span class="nd">@InjectView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textViewA</span><span class="o">)</span> <span class="n">TextView</span> <span class="n">aView</span><span class="o">;</span>
+  <span class="nd">@InjectView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textViewB</span><span class="o">)</span> <span class="n">TextView</span> <span class="n">bView</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+    <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">my_custom_view</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">RestoreableViewState</span> <span class="nf">createViewState</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">MyCustomViewState</span><span class="o">();</span> <span class="c1">// Our ViewState implementation
+</span><span class="c1"></span>  <span class="o">}</span>
+
+  <span class="c1">// Will be called when no view state exist yet,
+</span><span class="c1"></span>  <span class="c1">// which is the case the first time MyCustomActivity starts
+</span><span class="c1"></span>  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onNewViewStateInstance</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">presenter</span><span class="o">.</span><span class="na">doA</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="n">MyCustomPresenter</span> <span class="nf">createPresenter</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">MyCustomPresenter</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">showA</span><span class="o">(</span><span class="n">A</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">MyCustomViewState</span> <span class="n">vs</span> <span class="o">=</span> <span class="o">((</span><span class="n">MyCustomViewState</span><span class="o">)</span> <span class="n">viewState</span><span class="o">);</span>
+    <span class="n">vs</span><span class="o">.</span><span class="na">setShowingA</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+    <span class="n">vs</span><span class="o">.</span><span class="na">setData</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+    <span class="n">aView</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">a</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+    <span class="n">aView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+    <span class="n">bView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">showB</span><span class="o">(</span><span class="n">B</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">MyCustomViewState</span> <span class="n">vs</span> <span class="o">=</span> <span class="o">((</span><span class="n">MyCustomViewState</span><span class="o">)</span> <span class="n">viewState</span><span class="o">);</span>
+    <span class="n">vs</span><span class="o">.</span><span class="na">setShowingA</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+    <span class="n">vs</span><span class="o">.</span><span class="na">setData</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+    <span class="n">bView</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">b</span><span class="o">.</span><span class="na">getFoo</span><span class="o">());</span>
+    <span class="n">aView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">bView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@OnClick</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">loadA</span><span class="o">)</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onLoadAClicked</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">presenter</span><span class="o">.</span><span class="na">doA</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@OnClick</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">loadB</span><span class="o">)</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onLoadBClicked</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">presenter</span><span class="o">.</span><span class="na">doB</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Since we are not having LCE (Loading-Content-Error) we are not using <strong>MvpLceActivity</strong> as base class. We use <strong>MvpViewStateActivity</strong> as base class which is the most general Activity implementation that supports <strong>ViewState</strong>. Basically our View simply displays <strong>aView</strong> or <strong>bView</strong>.
+In **onNewViewStateInstance() ** we have to specify what to do on first Activity start, because no previous <strong>ViewState</strong> instance exists to restore. In <strong>showA(A a)</strong> and <strong>showB(B b)</strong> we have to save the information that we are displays <strong>A</strong> or <strong>B</strong> into our <strong>ViewState</strong>. We are almost done, only  <strong>MyCustomViewState</strong> implementation is missing:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomViewState</span> <span class="kd">implements</span> <span class="n">RestoreableViewState</span><span class="o">&lt;</span><span class="n">MyCustomView</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">KEY_STATE</span> <span class="o">=</span> <span class="s">&#34;MyCustomViewState-flag&#34;</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">KEY_DATA</span> <span class="o">=</span> <span class="s">&#34;MyCustomViewState-data&#34;</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">showingA</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="c1">// if false, then show B
+</span><span class="c1"></span>  <span class="kd">public</span> <span class="n">Parcelable</span> <span class="n">data</span><span class="o">;</span> <span class="c1">// Can be A or B
+</span><span class="c1"></span>
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveInstanceState</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">out</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">out</span><span class="o">.</span><span class="na">putBoolean</span><span class="o">(</span><span class="n">KEY_STATE</span><span class="o">,</span> <span class="n">showingA</span><span class="o">);</span>
+    <span class="n">out</span><span class="o">.</span><span class="na">putParcelable</span><span class="o">(</span><span class="n">KEY_DATA</span><span class="o">,</span> <span class="n">data</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">restoreInstanceState</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">in</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">in</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">showingA</span> <span class="o">=</span> <span class="n">in</span><span class="o">.</span><span class="na">getBoolean</span><span class="o">(</span><span class="n">KEY_STATE</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">in</span><span class="o">.</span><span class="na">getParcelable</span><span class="o">(</span><span class="n">KEY_DATA</span><span class="o">);</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">apply</span><span class="o">(</span><span class="n">MyCustomView</span> <span class="n">view</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">retained</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">showingA</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">view</span><span class="o">.</span><span class="na">showA</span><span class="o">((</span><span class="n">A</span><span class="o">)</span> <span class="n">data</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="n">view</span><span class="o">.</span><span class="na">showB</span><span class="o">((</span><span class="n">B</span><span class="o">)</span> <span class="n">data</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * @param a true if showing a, false if showing b
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setShowingA</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">showingA</span> <span class="o">=</span> <span class="n">a</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setData</span><span class="o">(</span><span class="n">Parcelable</span> <span class="n">data</span><span class="o">){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>As you can see we have to save our <strong>ViewState</strong> in <strong>saveInstanceState()</strong> which will be called from <strong>Activity.onSaveInstanceState()</strong> and restore the viewstate&rsquo;s data in <strong>restoreInstanceState()</strong> which will be called from <strong>Activity.onCreate()</strong>. The <strong>apply()</strong> method will be called from Activity to restore the view state. We do that by calling the same View interface methods <strong>showA()</strong> or <strong>showB()</strong> like the presenter does.</p>
+<p>This external <strong>ViewState</strong> class pulls the complexity and responsibility of restoring the view&rsquo;s state out from the Activity code into this separated class. It&rsquo;s also easier to write unit tests for a <strong>ViewState</strong> class  than for an <strong>Activity</strong> class.</p>
+<h4 id="how-to-handle-background-threads">How to handle background threads?</h4>
+<p>Usually background threads are observed by the <strong>Presenter</strong>. There are two scenario how presenter can handle background threads depending on the the surrounding Activity or Fragment:</p>
+<ul>
+<li>
+<p><strong>Retaining Fragment:</strong> If you set <strong>Fragment.setRetainInstanceState(true)</strong> then the Fragment will not be destroyed during screen rotations. Only the Fragment&rsquo;s GUI (the <strong>android.view.View</strong>  returned from <strong>onCreateView()</strong>) get&rsquo;s destroyed an newly created. That means all of your fragment class member variables are still there after screen rotation and so is the presenter still there after screen orientation has been changed. In that case we just detach the old view from presenter and attach the new view to presenter. Hence the presenter doesn&rsquo;t have to cancel any running background task, because the view gets reattached. Example:</p>
+<ol>
+<li>We start our app in portrait.</li>
+<li>The retaining fragment gets instantiated and calls <strong>onCreate()</strong>, <strong>onCreateView()</strong>, <strong>createPresenter()</strong> and attach the view (the fragment himself) to the presenter by calling <strong>presenter.attachView()</strong>.</li>
+<li>Next we rotate our device from portrait to landscape.</li>
+<li><strong>onDestroyView()</strong> gets called which calls <strong>presenter.detachView(true)</strong>. Note that the parameter <strong>true</strong>, informs the presenter that the fragment is a retaining fragment (otherwise the parameter would be set to false). Therefore the presenter knows that he doesn&rsquo;t have to cancel  running background threads.</li>
+<li>App is in landscape now. <strong>onCreateView()</strong> gets called, but <strong>not</strong> <strong>createPresenter()</strong> because  <strong>presenter != null</strong> since presenter variable has survived orientation changes because of <strong>setRetainInstanceState(true)</strong>.</li>
+<li>View gets reattached to presenter by <strong>presenter.attachView()</strong>.</li>
+<li><strong>ViewState</strong> gets restored. Since no background thread has been canceled restarting background threads is not needed.</li>
+</ol>
+</li>
+<li>
+<p><strong>Activity and NOT Retaining Fragments:</strong> In that case the workflow is quite simple. Everything gets destroyed (presenter instance too), hence the presenter should cancel running background tasks. Example:</p>
+<ol>
+<li>We start our app in portrait with an <strong>NOT</strong> retaining fragment</li>
+<li>The fragment gets instantiated and calls <strong>onCreate()</strong>, <strong>onCreateView()</strong>, <strong>createPresenter()</strong> and attach the view (the fragment) to the presenter by calling <strong>presenter.attachView()</strong>.</li>
+<li>Next we rotate our device from portrait to landscape.</li>
+<li><strong>onDestroyView()</strong> gets called which calls <strong>presenter.detachView(false)</strong>. Presenter cancels background tasks.</li>
+<li><strong>onSaveInstanceState(Bundle)</strong> gets called where the <strong>ViewState</strong> gets saved into the Bundle.</li>
+<li>App is in landscape now. A new Fragment gets instantiated and calls <strong>onCreate()</strong>, <strong>onCreateView()</strong>, <strong>createPresenter()</strong>, which creates a new presenter instance and attaches the new view to the new presenter by calling <strong>presenter.attachView()</strong>.</li>
+<li><strong>ViewState</strong> gets restored from Bundle and restores the views state. If the <strong>ViewState</strong> was <strong>showLoading</strong> then the presenter restarts new background threads to load data.</li>
+</ol>
+</li>
+</ul>
+<p>To sum it up here is a lifecycle diagram for <strong>Activities</strong> with ViewState support:
+<img src="/images/mosby/mvp-activity-lifecycle.png" alt="Model-View-Presenter"></p>
+<p>and here is the lifecycle diagram for <strong>Fragments</strong> with ViewState support:</p>
+<p><img src="/images/mosby/mvp-fragment-lifecycle.png" alt="Model-View-Presenter"></p>
+<h3 id="retrofit---module">Retrofit - Module</h3>
+<p>Mosby provides <strong>LceRetrofitPresenter</strong> and <strong>LceCallback</strong>. Writing  an Presenter for Retrofit with support for LCE methods <strong>showLoading()</strong>, <strong>showContent()</strong> and <strong>showError()</strong> can be done in few lines of code.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MembersPresenter</span> <span class="kd">extends</span> <span class="n">LceRetrofitPresenter</span><span class="o">&lt;</span><span class="n">MembersView</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">GithubApi</span> <span class="n">githubApi</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">MembersPresenter</span><span class="o">(</span><span class="n">GithubApi</span> <span class="n">githubApi</span><span class="o">){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">githubApi</span> <span class="o">=</span> <span class="n">githubApi</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">loadSquareMembers</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">pullToRefresh</span><span class="o">){</span>
+    <span class="n">githubApi</span><span class="o">.</span><span class="na">getMembers</span><span class="o">(</span><span class="s">&#34;square&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="n">LceCallback</span><span class="o">(</span><span class="n">pullToRefresh</span><span class="o">));</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><h3 id="dagger---module">Dagger - Module</h3>
+<p>Building an app without dependency injection? Ted Mosby would kick you in the ass! Dagger is one of the most used dependency injection frameworks for java and very popular by android developers. Mosby supports <a href="https://github.com/square/dagger">Dagger1</a>. Mosby provides an <strong>Injector</strong> interface with a method called <strong>getObjectGraph()</strong>. Usually, you have an application wide module. To share this module easily you have to subclass <strong>android.app.Application</strong> and make it implement <strong>Injector</strong>. Then all Activities and Fragments can access that <strong>ObjectGraph</strong> by calling <strong>getObjectGraph()</strong> since DaggerActivity and DaggerFragment are <strong>Injector</strong> as well. You can also call <strong>plus(Module)</strong> to add modules by overriding <strong>getObjcetGraph()</strong> in Activity or Fragment. I personally have migrated to  <a href="https://github.com/google/dagger">Dagger2</a>, which works also with Mosby. You can find samples for both Dagger1 and Dagger2 on <a href="https://github.com/sockeqwe/mosby">Github</a>. The Dagger1 sample apk can be downloaded <a href="https://db.tt/3fVqVdAz">here</a> and Dagger2 sample apk can be downloaded <a href="https://db.tt/z85y4fSY">here</a></p>
+<h3 id="rx---module">Rx - Module</h3>
+<p><strong>Observables</strong> ftw! Nowadays all the cool kids use RxJava and you know what? RxJava is pretty cool! Therefore Mosby offers <strong>MvpLceRxPresenter</strong> which internally is a <strong>Subscriber</strong> and handles for you automatically <strong>onNext()</strong>, <strong>onCompleted()</strong> and <strong>onError()</strong> as well as invoking the corresponding LCE method like <strong>showLoading()</strong>, <strong>shwoContent()</strong> and <strong>showError()</strong>. It also ships with RxAndroid to <strong>observerOn()</strong> Androids Main UI Thread. You may think that you don&rsquo;t need Model View Presenter anymore by using RxJava. Well, that&rsquo;s your decision. In my opinion a clear separation between View and Model is essential. I also think that some nice features like <strong>ViewState</strong> is not as easy to implement without MVP. And last but not least, do you really wanna step back where Activities and Fragments containing more than 1000+ lines of code? Welcome back to the spaghetti code hell. Ok, let&rsquo;s be fair, it&rsquo;s not spaghetti code because Observables introduce a nice structured workflow, but you are one step closer to make your Activity or Fragment to a <a href="http://www.antipatterns.com/briefing/sld024.htm">BLOB</a></p>
+<h3 id="testing---module">Testing - Module</h3>
+<p>You may have noticed that a testing module exists. This module is used internally to test mosby library. However it can also be used for your own app. It offers unit testing templates for your LCE Presenter, Activities and Fragments by using Robolectric. Basically, it checks if the Presenter under test is working correctly: Does the presenter calls <strong>showLoading()</strong>, <strong>showContent()</strong> and <strong>showError()</strong>. You can also verify the data from <strong>setData()</strong>. So you could write kind of black box tests for Presenter and underlying layers. Mosby&rsquo;s testing module also provides the possibility to test your <strong>MvpLceFragment</strong> or <strong>MvpLceActivity</strong>. It&rsquo;s kind of an &ldquo;lite&rdquo; UI test. These tests only check if the Fragment or Activity is working properly without crashing, by checking if the xml layout contains the required ids like <strong>R.id.loadingView</strong>, <strong>R.id.contentView</strong> and <strong>R.id.errorView</strong> or checks if the loadingView is visible, while loading data, is the error view visible, does the content view can handle the loaded data submitted by <strong>setData()</strong>. It&rsquo;s not an UI test like you could do with Espresso. I don&rsquo;t see the need to write UI tests for LCE Views.
+Concluding here are Ted Mosby&rsquo;s testing tips:</p>
+<ol>
+<li>Write traditional unit tests for testing your business logic and models.</li>
+<li>Use <strong>MvpLcePresenterTest</strong> to test your presenters,</li>
+<li>Use <strong>MvpLceFragmentTest</strong> and <strong>MvpLceActivityTest</strong> to test your MvpLceFragment / Activity.</li>
+<li>If you want, you can write UI Tests by using Espresso.</li>
+</ol>
+<p>The Testing - Module is not complete yet. You can see this module as beta software, because Robolectric 3.0 is not finished yet, nor has android gradle plugin full support for traditional unit tests. This should be much better with android gradle plugin 1.2. I will write another blog post about unit testing with Mosby, Dagger, Retrofit and RxJava once Robolectric and androids gradle plugin are ready to be used.</p>
+<p><strong>Update:</strong> A new Blog post with some tips related to Mosby by showing how to implement a mail client on android is online: <a href="http://hannesdorfmann.com/android/mosby-playbook">Stinson&rsquo;s playbook for Mosby</a></p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

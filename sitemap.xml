@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>http://127.0.0.1:1313/about/</loc>
+    <lastmod>2020-01-10T14:46:10+06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/contact/</loc>
+    <lastmod>2020-01-10T14:46:10+06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/</loc>
+    <lastmod>2020-01-10T14:46:10+06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/presentations/2019-07-02-flowing-in-the-deep-copy/</loc>
+    <lastmod>2019-07-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/presentations/</loc>
+    <lastmod>2019-07-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/search/</loc>
+    <lastmod>2019-05-14T14:46:10+06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/categories/android/</loc>
+    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/android/</loc>
+    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/categories/</loc>
+    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/design-patterns/</loc>
+    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/series/reactive-apps-with-model-view-intent/</loc>
+    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby3-mvi-8/</loc>
+    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/series/</loc>
+    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/software-architecture/</loc>
+    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/</loc>
+    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/coordinators-android/</loc>
+    <lastmod>2018-05-05T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/navigation/</loc>
+    <lastmod>2018-05-05T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby3-mvi-7/</loc>
+    <lastmod>2017-09-13T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/arch-components-purist/</loc>
+    <lastmod>2017-06-25T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby3-mvi-6/</loc>
+    <lastmod>2017-05-02T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby3-mvi-5/</loc>
+    <lastmod>2017-03-17T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby3-mvi-4/</loc>
+    <lastmod>2017-02-25T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby3-mvi-3/</loc>
+    <lastmod>2017-01-19T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby3-mvi-2/</loc>
+    <lastmod>2017-01-17T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby3-mvi-1/</loc>
+    <lastmod>2017-01-09T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/java/</loc>
+    <lastmod>2016-10-13T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/library-abstract-class/</loc>
+    <lastmod>2016-10-13T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/from-prefabricated-house-to-lego-house/</loc>
+    <lastmod>2016-07-17T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/presentations/2016-06-16-refactoring-plaid/</loc>
+    <lastmod>2016-06-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/from-prefabricated-house-to-lego-house/</loc>
+    <lastmod>2016-05-13T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/categories/java/</loc>
+    <lastmod>2016-04-26T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/java-mixins/</loc>
+    <lastmod>2016-04-26T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/presenters-dont-need-lifecycle/</loc>
+    <lastmod>2016-03-24T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/model-view-intent/</loc>
+    <lastmod>2016-03-04T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/let-mosby-flow/</loc>
+    <lastmod>2016-03-01T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/adapter-commands/</loc>
+    <lastmod>2016-02-07T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/algorithms/</loc>
+    <lastmod>2016-02-07T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/series/refactoring-plaid-app/</loc>
+    <lastmod>2015-12-02T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/plaid-refactored-2/</loc>
+    <lastmod>2015-12-02T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/plaid-refactored-1/</loc>
+    <lastmod>2015-11-29T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/fragmentargs3/</loc>
+    <lastmod>2015-11-02T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/library/</loc>
+    <lastmod>2015-11-02T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/debugoverlay/</loc>
+    <lastmod>2015-10-16T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/dont-interrupt-user-flow/</loc>
+    <lastmod>2015-08-18T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/ui/</loc>
+    <lastmod>2015-08-18T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/ux/</loc>
+    <lastmod>2015-08-18T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/adapter-delegates/</loc>
+    <lastmod>2015-07-28T14:46:10+06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/tags/database/</loc>
+    <lastmod>2015-06-24T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/sqlbrite-dao/</loc>
+    <lastmod>2015-06-24T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby-playbook/</loc>
+    <lastmod>2015-05-09T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/mosby/</loc>
+    <lastmod>2015-03-25T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/annotation-processing/annotationprocessing101/</loc>
+    <lastmod>2015-01-10T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/categories/annotation-processor/</loc>
+    <lastmod>2015-01-10T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/annotatedadapter/</loc>
+    <lastmod>2014-09-24T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/parcelableplease/</loc>
+    <lastmod>2014-09-24T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/fragmentargs/</loc>
+    <lastmod>2014-09-15T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/android/swipeback/</loc>
+    <lastmod>2013-12-27T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/homepage/home-1/</loc>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/homepage/home-2/</loc>
+  </url>
+  
+  <url>
+    <loc>http://127.0.0.1:1313/homepage/</loc>
+  </url>
+  
+</urlset>

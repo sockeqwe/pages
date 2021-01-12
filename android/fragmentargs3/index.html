@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Framgent Android Arguments code generation">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>FragmentArgs 3.0</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Nov 02, 2015</li>
+        </ul>
+        <article class="content">
+          
+          <p>I finally found some time last weekend to work on <a href="https://github.com/sockeqwe/fragmentargs">FragmentArgs</a> and to release a new major version <strong>3.0</strong>. Here is an overview of new features and bug fixes.</p>
+<h2 id="migration">Migration</h2>
+<p>The good news first: FragmentArgs 3.0 is completely backward compatible to all previous versions (down to <strong>1.0</strong>). So basically you have to do nothing. However, I recommend to add the <strong>@FragmentWithArgs</strong> annotations to your Fragments that contain <strong>@Arg</strong> annotations. Why? See <em>What&rsquo;s new</em> section and <em>Bugfixes</em> sections.</p>
+<h2 id="whats-new">What&rsquo;s new?</h2>
+<ul>
+<li>I have added <strong>@FragmentWithArgs</strong> and you should annotate all Fragment classes with this annotation. For backward compatibility reasons <strong>@FragmentWithArgs</strong> is not mandatory. However, I strongly recommend to use <strong>@FragmentWithArgs</strong> because in further versions of FragmentArgs this could become mandatory to support more features.</li>
+<li><strong>@FragmentArgsInherited</strong> is deprecated now. Use <strong>@FragmentWithArgs(inherited = true or false)</strong> instead.</li>
+<li>The generated Builder classes are now annotated with <strong>@NonNull</strong> from android support annotations library. This allows LINT to check your builders as well. You can disable that (see <em>&ldquo;Annotation Processor Options&rdquo;</em> below)</li>
+<li>Setter methods: You still have to annotate fields with <strong>@Arg</strong> (not the setter method itself). FragmentArgs detects the corresponding setter method automatically. This allows you to annotate private or protected fields with <strong>@Arg</strong>. However, I still recommend to use package (default) visibility for your argument fields:</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@FragmentWithArgs</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+
+    <span class="nd">@Arg</span>
+    <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="nd">@Arg</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">mTitle</span><span class="o">;</span> <span class="c1">// private fields requires a setter method
+</span><span class="c1"></span>
+  <span class="c1">// Setter method for private field.
+</span><span class="c1"></span>  <span class="c1">// The name must be the &#34;set&#34; prefix concatenated with field name
+</span><span class="c1"></span>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTitle</span><span class="o">(</span><span class="n">String</span> <span class="n">title</span><span class="o">){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">;</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>FragmentArgs supports hungarian notation for detecting fields (even if your setter method would be called <strong>setMTitle()</strong> or <strong>setmTitle()</strong>). Nevertheless, I&rsquo;m not a fan of the hungarian notation. We are not old school C++ developers living in the 1990&rsquo;s. We should stop using the hungarian notation on android.</p>
+<h2 id="kotlin-support">Kotlin support</h2>
+<p>The kotlin programming language is supported (use <strong>kapt</strong> instead of <strong>apt</strong>). Since FragmentArgs 3.0 now supports setter methods kotlin backing fields are supported out of the box (because backing fields simply generate getter and setters).</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"> <span class="n">@FragmentWithArgs</span>
+ <span class="k">class</span> <span class="nc">KotlinFragment</span> <span class="p">:</span> <span class="n">Fragment</span><span class="p">()</span> <span class="p">{</span>
+
+     <span class="n">@Arg</span> <span class="k">var</span> <span class="py">foo</span><span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&#34;foo&#34;</span>
+     <span class="n">@Arg</span><span class="p">(</span><span class="n">required</span> <span class="p">=</span> <span class="k">false</span><span class="p">)</span> <span class="k">lateinit</span> <span class="k">var</span> <span class="py">bar</span><span class="p">:</span> <span class="n">String</span> <span class="c1">// works also with lateinit for non primitives
+</span><span class="c1"></span>
+     <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="n">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+         <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
+         <span class="n">FragmentArgs</span><span class="p">.</span><span class="n">inject</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+     <span class="p">}</span>
+
+     <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreateView</span><span class="p">(</span><span class="n">inflater</span><span class="p">:</span> <span class="n">LayoutInflater</span><span class="p">,</span>
+        <span class="n">container</span><span class="p">:</span> <span class="n">ViewGroup</span><span class="p">?,</span> <span class="n">savedInstanceState</span><span class="p">:</span> <span class="n">Bundle</span><span class="p">?):</span> <span class="n">View</span><span class="p">?</span> <span class="p">{</span>
+
+         <span class="k">val</span> <span class="py">view</span> <span class="p">=</span> <span class="n">inflater</span><span class="p">.</span><span class="n">inflate</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">fragment_kotlin</span><span class="p">,</span> <span class="n">container</span><span class="p">,</span> <span class="k">false</span><span class="p">)</span>
+
+         <span class="k">val</span> <span class="py">tv</span> <span class="p">=</span> <span class="n">view</span><span class="p">.</span><span class="n">findViewById</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">textView</span><span class="p">)</span> <span class="k">as</span> <span class="n">TextView</span>
+
+         <span class="n">tv</span><span class="p">.</span><span class="n">text</span> <span class="p">=</span> <span class="s">&#34;Foo = ${foo} , bar = ${bar}&#34;</span>
+         <span class="k">return</span> <span class="n">view</span><span class="p">;</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+</code></pre></div><h2 id="annotation-processor-options">Annotation Processor Options</h2>
+<p>The FragmentArgs annotation processor supports some options for customization.</p>
+<div class="highlight"><pre class="chroma"><code class="language-groovy" data-lang="groovy"><span class="c1">// Hugo Visser&#39;s APT plugin
+</span><span class="c1"></span><span class="n">apt</span> <span class="o">{</span>
+  <span class="n">arguments</span> <span class="o">{</span>
+    <span class="n">fragmentArgsLib</span> <span class="kc">true</span>
+    <span class="n">fragmentArgsSupportAnnotations</span> <span class="kc">false</span>
+    <span class="n">fragmentArgsBuilderAnnotations</span> <span class="s2">&#34;hugo.weaving.DebugLog com.foo.OtherAnnotation&#34;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1">// Kotlin Annotation processor
+</span><span class="c1"></span><span class="n">kapt</span> <span class="o">{</span>
+  <span class="n">generateStubs</span> <span class="o">=</span> <span class="kc">true</span>
+  <span class="n">arguments</span> <span class="o">{</span>
+    <span class="n">arg</span><span class="o">(</span><span class="s2">&#34;fragmentArgsLib&#34;</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+    <span class="n">arg</span><span class="o">(</span><span class="s2">&#34;fragmentArgsSupportAnnotations&#34;</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span>
+    <span class="n">arg</span><span class="o">(</span><span class="s2">&#34;fragmentArgsBuilderAnnotations&#34;</span><span class="o">,</span> <span class="s2">&#34;hugo.weaving.DebugLog com.foo.OtherAnnotation&#34;</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><ul>
+<li><strong>fragmentArgsLib</strong>: If you want to use FragmentArgs in android library projects. See <a href="https://github.com/sockeqwe/fragmentargs">github readme</a> for more informtation.</li>
+<li><strong>fragmentArgsSupportAnnotations</strong>: As default the methods of the generated <strong>Builder</strong> are annotated with the annotations from support library like <strong>@NonNull</strong> etc. You can disable that feature by passing <strong>false</strong>.</li>
+<li><strong>fragmentArgsBuilderAnnotations</strong>: You can add additional annotations to the generated <strong>Builder</strong> classes. For example you can add <strong>@DebugLog</strong> annotation to the <strong>Builder</strong> classes to use Jake Wharton&rsquo;s <a href="https://github.com/JakeWharton/hugo">Hugo</a> for logging in debug builds. You have to pass a string of a full qualified annotation class name. You can supply multiple annotations by using a white space between each one. The sample show above would generate a builder class like this:</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"> <span class="nd">@hugo.weaving.DebugLog</span>
+ <span class="nd">@com.foo.OtherAnnotation</span>
+ <span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">MyFragmentBuilder</span> <span class="o">{</span>
+   <span class="o">...</span>
+ <span class="o">}</span>
+</code></pre></div><h2 id="bugfixes">Bugfixes:</h2>
+<ul>
+<li><a href="https://github.com/sockeqwe/fragmentargs/issues/30">#30</a>: There was a bug when having a Fragment with  optional arguments only (<strong>@Arg(required = false)</strong>). This has been fixed.</li>
+<li><a href="https://github.com/sockeqwe/fragmentargs/issues/32">#32</a>: It wasn&rsquo;t possible to generate a builder for a Fragment without any <strong>@Arg</strong> annotation.  <strong>TL;DR</strong>: Use <strong>@FragmentWithArgs</strong> also on Fragments with no arguments and the corresponding generated <strong>Builder</strong> to instantiate an instance. <strong>The long story:</strong> So why would should you use the FragmentArgs Builder if you don&rsquo;t have arguments anyway? Imagine you have a Fragment called <strong>MyFragment</strong>. If it doesn&rsquo;t have any argument then it&rsquo;s safe to instantiate the Fragment directly via <strong>new MyFragment()</strong>. However, you should always use a FragmentArgs builder: Why? The reason is consistency and compile time verification. Imagine that one day in the future <strong>MyFragment</strong> needs an argument. So now you would have to scan all of your code for <strong>new MyFragment()</strong> calls and replace them with the <strong>new MyFragmentBuilder(argument).build()</strong>. What if you overlook one <strong>new MyFragment()</strong> statement. So your code will still compile, but will crash at runtime because the argument is missing. If you would have used <strong>new MyFragmentBuilder()</strong> instead even for fragments without arguments from the beginning you won&rsquo;t run into this kind of issue because as soon as you add an <strong>argument</strong> by using <strong>@Arg</strong> to <strong>MyFragment</strong> class the Builder will throw an compile error because the argument is required as constructor parameter in <strong>new MyFragmentBuilder(argument)</strong>.</li>
+</ul>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

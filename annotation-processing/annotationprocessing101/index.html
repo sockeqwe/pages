@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Annotation Processing 101">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Annotation Processing 101</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Jan 10, 2015</li>
+        </ul>
+        <article class="content">
+          
+          <p>In this blog entry I would like to explain how to write an annotation processor. First, I am going to explain to you what annotation processing is, what you can do with that powerful tool and finally what you cannot do with it. In a second step we will implement a simple annotation processor step by step.</p>
+<h3 id="the-basics">The Basics</h3>
+<p>To clarify a very important thing from the very beginning: we are not talking about evaluating annotations by using reflections at runtime (run time = the time when the application runs). Annotation processing takes place at compile time (compile time = the time when the java compiler compiles your java source code).</p>
+<p>Annotation processing is a tool build in javac for scanning and processing annotations <strong>at compile time</strong>. You can register your own annotation processor for certain annotations. At this point I assume that you already know what an annotation is and how to declare an annotation type. If you are not familar with annotations you can find more information in the <a href="http://docs.oracle.com/javase/tutorial/java/annotations/index.html">official java documentation</a>. Annotation processing is already available since Java 5 but a useable API is available since Java 6 (released in December 2006). It took some time until the java world realized the power of annotation processing. So it has become popular in the last few years.</p>
+<p>An annotation processor for a certain annotation takes java code (or compiled byte code) as input and generate files (usually .java files) as output. What does that exactly means? You can generate java code! The generated java code is in a generated <strong>.java</strong> file. So you <strong>can not</strong> manipulate an existing java class for instance adding a method. The generated java file will be compiled by javac as any other hand written java source file.</p>
+<h3 id="abstractprocessor">AbstractProcessor</h3>
+<p>Let&rsquo;s have a look at the Processor API. Every Processor extends from <code>AbstractProcessor</code> as follows:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.example</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyProcessor</span> <span class="kd">extends</span> <span class="n">AbstractProcessor</span> <span class="o">{</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">ProcessingEnvironment</span> <span class="n">env</span><span class="o">){</span> <span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annoations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">env</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">getSupportedAnnotationTypes</span><span class="o">()</span> <span class="o">{</span> <span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">SourceVersion</span> <span class="nf">getSupportedSourceVersion</span><span class="o">()</span> <span class="o">{</span> <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><ul>
+<li><code>init(ProcessingEnvironment env)</code>: Every annotation processor class <strong>must have an empty constructor</strong>. However, there is a special init() method which is invoked by the annotation processing tool with the <code>ProcessingEnviroment</code> as parameter. The ProcessingEnviroment provides some useful util classes <code>Elements</code>, <code>Types</code> and <code>Filer</code>. We will use them later.</li>
+<li><code>process(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment env)</code>: This is kind of <code>main()</code> method of each processor. Here you write your code for scanning, evaluating and processing annotations and generating java files. With <code>RoundEnviroment</code> passed as parameter you can query for elements annotated with a certain annotation as we will see later.</li>
+<li><code>getSupportedAnnotationTypes()</code>: Here you have to specify for which annotations this annotation processor should be registered for. Note that the return type is a set of strings containing full qualified names for your annotation types you want to process with this annotation processor. In other words, you define here for which annotations you register your annotation processor.</li>
+<li><code>getSupportedSourceVersion()</code>: Used to specify which java version you use. Usually you will return <code>SourceVersion.latestSupported()</code>. However, you could also return <code>SourceVersion.RELEASE_6</code> if you have good reasons for stick with Java 6. I recommend to use <code>SourceVersion.latestSupported();</code></li>
+</ul>
+<p>With Java 7 you could also use annotations instead of overriding <code>getSupportedAnnotationTypes()</code> and <code>getSupportedSourceVersion()</code> like that:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@SupportedSourceVersion</span><span class="o">(</span><span class="n">SourceVersion</span><span class="o">.</span><span class="na">latestSupported</span><span class="o">())</span>
+<span class="nd">@SupportedAnnotationTypes</span><span class="o">({</span>
+   <span class="c1">// Set of full qullified annotation type names
+</span><span class="c1"></span> <span class="o">})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyProcessor</span> <span class="kd">extends</span> <span class="n">AbstractProcessor</span> <span class="o">{</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">ProcessingEnvironment</span> <span class="n">env</span><span class="o">){</span> <span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annoations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">env</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>For compatibility reasons, especially for android, I recommend to override <code>getSupportedAnnotationTypes()</code> and <code>getSupportedSourceVersion()</code> instead of using <code>@SupportedAnnotationTypes</code> and <code>@SupportedSourceVersion</code></p>
+<p>The next thing you have to know is that the annotation processor runs in it&rsquo;s own jvm. Yes you read correctly. javac starts a complete java virtual machine for running annotation processors. So what that means for you? You can use anything you would use in any other java application. Use guava! If you want to you can use dependency injection tools like dagger or any other library you want to. But don&rsquo;t forget. Even if it&rsquo;s just a small processor you should take care about efficient algorithms and design patterns like you would do for any other java application.</p>
+<h3 id="register-your-processor">Register Your Processor</h3>
+<p>You may ask yourself <em>&ldquo;How do I register MyProcessor to javac?&quot;</em>. You have to provide a <strong>.jar</strong> file. Like any other .jar file you pack your (compiled) annotation processor in that file. Furthermore you also have to pack a special file called <strong>javax.annotation.processing.Processor</strong> located in <strong>META-INF/services</strong> in your .jar file. So the content of your .jar file looks like this:</p>
+<pre><code>MyProcessor.jar
+  - com
+    - example
+      - MyProcessor.class
+
+  - META-INF
+    - services
+      - javax.annotation.processing.Processor
+</code></pre><p>The content of the file <strong>javax.annotation.processing.Processor</strong> (packed in MyProcessor.jar) is a list with full qualified class names to the processors with new line as delimiter:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">MyProcessor</span>
+<span class="n">com</span><span class="o">.</span><span class="na">foo</span><span class="o">.</span><span class="na">OtherProcessor</span>
+<span class="n">net</span><span class="o">.</span><span class="na">blabla</span><span class="o">.</span><span class="na">SpecialProcessor</span>
+</code></pre></div><p>With <strong>MyProcessor.jar</strong> in your buildpath javac automatically detects and reads the <strong>javax.annotation.processing.Processor</strong> file and registers <strong>MyProcessor</strong> as annotation processor.</p>
+<h2 id="example-factory-pattern">Example: Factory Pattern</h2>
+<p>It&rsquo;s time to for a concrete example. We will use maven as our build system and dependency management tool. If you are not familiar with maven, don&rsquo;t worry maven is not necessary. The whole code can be found <a href="https://github.com/sockeqwe/annotationprocessing101">on github</a>.</p>
+<p>First of all I have to say, that it&rsquo;s not so easy to find a simple problem for a tutorial that we can solve with an annotation processor. Here we gonna implement a very simple factory pattern (not abstract factory pattern). It should give you just a brief introduction on the annotation processing API. So the problem statement may be a little bit dump and not a real world one. Once again, you will learn about annotation processing and not about design patterns.</p>
+<p>So here is the problem: We want to implement a pizza store. The pizza store offers to it&rsquo;s customers 2 Pizzas (&ldquo;Margherita&rdquo; and &ldquo;Calzone&rdquo;) and Tiramisu for dessert.</p>
+<p>Have a look at this code snippets, which should not need any further explanation:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Meal</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="kt">float</span> <span class="nf">getPrice</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MargheritaPizza</span> <span class="kd">implements</span> <span class="n">Meal</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">float</span> <span class="nf">getPrice</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">6</span><span class="o">.</span><span class="na">0f</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalzonePizza</span> <span class="kd">implements</span> <span class="n">Meal</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">float</span> <span class="nf">getPrice</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">8</span><span class="o">.</span><span class="na">5f</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Tiramisu</span> <span class="kd">implements</span> <span class="n">Meal</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">float</span> <span class="nf">getPrice</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">4</span><span class="o">.</span><span class="na">5f</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>To order in our <code>PizzaStore</code> the customer has to enter the name of the meal:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PizzaStore</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="n">Meal</span> <span class="nf">order</span><span class="o">(</span><span class="n">String</span> <span class="n">mealName</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">mealName</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Name of the meal is null!&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="s">&#34;Margherita&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">mealName</span><span class="o">))</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">MargheritaPizza</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="s">&#34;Calzone&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">mealName</span><span class="o">))</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">CalzonePizza</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="s">&#34;Tiramisu&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">mealName</span><span class="o">))</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">Tiramisu</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Unknown meal &#39;&#34;</span> <span class="o">+</span> <span class="n">mealName</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+    <span class="n">PizzaStore</span> <span class="n">pizzaStore</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PizzaStore</span><span class="o">();</span>
+    <span class="n">Meal</span> <span class="n">meal</span> <span class="o">=</span> <span class="n">pizzaStore</span><span class="o">.</span><span class="na">order</span><span class="o">(</span><span class="n">readConsole</span><span class="o">());</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Bill: $&#34;</span> <span class="o">+</span> <span class="n">meal</span><span class="o">.</span><span class="na">getPrice</span><span class="o">());</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>As you see, we have a lot of <em>if statements</em>  in the <code>order()</code> method and whenever we add a new type of pizza we have to add a new if statement. But wait, with annotation processing and the factory pattern we can let an annotation processor generate this <em>if statements</em>. So what we want to have is something like that:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PizzaStore</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">MealFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MealFactory</span><span class="o">();</span>
+
+  <span class="kd">public</span> <span class="n">Meal</span> <span class="nf">order</span><span class="o">(</span><span class="n">String</span> <span class="n">mealName</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">factory</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">mealName</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+    <span class="n">PizzaStore</span> <span class="n">pizzaStore</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PizzaStore</span><span class="o">();</span>
+    <span class="n">Meal</span> <span class="n">meal</span> <span class="o">=</span> <span class="n">pizzaStore</span><span class="o">.</span><span class="na">order</span><span class="o">(</span><span class="n">readConsole</span><span class="o">());</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Bill: $&#34;</span> <span class="o">+</span> <span class="n">meal</span><span class="o">.</span><span class="na">getPrice</span><span class="o">());</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>The <code>MealFactory</code> should look as follows:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MealFactory</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="n">Meal</span> <span class="nf">create</span><span class="o">(</span><span class="n">String</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">id</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;id is null!&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">(</span><span class="s">&#34;Calzone&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">id</span><span class="o">))</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">CalzonePizza</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="s">&#34;Tiramisu&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">id</span><span class="o">))</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">Tiramisu</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="s">&#34;Margherita&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">id</span><span class="o">))</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">MargheritaPizza</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Unknown id = &#34;</span> <span class="o">+</span> <span class="n">id</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><h3 id="factory-annotation">@Factory Annotation</h3>
+<p>Guess what: We want to generate the <code>MealFactory</code> by using annotation processing. To be more general, we want to provide an annotation and a processor for generating factory classes.</p>
+<p>Let&rsquo;s have a look at the <code>@Factory</code> annotation:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Target</span><span class="o">(</span><span class="n">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">)</span> <span class="nd">@Retention</span><span class="o">(</span><span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">CLASS</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="n">Factory</span> <span class="o">{</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The name of the factory
+</span><span class="cm">   */</span>
+  <span class="n">Class</span> <span class="nf">type</span><span class="o">();</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The identifier for determining which item should be instantiated
+</span><span class="cm">   */</span>
+  <span class="n">String</span> <span class="nf">id</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div><p>The idea is that we annotate classes which should belong to the same factory with the same <code>type()</code> and with <code>id()</code> we do the mapping from <code>&quot;Calzone&quot;</code> to <code>CalzonePizza</code> class. Let&rsquo;s apply <code>@Factory</code> to our classes:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Factory</span><span class="o">(</span>
+    <span class="n">id</span> <span class="o">=</span> <span class="s">&#34;Margherita&#34;</span><span class="o">,</span>
+    <span class="n">type</span> <span class="o">=</span> <span class="n">Meal</span><span class="o">.</span><span class="na">class</span>
+<span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MargheritaPizza</span> <span class="kd">implements</span> <span class="n">Meal</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">float</span> <span class="nf">getPrice</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">6f</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Factory</span><span class="o">(</span>
+    <span class="n">id</span> <span class="o">=</span> <span class="s">&#34;Calzone&#34;</span><span class="o">,</span>
+    <span class="n">type</span> <span class="o">=</span> <span class="n">Meal</span><span class="o">.</span><span class="na">class</span>
+<span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalzonePizza</span> <span class="kd">implements</span> <span class="n">Meal</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">float</span> <span class="nf">getPrice</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">8</span><span class="o">.</span><span class="na">5f</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Factory</span><span class="o">(</span>
+    <span class="n">id</span> <span class="o">=</span> <span class="s">&#34;Tiramisu&#34;</span><span class="o">,</span>
+    <span class="n">type</span> <span class="o">=</span> <span class="n">Meal</span><span class="o">.</span><span class="na">class</span>
+<span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Tiramisu</span> <span class="kd">implements</span> <span class="n">Meal</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">float</span> <span class="nf">getPrice</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">4</span><span class="o">.</span><span class="na">5f</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>You may ask yourself if we could just apply <code>@Factory</code> on the <code>Meal</code> interface. Annotations are not inherited. Annotating <code>class X</code> with an annotation does not mean that <code>class Y extends X</code> is automatically annotated. Before we start writing the processor code we have to specify some rules:</p>
+<ol>
+<li>Only classes can be annotated with <code>@Factory</code> since interfaces or abstract classes can not be instantiated with the <strong>new</strong> operator.</li>
+<li>Classes annotated with <code>@Factory</code> must provide at least one public empty default constructor (parameterless). Otherwise we could not instantiate a new instance.</li>
+<li>Classes annotated with <code>@Factory</code> must inherit directly or indirectly from the specified <strong>type</strong> (or implement it if it&rsquo;s an interface).</li>
+<li><code>@Factory</code> annotations with the same <strong>type</strong> are grouped together and one Factory class will be generated. The name of the generated class has <em>&ldquo;Factory&rdquo;</em> as suffix, for example <code>type = Meal.class</code> will generate <code>MealFactory</code></li>
+<li><code>id</code> are limited to Strings and must be unique in it&rsquo;s type group.</li>
+</ol>
+<h3 id="the-processor">The Processor</h3>
+<p>I will guide you step by step by adding line of code followed by an explanation paragraph. Three dots (<strong>&hellip;</strong>) means that code is omitted either was discussed in the paragraph before or will be added later as next step. Goal is to make the snipped more readable. As already mentioned above the complete code can be found <a href="https://github.com/sockeqwe/annotationprocessing101">on github</a>. Ok lets start with the skeleton of our <strong>FactoryProcessor</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@AutoService</span><span class="o">(</span><span class="n">Processor</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FactoryProcessor</span> <span class="kd">extends</span> <span class="n">AbstractProcessor</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">Types</span> <span class="n">typeUtils</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">Elements</span> <span class="n">elementUtils</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">Filer</span> <span class="n">filer</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">Messager</span> <span class="n">messager</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryGroupedClasses</span><span class="o">&gt;</span> <span class="n">factoryClasses</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryGroupedClasses</span><span class="o">&gt;();</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">ProcessingEnvironment</span> <span class="n">processingEnv</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">init</span><span class="o">(</span><span class="n">processingEnv</span><span class="o">);</span>
+    <span class="n">typeUtils</span> <span class="o">=</span> <span class="n">processingEnv</span><span class="o">.</span><span class="na">getTypeUtils</span><span class="o">();</span>
+    <span class="n">elementUtils</span> <span class="o">=</span> <span class="n">processingEnv</span><span class="o">.</span><span class="na">getElementUtils</span><span class="o">();</span>
+    <span class="n">filer</span> <span class="o">=</span> <span class="n">processingEnv</span><span class="o">.</span><span class="na">getFiler</span><span class="o">();</span>
+    <span class="n">messager</span> <span class="o">=</span> <span class="n">processingEnv</span><span class="o">.</span><span class="na">getMessager</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">getSupportedAnnotationTypes</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">annotataions</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedHashSet</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+    <span class="n">annotataions</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getCanonicalName</span><span class="o">());</span>
+    <span class="k">return</span> <span class="n">annotataions</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">SourceVersion</span> <span class="nf">getSupportedSourceVersion</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">SourceVersion</span><span class="o">.</span><span class="na">latestSupported</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annotations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">roundEnv</span><span class="o">)</span> <span class="o">{</span>
+	<span class="o">...</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>In the first line you see <code>@AutoService(Processor.class)</code>. What&rsquo;s that? It&rsquo;s an annotation from another annotation processor. This <code>AutoService</code> annotation processor has been developed by Google and generates the <code>META-INF/services/javax.annotation.processing.Processor</code> file. Yes, you read correctly. We can use annotation processors in our annotation processor. Handy, isn&rsquo;t it? In <code>getSupportedAnnotationTypes()</code> we specify that <code>@Factory</code> is processed by this processor.</p>
+<h2 id="elements-and-typemirrors">Elements and TypeMirrors</h2>
+<p>In <code>init()</code> we retrieve a reference to</p>
+<ul>
+<li><code>Elements</code>: A utils class to work with <code>Element</code> classes (more information later).</li>
+<li><code>Types</code>: A utils class to work with <code>TypeMirror</code> (more information later)</li>
+<li><code>Filer</code>: Like the name suggests with Filer you can create files.</li>
+</ul>
+<p>In annotation processing we are scanning java source code files. Every part of the source code is a certain type of <code>Element</code>. In other words: <code>Element</code> represents a program element such as a package, class, or method. Each element represents a static, language-level construct. In the following example I have added comments to clarify that:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.example</span><span class="o">;</span>	<span class="c1">// PackageElement
+</span><span class="c1"></span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Foo</span> <span class="o">{</span>		<span class="c1">// TypeElement
+</span><span class="c1"></span>
+	<span class="kd">private</span> <span class="kt">int</span> <span class="n">a</span><span class="o">;</span>		<span class="c1">// VariableElement
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="n">Foo</span> <span class="n">other</span><span class="o">;</span> 	<span class="c1">// VariableElement
+</span><span class="c1"></span>
+	<span class="kd">public</span> <span class="nf">Foo</span> <span class="o">()</span> <span class="o">{}</span> 	<span class="c1">// ExecuteableElement
+</span><span class="c1"></span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setA</span> <span class="o">(</span> 	<span class="c1">// ExecuteableElement
+</span><span class="c1"></span>	                 <span class="kt">int</span> <span class="n">newA</span>	<span class="c1">// TypeElement
+</span><span class="c1"></span>	                 <span class="o">)</span> <span class="o">{}</span>
+<span class="o">}</span>
+</code></pre></div><p>You have to change the way you see source code. It&rsquo;s just structured text. It&rsquo;s not executable. You can think of it like a XML file you try to parse (or an abstract syntax tree in compiler construction). Like in XML parsers there is some kind of DOM with elements. You can navigate from Element to it&rsquo;s parent or child Element.</p>
+<p>For instance if you have a <code>TypeElement</code> representing <code>public class Foo</code> you could iterate over its children like that:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">TypeElement</span> <span class="n">fooClass</span> <span class="o">=</span> <span class="o">...</span> <span class="o">;</span>
+<span class="k">for</span> <span class="o">(</span><span class="n">Element</span> <span class="n">e</span> <span class="o">:</span> <span class="n">fooClass</span><span class="o">.</span><span class="na">getEnclosedElements</span><span class="o">()){</span> <span class="c1">// iterate over children
+</span><span class="c1"></span>	<span class="n">Element</span> <span class="n">parent</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getEnclosingElement</span><span class="o">();</span>  <span class="c1">// parent == fooClass
+</span><span class="c1"></span><span class="o">}</span>
+</code></pre></div><p>As you see Elements are representing source code. TypeElement represent type elements in the source code like classes. However, TypeElement does not contain information about the class itself. From TypeElement you will get the name of the class, but you will not get information about the class like the superclass. This is kind of information are accessible through a <code>TypeMirror</code>. You can access the TypeMirror of an Element by calling <code>element.asType()</code>.</p>
+<h3 id="searching-for-factory">Searching For @Factory</h3>
+<p>So lets implement the <code>process()</code> method step by step. First we start with searching for classes annotated with <code>@Factory</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@AutoService</span><span class="o">(</span><span class="n">Processor</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FactoryProcessor</span> <span class="kd">extends</span> <span class="n">AbstractProcessor</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">Types</span> <span class="n">typeUtils</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">Elements</span> <span class="n">elementUtils</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">Filer</span> <span class="n">filer</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">Messager</span> <span class="n">messager</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryGroupedClasses</span><span class="o">&gt;</span> <span class="n">factoryClasses</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryGroupedClasses</span><span class="o">&gt;();</span>
+	<span class="o">...</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annotations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">roundEnv</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="c1">// Itearate over all @Factory annotated elements
+</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">Element</span> <span class="n">annotatedElement</span> <span class="o">:</span> <span class="n">roundEnv</span><span class="o">.</span><span class="na">getElementsAnnotatedWith</span><span class="o">(</span><span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">))</span> <span class="o">{</span>
+  		<span class="o">...</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+ <span class="o">...</span>
+
+<span class="o">}</span>
+</code></pre></div><p>No rocket science here. <code>roundEnv.getElementsAnnotatedWith(Factory.class))</code> returnes a list of Elements annotated with <code>@Factory</code>. You may have noted that I have avoited saying <em>&ldquo;returns list of classes annotated with @Factory&rdquo;</em>, because it really returns list of <code>Element</code>. Remember: <code>Element</code> can be a class, method, variable etc. So what we have to do next is to check if the Element is a class:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annotations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">roundEnv</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="n">Element</span> <span class="n">annotatedElement</span> <span class="o">:</span> <span class="n">roundEnv</span><span class="o">.</span><span class="na">getElementsAnnotatedWith</span><span class="o">(</span><span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">))</span> <span class="o">{</span>
+
+      <span class="c1">// Check if a class has been annotated with @Factory
+</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">annotatedElement</span><span class="o">.</span><span class="na">getKind</span><span class="o">()</span> <span class="o">!=</span> <span class="n">ElementKind</span><span class="o">.</span><span class="na">CLASS</span><span class="o">)</span> <span class="o">{</span>
+    		<span class="o">...</span>
+      <span class="o">}</span>
+   <span class="o">}</span>
+
+   <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div><p>What&rsquo;s going on here? We want to ensure that only elements of type class are processed by our processor. Previously we have learned that classes are <code>TypeElements</code>. So why don&rsquo;t we check <code>if (! (annotatedElement instanceof TypeElement) )</code>. That&rsquo;s a wrong assumption because interfaces are TypeElement as well. So in annoation processing you should avoid <em>instanceof</em> but rather us <a href="http://docs.oracle.com/javase/7/docs/api/javax/lang/model/element/ElementKind.html">ElementKind</a> or <a href="http://docs.oracle.com/javase/7/docs/api/javax/lang/model/type/TypeKind.html">TypeKind</a> with TypeMirror.</p>
+<h3 id="error-handling">Error Handling</h3>
+<p>In <code>init()</code> we also retrieve a reference to <code>Messager</code>. A Messager provides the way for an annotation processor to report error messages, warnings and other notices. It&rsquo;s not a logger for you, the developer of the annotation processor (even thought it can be used for that during development of the processor). Messager is used to write messages to the third party developer who uses your annotation processor in their projects. There are different levels of messages described in the <a href="http://docs.oracle.com/javase/7/docs/api/javax/tools/Diagnostic.Kind.html">official docs</a>. Very important is <a href="http://docs.oracle.com/javase/7/docs/api/javax/tools/Diagnostic.Kind.html#ERROR">Kind.ERROR</a> because this kind of message is used to indicate that our annotation processor has failed processing. Probably the third party developer is misusing our <code>@Factory</code> annotation (i.e. annotated an interface with @Factory). The concept is a little bit different from traditional java application where you would throw an <code>Exception</code>. If you throw an exception in <code>process()</code> then the jvm which runs annotation processing crashs (like any other java application) and the third party developer who is using our FactoryProcessor will get an error from javac with a hardly understandable Exception, because it contains the stacktrace of FactoryProcessor. Therefore Annotation Processor has this <code>Messager</code> class. It prints a pretty error message. Additionaly, you can   link to the element who has raised this error. In modern IDEs like IntelliJ the third party developer can click on this error message and the IDE will jump to the source file and line of the third party developers project where the error source is.</p>
+<p>Back to implementing the <code>process()</code> method. We raise a error message if the user has annotated a non class with @Factory:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annotations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">roundEnv</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="n">Element</span> <span class="n">annotatedElement</span> <span class="o">:</span> <span class="n">roundEnv</span><span class="o">.</span><span class="na">getElementsAnnotatedWith</span><span class="o">(</span><span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">))</span> <span class="o">{</span>
+
+      <span class="c1">// Check if a class has been annotated with @Factory
+</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">annotatedElement</span><span class="o">.</span><span class="na">getKind</span><span class="o">()</span> <span class="o">!=</span> <span class="n">ElementKind</span><span class="o">.</span><span class="na">CLASS</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">error</span><span class="o">(</span><span class="n">annotatedElement</span><span class="o">,</span> <span class="s">&#34;Only classes can be annotated with @%s&#34;</span><span class="o">,</span>
+            <span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">());</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span> <span class="c1">// Exit processing
+</span><span class="c1"></span>      <span class="o">}</span>
+
+      <span class="o">...</span>
+    <span class="o">}</span>
+
+
+<span class="kd">private</span> <span class="kt">void</span> <span class="nf">error</span><span class="o">(</span><span class="n">Element</span> <span class="n">e</span><span class="o">,</span> <span class="n">String</span> <span class="n">msg</span><span class="o">,</span> <span class="n">Object</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">messager</span><span class="o">.</span><span class="na">printMessage</span><span class="o">(</span>
+    	<span class="n">Diagnostic</span><span class="o">.</span><span class="na">Kind</span><span class="o">.</span><span class="na">ERROR</span><span class="o">,</span>
+    	<span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">args</span><span class="o">),</span>
+    	<span class="n">e</span><span class="o">);</span>
+  <span class="o">}</span>
+
+ <span class="o">}</span>
+</code></pre></div><p>To get the message of the Messager displayed it&rsquo;s <code>important that the annotation processor has to complete without crashing</code>. That&rsquo;s why we <code>return</code> after having called <code>error()</code>. If we don&rsquo;t return here <code>process()</code> will continue running since  <code>messager.printMessage( Diagnostic.Kind.ERROR)</code> does not stop the process. So it&rsquo;s very likely that if we don&rsquo;t return after printing the error we will run in an internal <em>NullPointerException</em> etc. if we continue in <code>process()</code>. As said before, the problem is that if an unhandled exception is thrown in <code>process()</code> javac will print the stacktrace of the internal <em>NullPointerException</em> and NOT your error message of <code>Messager</code>.</p>
+<h3 id="datamodel">Datamodel</h3>
+<p>Before we continue with checking if classes annotated with @Factory observe our five rules (see above) we are going to introduce data structures which makes it easier for us to continue. Sometimes the problem or processor seems to be so simple that programmers tend to write the whole processor in a procedural manner. <strong>But you know what? An Annotation Processor is still a java application. So use object oriented programming, interfaces, design patterns and anything else you would use in any other java application!</strong></p>
+<p>Our FactoryProcessor is quite simple but there are some information we want to store as objects. With <code>FactoryAnnotatedClass</code> we store the annotated class data like qualified class name along with the data of the @Factory annotation itself. So we store the TypeElement and evaluate the @Factory annotation:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FactoryAnnotatedClass</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">TypeElement</span> <span class="n">annotatedClassElement</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">qualifiedSuperClassName</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">simpleTypeName</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">id</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">FactoryAnnotatedClass</span><span class="o">(</span><span class="n">TypeElement</span> <span class="n">classElement</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IllegalArgumentException</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">annotatedClassElement</span> <span class="o">=</span> <span class="n">classElement</span><span class="o">;</span>
+    <span class="n">Factory</span> <span class="n">annotation</span> <span class="o">=</span> <span class="n">classElement</span><span class="o">.</span><span class="na">getAnnotation</span><span class="o">(</span><span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="n">id</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="na">id</span><span class="o">();</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">id</span><span class="o">))</span> <span class="o">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span>
+          <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;id() in @%s for class %s is null or empty! that&#39;s not allowed&#34;</span><span class="o">,</span>
+              <span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">(),</span> <span class="n">classElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">()));</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Get the full QualifiedTypeName
+</span><span class="c1"></span>    <span class="k">try</span> <span class="o">{</span>
+      <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="na">type</span><span class="o">();</span>
+      <span class="n">qualifiedSuperClassName</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getCanonicalName</span><span class="o">();</span>
+      <span class="n">simpleTypeName</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">();</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">MirroredTypeException</span> <span class="n">mte</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">DeclaredType</span> <span class="n">classTypeMirror</span> <span class="o">=</span> <span class="o">(</span><span class="n">DeclaredType</span><span class="o">)</span> <span class="n">mte</span><span class="o">.</span><span class="na">getTypeMirror</span><span class="o">();</span>
+      <span class="n">TypeElement</span> <span class="n">classTypeElement</span> <span class="o">=</span> <span class="o">(</span><span class="n">TypeElement</span><span class="o">)</span> <span class="n">classTypeMirror</span><span class="o">.</span><span class="na">asElement</span><span class="o">();</span>
+      <span class="n">qualifiedSuperClassName</span> <span class="o">=</span> <span class="n">classTypeElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">();</span>
+      <span class="n">simpleTypeName</span> <span class="o">=</span> <span class="n">classTypeElement</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">().</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Get the id as specified in {@link Factory#id()}.
+</span><span class="cm">   * return the id
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Get the full qualified name of the type specified in  {@link Factory#type()}.
+</span><span class="cm">   *
+</span><span class="cm">   * @return qualified name
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getQualifiedFactoryGroupName</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">qualifiedSuperClassName</span><span class="o">;</span>
+  <span class="o">}</span>
+
+
+  <span class="cm">/**
+</span><span class="cm">   * Get the simple name of the type specified in  {@link Factory#type()}.
+</span><span class="cm">   *
+</span><span class="cm">   * @return qualified name
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getSimpleFactoryGroupName</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">simpleTypeName</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The original element that was annotated with @Factory
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="n">TypeElement</span> <span class="nf">getTypeElement</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">annotatedClassElement</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Lot of code, but the most important thing happens ins the constructor where you find the following lines of code:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Factory</span> <span class="n">annotation</span> <span class="o">=</span> <span class="n">classElement</span><span class="o">.</span><span class="na">getAnnotation</span><span class="o">(</span><span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">id</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="na">id</span><span class="o">();</span> <span class="c1">// Read the id value (like &#34;Calzone&#34; or &#34;Tiramisu&#34;)
+</span><span class="c1"></span>
+<span class="k">if</span> <span class="o">(</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">id</span><span class="o">))</span> <span class="o">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span>
+          <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;id() in @%s for class %s is null or empty! that&#39;s not allowed&#34;</span><span class="o">,</span>
+              <span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">(),</span> <span class="n">classElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">()));</span>
+    <span class="o">}</span>
+</code></pre></div><p>Here we access the @Factory annotation and check if the id is not empty. We will throw an IllegalArgumentException if id is empty. You may be confused now because previously we said that we are not throwing exceptions but rather use <code>Messager</code>. That&rsquo;s still correct. We throw an exception here internally and we will catch that one in <code>process()</code> as you will see later. We do that for two reasons:</p>
+<ol>
+<li>I want to demonstrate that you should still code like in any other java application. Throwing and catching exceptions is considered as good practice in java.</li>
+<li>If we want to print a message right from <code>FactoryAnnotatedClass</code> we also have to pass the <code>Messager</code> and as already mentioned in &ldquo;Error Handling&rdquo; (scroll up) the processor has to terminate successfully to make <code>Messager</code> print the error message. So if we would write an error message by using <code>Messager</code> how do we &ldquo;notify&rdquo; <code>process()</code> that an error has occurred? The easiest and from my point of view most intuitive way is to throw an Exception and let <code>process()</code> chatch this one.</li>
+</ol>
+<p>Next we want to get the <code>type</code> field of the <code>@Factory</code> annotation.  We are interessted in the full qualified name.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java">  <span class="k">try</span> <span class="o">{</span>
+      <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="na">type</span><span class="o">();</span>
+      <span class="n">qualifiedGroupClassName</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getCanonicalName</span><span class="o">();</span>
+      <span class="n">simpleFactoryGroupName</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">();</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">MirroredTypeException</span> <span class="n">mte</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">DeclaredType</span> <span class="n">classTypeMirror</span> <span class="o">=</span> <span class="o">(</span><span class="n">DeclaredType</span><span class="o">)</span> <span class="n">mte</span><span class="o">.</span><span class="na">getTypeMirror</span><span class="o">();</span>
+      <span class="n">TypeElement</span> <span class="n">classTypeElement</span> <span class="o">=</span> <span class="o">(</span><span class="n">TypeElement</span><span class="o">)</span> <span class="n">classTypeMirror</span><span class="o">.</span><span class="na">asElement</span><span class="o">();</span>
+      <span class="n">qualifiedGroupClassName</span> <span class="o">=</span> <span class="n">classTypeElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">();</span>
+      <span class="n">simpleFactoryGroupName</span> <span class="o">=</span> <span class="n">classTypeElement</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">().</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+</code></pre></div><p>That&rsquo;s a little bit tricky, because the type is <code>java.lang.Class</code>. That means, that this is a real Class object. Since annotation processing runs before compiling java source code we have to consider two cases:</p>
+<ol>
+<li><strong>The class is already compiled</strong>: This is the case if a third party .jar contains compiled .class files with <code>@Factory</code> annotations. In that case we can directly access the Class like we do in the <code>try-block</code>.</li>
+<li><strong>The class is not compiled yet</strong>: This will be the case if we try to compile our source code which has @Factory annotations. Trying to  access the Class directly throws a <code>MirroredTypeException</code>. Fortunately MirroredTypeException contains a <code>TypeMirror</code> representation of our not yet compiled class. Since we know that it must be type of class (we have already checked that before) we can cast it to <code>DeclaredType</code> and access <code>TypeElement</code> to read the qualified name.</li>
+</ol>
+<p>Alright, now we need one more datastructure named <code>FactoryGroupedClasses</code> which basically groups all <code>FactoryAnnotatedClasses</code> together.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FactoryGroupedClasses</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">qualifiedClassName</span><span class="o">;</span>
+
+  <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryAnnotatedClass</span><span class="o">&gt;</span> <span class="n">itemsMap</span> <span class="o">=</span>
+      <span class="k">new</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryAnnotatedClass</span><span class="o">&gt;();</span>
+
+  <span class="kd">public</span> <span class="nf">FactoryGroupedClasses</span><span class="o">(</span><span class="n">String</span> <span class="n">qualifiedClassName</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">qualifiedClassName</span> <span class="o">=</span> <span class="n">qualifiedClassName</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="n">FactoryAnnotatedClass</span> <span class="n">toInsert</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IdAlreadyUsedException</span> <span class="o">{</span>
+
+    <span class="n">FactoryAnnotatedClass</span> <span class="n">existing</span> <span class="o">=</span> <span class="n">itemsMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">toInsert</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">existing</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="n">IdAlreadyUsedException</span><span class="o">(</span><span class="n">existing</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="n">itemsMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">toInsert</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">toInsert</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">generateCode</span><span class="o">(</span><span class="n">Elements</span> <span class="n">elementUtils</span><span class="o">,</span> <span class="n">Filer</span> <span class="n">filer</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+	<span class="o">...</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>As you see it&rsquo;s basically just a <code>Map&lt;String, FactoryAnnotatedClass&gt;</code>. This map is used to map an @Factory.id() to FactoryAnnotatedClass. We have chosen <code>Map</code> because we want to ensure that each id is unique. That can be easily done with a map lookup. <code>generateCode()</code> will be called to generate the Factory code (discussed later).</p>
+<h3 id="matching-criteria">Matching Criteria</h3>
+<p>Let&rsquo;s proceed with the implementation of <code>process()</code>. Next we want to check if the annotated class has at least one public constructor, is not an abstract class, inherits the specified type and is a public class (visibility):</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FactoryProcessor</span> <span class="kd">extends</span> <span class="n">AbstractProcessor</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annotations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">roundEnv</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="n">Element</span> <span class="n">annotatedElement</span> <span class="o">:</span> <span class="n">roundEnv</span><span class="o">.</span><span class="na">getElementsAnnotatedWith</span><span class="o">(</span><span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">))</span> <span class="o">{</span>
+
+      <span class="o">...</span>
+
+      <span class="c1">// We can cast it, because we know that it of ElementKind.CLASS
+</span><span class="c1"></span>      <span class="n">TypeElement</span> <span class="n">typeElement</span> <span class="o">=</span> <span class="o">(</span><span class="n">TypeElement</span><span class="o">)</span> <span class="n">annotatedElement</span><span class="o">;</span>
+
+      <span class="k">try</span> <span class="o">{</span>
+        <span class="n">FactoryAnnotatedClass</span> <span class="n">annotatedClass</span> <span class="o">=</span>
+            <span class="k">new</span> <span class="n">FactoryAnnotatedClass</span><span class="o">(</span><span class="n">typeElement</span><span class="o">);</span> <span class="c1">// throws IllegalArgumentException
+</span><span class="c1"></span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">isValidClass</span><span class="o">(</span><span class="n">annotatedClass</span><span class="o">))</span> <span class="o">{</span>
+          <span class="k">return</span> <span class="kc">true</span><span class="o">;</span> <span class="c1">// Error message printed, exit processing
+</span><span class="c1"></span>         <span class="o">}</span>
+       <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IllegalArgumentException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// @Factory.id() is empty
+</span><span class="c1"></span>        <span class="n">error</span><span class="o">(</span><span class="n">typeElement</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+       <span class="o">}</span>
+
+   	   <span class="o">...</span>
+   <span class="o">}</span>
+
+
+ <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">isValidClass</span><span class="o">(</span><span class="n">FactoryAnnotatedClass</span> <span class="n">item</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="c1">// Cast to TypeElement, has more type specific methods
+</span><span class="c1"></span>    <span class="n">TypeElement</span> <span class="n">classElement</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="na">getTypeElement</span><span class="o">();</span>
+
+    <span class="k">if</span> <span class="o">(!</span><span class="n">classElement</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">().</span><span class="na">contains</span><span class="o">(</span><span class="n">Modifier</span><span class="o">.</span><span class="na">PUBLIC</span><span class="o">))</span> <span class="o">{</span>
+      <span class="n">error</span><span class="o">(</span><span class="n">classElement</span><span class="o">,</span> <span class="s">&#34;The class %s is not public.&#34;</span><span class="o">,</span>
+          <span class="n">classElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Check if it&#39;s an abstract class
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">classElement</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">().</span><span class="na">contains</span><span class="o">(</span><span class="n">Modifier</span><span class="o">.</span><span class="na">ABSTRACT</span><span class="o">))</span> <span class="o">{</span>
+      <span class="n">error</span><span class="o">(</span><span class="n">classElement</span><span class="o">,</span> <span class="s">&#34;The class %s is abstract. You can&#39;t annotate abstract classes with @%&#34;</span><span class="o">,</span>
+          <span class="n">classElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span> <span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">());</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Check inheritance: Class must be childclass as specified in @Factory.type();
+</span><span class="c1"></span>    <span class="n">TypeElement</span> <span class="n">superClassElement</span> <span class="o">=</span>
+        <span class="n">elementUtils</span><span class="o">.</span><span class="na">getTypeElement</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">getQualifiedFactoryGroupName</span><span class="o">());</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">superClassElement</span><span class="o">.</span><span class="na">getKind</span><span class="o">()</span> <span class="o">==</span> <span class="n">ElementKind</span><span class="o">.</span><span class="na">INTERFACE</span><span class="o">)</span> <span class="o">{</span>
+      <span class="c1">// Check interface implemented
+</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(!</span><span class="n">classElement</span><span class="o">.</span><span class="na">getInterfaces</span><span class="o">().</span><span class="na">contains</span><span class="o">(</span><span class="n">superClassElement</span><span class="o">.</span><span class="na">asType</span><span class="o">()))</span> <span class="o">{</span>
+        <span class="n">error</span><span class="o">(</span><span class="n">classElement</span><span class="o">,</span> <span class="s">&#34;The class %s annotated with @%s must implement the interface %s&#34;</span><span class="o">,</span>
+            <span class="n">classElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span> <span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">(),</span>
+            <span class="n">item</span><span class="o">.</span><span class="na">getQualifiedFactoryGroupName</span><span class="o">());</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+      <span class="o">}</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="c1">// Check subclassing
+</span><span class="c1"></span>      <span class="n">TypeElement</span> <span class="n">currentClass</span> <span class="o">=</span> <span class="n">classElement</span><span class="o">;</span>
+      <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">TypeMirror</span> <span class="n">superClassType</span> <span class="o">=</span> <span class="n">currentClass</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">();</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">superClassType</span><span class="o">.</span><span class="na">getKind</span><span class="o">()</span> <span class="o">==</span> <span class="n">TypeKind</span><span class="o">.</span><span class="na">NONE</span><span class="o">)</span> <span class="o">{</span>
+          <span class="c1">// Basis class (java.lang.Object) reached, so exit
+</span><span class="c1"></span>          <span class="n">error</span><span class="o">(</span><span class="n">classElement</span><span class="o">,</span> <span class="s">&#34;The class %s annotated with @%s must inherit from %s&#34;</span><span class="o">,</span>
+              <span class="n">classElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span> <span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">(),</span>
+              <span class="n">item</span><span class="o">.</span><span class="na">getQualifiedFactoryGroupName</span><span class="o">());</span>
+          <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">superClassType</span><span class="o">.</span><span class="na">toString</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">getQualifiedFactoryGroupName</span><span class="o">()))</span> <span class="o">{</span>
+          <span class="c1">// Required super class found
+</span><span class="c1"></span>          <span class="k">break</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="c1">// Moving up in inheritance tree
+</span><span class="c1"></span>        <span class="n">currentClass</span> <span class="o">=</span> <span class="o">(</span><span class="n">TypeElement</span><span class="o">)</span> <span class="n">typeUtils</span><span class="o">.</span><span class="na">asElement</span><span class="o">(</span><span class="n">superClassType</span><span class="o">);</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Check if an empty public constructor is given
+</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">Element</span> <span class="n">enclosed</span> <span class="o">:</span> <span class="n">classElement</span><span class="o">.</span><span class="na">getEnclosedElements</span><span class="o">())</span> <span class="o">{</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">enclosed</span><span class="o">.</span><span class="na">getKind</span><span class="o">()</span> <span class="o">==</span> <span class="n">ElementKind</span><span class="o">.</span><span class="na">CONSTRUCTOR</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ExecutableElement</span> <span class="n">constructorElement</span> <span class="o">=</span> <span class="o">(</span><span class="n">ExecutableElement</span><span class="o">)</span> <span class="n">enclosed</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">constructorElement</span><span class="o">.</span><span class="na">getParameters</span><span class="o">().</span><span class="na">size</span><span class="o">()</span> <span class="o">==</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">constructorElement</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">Modifier</span><span class="o">.</span><span class="na">PUBLIC</span><span class="o">))</span> <span class="o">{</span>
+          <span class="c1">// Found an empty constructor
+</span><span class="c1"></span>          <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="c1">// No empty constructor found
+</span><span class="c1"></span>    <span class="n">error</span><span class="o">(</span><span class="n">classElement</span><span class="o">,</span> <span class="s">&#34;The class %s must provide an public empty default constructor&#34;</span><span class="o">,</span>
+        <span class="n">classElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>We have added a method <code>isValidClass()</code> and it checks if our rules are complied:</p>
+<ul>
+<li>Class must be public: <code>classElement.getModifiers().contains(Modifier.PUBLIC)</code></li>
+<li>Class can not be abstract: <code>classElement.getModifiers().contains(Modifier.ABSTRACT)</code></li>
+<li>Class must be subclass or implement the Class as specified in <code>@Factoy.type()</code>. First we use <code>elementUtils.getTypeElement(item.getQualifiedFactoryGroupName())</code> to create a Element of the passed <code>Class</code> (<code>@Factoy.type()</code>). Yes you got it, you can create <code>TypeElement</code> (with TypeMirror) just by knowing the qualified class name. Next we check if it&rsquo;s an interface or a class: <code>superClassElement.getKind() == ElementKind.INTERFACE</code>.
+So we have two cases: If it&rsquo;s an interfaces then <code>classElement.getInterfaces().contains(superClassElement.asType())</code>. If it&rsquo;s a class, then we have to scan the inheritance hierarchy with calling <code>currentClass.getSuperclass()</code>. Note that this check could also be done with <code>typeUtils.isSubtype()</code>.</li>
+<li>Class must have a public empty constructor: So we iterate over all enclosed elements <code>classElement.getEnclosedElements()</code> and check for <code>ElementKind.CONSTRUCTOR</code>, <code>Modifier.PUBLIC</code> and <code>constructorElement.getParameters().size() == 0</code></li>
+</ul>
+<p>If these conditions are fulfilled <code>isValidClass()</code> returns true, otherwise it prints a error message and returns false.</p>
+<h3 id="grouping-the-annotated-classes">Grouping The Annotated Classes</h3>
+<p>Once we have checked <code>isValidClass()</code> we continue with adding <code>FactoryAnnotatedClass</code> to the corresponding <code>FactoryGroupedClasses</code> as follows:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FactoryProcessor</span> <span class="kd">extends</span> <span class="n">AbstractProcessor</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryGroupedClasses</span><span class="o">&gt;</span> <span class="n">factoryClasses</span> <span class="o">=</span>
+     <span class="k">new</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryGroupedClasses</span><span class="o">&gt;();</span>
+
+
+<span class="nd">@Override</span>
+ <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annotations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">roundEnv</span><span class="o">)</span> <span class="o">{</span>
+
+     <span class="o">...</span>
+
+     <span class="k">try</span> <span class="o">{</span>
+       <span class="n">FactoryAnnotatedClass</span> <span class="n">annotatedClass</span> <span class="o">=</span>
+           <span class="k">new</span> <span class="n">FactoryAnnotatedClass</span><span class="o">(</span><span class="n">typeElement</span><span class="o">);</span> <span class="c1">// throws IllegalArgumentException
+</span><span class="c1"></span>
+         <span class="k">if</span> <span class="o">(!</span><span class="n">isValidClass</span><span class="o">(</span><span class="n">annotatedClass</span><span class="o">))</span> <span class="o">{</span>
+         <span class="k">return</span> <span class="kc">true</span><span class="o">;</span> <span class="c1">// Error message printed, exit processing
+</span><span class="c1"></span>       <span class="o">}</span>
+
+       <span class="c1">// Everything is fine, so try to add
+</span><span class="c1"></span>       <span class="n">FactoryGroupedClasses</span> <span class="n">factoryClass</span> <span class="o">=</span>
+           <span class="n">factoryClasses</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">annotatedClass</span><span class="o">.</span><span class="na">getQualifiedFactoryGroupName</span><span class="o">());</span>
+       <span class="k">if</span> <span class="o">(</span><span class="n">factoryClass</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+         <span class="n">String</span> <span class="n">qualifiedGroupName</span> <span class="o">=</span> <span class="n">annotatedClass</span><span class="o">.</span><span class="na">getQualifiedFactoryGroupName</span><span class="o">();</span>
+         <span class="n">factoryClass</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FactoryGroupedClasses</span><span class="o">(</span><span class="n">qualifiedGroupName</span><span class="o">);</span>
+         <span class="n">factoryClasses</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">qualifiedGroupName</span><span class="o">,</span> <span class="n">factoryClass</span><span class="o">);</span>
+       <span class="o">}</span>
+
+       <span class="c1">// Throws IdAlreadyUsedException if id is conflicting with
+</span><span class="c1"></span>       <span class="c1">// another @Factory annotated class with the same id
+</span><span class="c1"></span>       <span class="n">factoryClass</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">annotatedClass</span><span class="o">);</span>
+     <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IllegalArgumentException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+       <span class="c1">// @Factory.id() is empty --&gt; printing error message
+</span><span class="c1"></span>       <span class="n">error</span><span class="o">(</span><span class="n">typeElement</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+       <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+     <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IdAlreadyUsedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+       <span class="n">FactoryAnnotatedClass</span> <span class="n">existing</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getExisting</span><span class="o">();</span>
+       <span class="c1">// Already existing
+</span><span class="c1"></span>       <span class="n">error</span><span class="o">(</span><span class="n">annotatedElement</span><span class="o">,</span>
+           <span class="s">&#34;Conflict: The class %s is annotated with @%s with id =&#39;%s&#39; but %s already uses the same id&#34;</span><span class="o">,</span>
+           <span class="n">typeElement</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span> <span class="n">Factory</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">(),</span>
+           <span class="n">existing</span><span class="o">.</span><span class="na">getTypeElement</span><span class="o">().</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+       <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+     <span class="o">}</span>
+   <span class="o">}</span>
+
+   <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div><h3 id="code-generation">Code Generation</h3>
+<p>We have collected all classes annotated with <code>@Factory</code> stored as <code>FactoryAnnotatedClass</code> and grouped into <code>FactoryGroupedClasses</code>. Now we are going to generate java files for each Factory:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annotations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">roundEnv</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="o">...</span>
+
+  <span class="k">try</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">FactoryGroupedClasses</span> <span class="n">factoryClass</span> <span class="o">:</span> <span class="n">factoryClasses</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+          <span class="n">factoryClass</span><span class="o">.</span><span class="na">generateCode</span><span class="o">(</span><span class="n">elementUtils</span><span class="o">,</span> <span class="n">filer</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">error</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+<span class="o">}</span>
+
+</code></pre></div><p>Writing a java file is pretty the same as writing any other file in java. We use an <code>Writer</code> provided by <code>Filer</code>. We could write our generated code as concatination of Strings. Fortunately, Square Inc. well known for plenty awesome open source projects gives us with <a href="https://github.com/square/javawriter">JavaWriter</a> a high level library for generating Java Code:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FactoryGroupedClasses</span> <span class="o">{</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Will be added to the name of the generated factory class
+</span><span class="cm">   */</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">SUFFIX</span> <span class="o">=</span> <span class="s">&#34;Factory&#34;</span><span class="o">;</span>
+
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">qualifiedClassName</span><span class="o">;</span>
+
+  <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryAnnotatedClass</span><span class="o">&gt;</span> <span class="n">itemsMap</span> <span class="o">=</span>
+      <span class="k">new</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">FactoryAnnotatedClass</span><span class="o">&gt;();</span>
+
+	<span class="o">...</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">generateCode</span><span class="o">(</span><span class="n">Elements</span> <span class="n">elementUtils</span><span class="o">,</span> <span class="n">Filer</span> <span class="n">filer</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+
+    <span class="n">TypeElement</span> <span class="n">superClassName</span> <span class="o">=</span> <span class="n">elementUtils</span><span class="o">.</span><span class="na">getTypeElement</span><span class="o">(</span><span class="n">qualifiedClassName</span><span class="o">);</span>
+    <span class="n">String</span> <span class="n">factoryClassName</span> <span class="o">=</span> <span class="n">superClassName</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">()</span> <span class="o">+</span> <span class="n">SUFFIX</span><span class="o">;</span>
+
+    <span class="n">JavaFileObject</span> <span class="n">jfo</span> <span class="o">=</span> <span class="n">filer</span><span class="o">.</span><span class="na">createSourceFile</span><span class="o">(</span><span class="n">qualifiedClassName</span> <span class="o">+</span> <span class="n">SUFFIX</span><span class="o">);</span>
+    <span class="n">Writer</span> <span class="n">writer</span> <span class="o">=</span> <span class="n">jfo</span><span class="o">.</span><span class="na">openWriter</span><span class="o">();</span>
+    <span class="n">JavaWriter</span> <span class="n">jw</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JavaWriter</span><span class="o">(</span><span class="n">writer</span><span class="o">);</span>
+
+    <span class="c1">// Write package
+</span><span class="c1"></span>    <span class="n">PackageElement</span> <span class="n">pkg</span> <span class="o">=</span> <span class="n">elementUtils</span><span class="o">.</span><span class="na">getPackageOf</span><span class="o">(</span><span class="n">superClassName</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">pkg</span><span class="o">.</span><span class="na">isUnnamed</span><span class="o">())</span> <span class="o">{</span>
+      <span class="n">jw</span><span class="o">.</span><span class="na">emitPackage</span><span class="o">(</span><span class="n">pkg</span><span class="o">.</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+      <span class="n">jw</span><span class="o">.</span><span class="na">emitEmptyLine</span><span class="o">();</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="n">jw</span><span class="o">.</span><span class="na">emitPackage</span><span class="o">(</span><span class="s">&#34;&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="n">jw</span><span class="o">.</span><span class="na">beginType</span><span class="o">(</span><span class="n">factoryClassName</span><span class="o">,</span> <span class="s">&#34;class&#34;</span><span class="o">,</span> <span class="n">EnumSet</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">Modifier</span><span class="o">.</span><span class="na">PUBLIC</span><span class="o">));</span>
+    <span class="n">jw</span><span class="o">.</span><span class="na">emitEmptyLine</span><span class="o">();</span>
+    <span class="n">jw</span><span class="o">.</span><span class="na">beginMethod</span><span class="o">(</span><span class="n">qualifiedClassName</span><span class="o">,</span> <span class="s">&#34;create&#34;</span><span class="o">,</span> <span class="n">EnumSet</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">Modifier</span><span class="o">.</span><span class="na">PUBLIC</span><span class="o">),</span> <span class="s">&#34;String&#34;</span><span class="o">,</span> <span class="s">&#34;id&#34;</span><span class="o">);</span>
+
+    <span class="n">jw</span><span class="o">.</span><span class="na">beginControlFlow</span><span class="o">(</span><span class="s">&#34;if (id == null)&#34;</span><span class="o">);</span>
+    <span class="n">jw</span><span class="o">.</span><span class="na">emitStatement</span><span class="o">(</span><span class="s">&#34;throw new IllegalArgumentException(\&#34;id is null!\&#34;)&#34;</span><span class="o">);</span>
+    <span class="n">jw</span><span class="o">.</span><span class="na">endControlFlow</span><span class="o">();</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="n">FactoryAnnotatedClass</span> <span class="n">item</span> <span class="o">:</span> <span class="n">itemsMap</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+      <span class="n">jw</span><span class="o">.</span><span class="na">beginControlFlow</span><span class="o">(</span><span class="s">&#34;if (\&#34;%s\&#34;.equals(id))&#34;</span><span class="o">,</span> <span class="n">item</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+      <span class="n">jw</span><span class="o">.</span><span class="na">emitStatement</span><span class="o">(</span><span class="s">&#34;return new %s()&#34;</span><span class="o">,</span> <span class="n">item</span><span class="o">.</span><span class="na">getTypeElement</span><span class="o">().</span><span class="na">getQualifiedName</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+      <span class="n">jw</span><span class="o">.</span><span class="na">endControlFlow</span><span class="o">();</span>
+      <span class="n">jw</span><span class="o">.</span><span class="na">emitEmptyLine</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="n">jw</span><span class="o">.</span><span class="na">emitStatement</span><span class="o">(</span><span class="s">&#34;throw new IllegalArgumentException(\&#34;Unknown id = \&#34; + id)&#34;</span><span class="o">);</span>
+    <span class="n">jw</span><span class="o">.</span><span class="na">endMethod</span><span class="o">();</span>
+
+    <span class="n">jw</span><span class="o">.</span><span class="na">endType</span><span class="o">();</span>
+
+    <span class="n">jw</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><blockquote>
+<p><strong>Tipp:</strong> Since JavaWriter is very very popular there are many other processors, libraries and tools depending on JavaWriter. This maybe will cause problems if you use dependency management tools like maven or gradle if one library depends on a newer version of JavaWriter as another one. Therefore I recommend to copy and repackage JavaWriter directly into your annotation processor code base (it&rsquo;s just one java file).</p>
+</blockquote>
+<p><strong>Update:</strong> Use <a href="https://github.com/square/javapoet">JavaPoet</a> instead of JavaWriter.</p>
+<h2 id="processing-rounds">Processing Rounds</h2>
+<p>Annotation Processing maybe takes more than one processing round. The official javadoc define processing like as follows:</p>
+<blockquote>
+<p>Annotation processing happens in a sequence of rounds. On each round, a processor may be asked to process a subset of the annotations found on the source and class files produced by a prior round. The inputs to the first round of processing are the initial inputs to a run of the tool; these initial inputs can be regarded as the output of a virtual zeroth round of processing.</p>
+</blockquote>
+<p>A simpler definition: A processing round is calling <code>process()</code> of an annotation processor. To stick with our factory sample:  <code>FactoryProcessor</code> is instantiated once (new Processor object is <strong>not</strong> created for each round), but <code>process()</code> can be called multiple times, if new source files has been created. Sounds a little bit strange, doesn&rsquo;t it? The reason is that, the generated source code files could contain <code>@Factory</code> annotated classes as well, which would be processed by <code>FactoryProcessor</code>.</p>
+<p>For example our <code>PizzaStore</code> sample will be processed in 3 rounds:</p>
+<table>
+<thead>
+<tr>
+<th>Round</th>
+<th>Input</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>CalzonePizza.java, Tiramisu.java, Meal.java, PizzaStore.java</td>
+<td>MealFactory.java</td>
+</tr>
+<tr>
+<td>2</td>
+<td>MealFactory.java</td>
+<td>none</td>
+</tr>
+<tr>
+<td>3</td>
+<td>none</td>
+<td>none</td>
+</tr>
+</tbody>
+</table>
+<p>There is another reason why I&rsquo;m explaining processing rounds. If you look at our <code>FactoryProcessor</code> code you see that we collect data and store them in private field <code>Map&lt;String, FactoryGroupedClasses&gt; factoryClasses</code>. In first round we detect MagheritaPizza, CalzonePizza and Tiramisu and we generate a file MealFactory.java. In the second round we take MealFactory as input. Since there is no <code>@Factory</code> annotation in MealFactory no data will be collected, we would not expect to get an error. However we get one:</p>
+<p><strong>Attempt to recreate a file for type com.hannesdorfmann.annotationprocessing101.factory.MealFactory</strong></p>
+<p>The problem is that we never clear <code>factoryClasses</code>. That means, that in round two <code>process()</code> has still stored data from the first round and wants to generate the same file as round 1 already did which will cause this error. In our case, we know that only in the first round we will detect <code>@Factory</code> annotated classes and therefore we can simply fix it like that:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">process</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">TypeElement</span><span class="o">&gt;</span> <span class="n">annotations</span><span class="o">,</span> <span class="n">RoundEnvironment</span> <span class="n">roundEnv</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">try</span> <span class="o">{</span>
+      <span class="k">for</span> <span class="o">(</span><span class="n">FactoryGroupedClasses</span> <span class="n">factoryClass</span> <span class="o">:</span> <span class="n">factoryClasses</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">factoryClass</span><span class="o">.</span><span class="na">generateCode</span><span class="o">(</span><span class="n">elementUtils</span><span class="o">,</span> <span class="n">filer</span><span class="o">);</span>
+      <span class="o">}</span>
+
+      <span class="c1">// Clear to fix the problem
+</span><span class="c1"></span>      <span class="n">factoryClasses</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">error</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+    <span class="o">}</span>
+
+	<span class="o">...</span>
+	<span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><p>I know there are other ways to deal with that problem i.e. we could also set a boolean flag etc. The point is: Keep in mind that annotation processing is done in multiple processing rounds and you can not override or recreate already generated source files.</p>
+<h2 id="separation-of-processor-and-annotation">Separation of processor and annotation</h2>
+<p>If you have looked at the <a href="https://github.com/sockeqwe/annotationprocessing101/tree/master/factory">git repository</a> of our factory processor you will see that we have organized our repository in two maven modules. We did that, because we want to give the user of our Factory example the possibility to compile just the annotation in his own project and to include the processor module just for compilation. Confused? I.e. if we would have just one single artifact another developer who wants to use our factory processor in his own project would include both the <code>@Factory</code> annotation and the whole <code>FactoryProcessor</code> code (incl. FactoryAnnotatedClass and FactoryGroupedClasses) in his project build. I&rsquo;m pretty sure that the other one won&rsquo;t have the processor class in his compiled project. If you are an android developer maybe you have heard of the 65k method limit (a android .dex file can only address 65.000 methods). If we would have used guava in FactoryProcessor and would provide just a single artifact containing annotation and processor code, then the android apk would not only contain FactoryProcessor code but the whole guava code as well. Guava has about 20.000 methods. Therefore a separation of annotation and processor makes sense.</p>
+<h2 id="instantiation-of-generated-classes">Instantiation Of Generated Classes</h2>
+<p>As you have seen in <code>PizzaStore</code> sample the generated class <code>MealFactory</code> is a normal java class as any other handwritten class. Furthermore, you have to instantiate it by hand (like any other java object).</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PizzaStore</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">MealFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MealFactory</span><span class="o">();</span>
+
+  <span class="kd">public</span> <span class="n">Meal</span> <span class="nf">order</span><span class="o">(</span><span class="n">String</span> <span class="n">mealName</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">factory</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">mealName</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="o">...</span>
+
+<span class="o">}</span>
+</code></pre></div><p>If you are an android developer you should be familiar with a great annotation processors called <a href="http://jakewharton.github.io/butterknife/">ButterKnife</a>. In ButterKnife you annotate android Views with <code>@InjectView</code>. The ButterKnifeProcessor generates a class <code>MyActivity$$ViewInjector</code>. But in ButterKnife you don&rsquo;t have to instantiate the ButterKnife injector by hand by calling <code>new MyActivity$$ViewInjector()</code> but you can use <code>Butterknife.inject(activity)</code>. ButterKnife internally uses reflections to instantiate <code>MyActivity$$ViewInjector()</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="k">try</span> <span class="o">{</span>
+	<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">injector</span> <span class="o">=</span> <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="n">clsName</span> <span class="o">+</span> <span class="s">&#34;$$ViewInjector&#34;</span><span class="o">);</span>
+<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ClassNotFoundException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+</code></pre></div><p>But is reflection not slow and didn&rsquo;t we tried to get rich of reflections performance issues by using annotation processing which generates native code? Yes, reflection brings perfomance issues. However, it speeds up development because the developer has not to instantiate objects by hand. ButterKnife uses a HashMap to &ldquo;cache&rdquo; the instantiated objects. So <code>MyActivity$$ViewInjector</code> is only instantiated once by using reflections. Next time <code>MyActivity$$ViewInjector</code> is needed it will be retrieved from the HashMap.</p>
+<p><a href="https://github.com/sockeqwe/fragmentargs">FragmentArgs</a> works similar to ButterKnife. It uses reflection to instantiate things that otherwise the developer who uses FragmentArgs has to do manually. FragmentArgs generates a special &ldquo;lookup&rdquo; class while annotation processing which is kind of HashMap. So the whole FragmentArgs library executes only one reflection call at the very first time to instantiate this special HashMap class. Once this class is instantiated with <code>Class.forName()</code> fragment arguments injection runs in native java code.</p>
+<p>All in all it&rsquo;s up to you (the developer of annotation processor) to find a good compromise between reflection and usability for other users of your annotation processor.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>I hope you have a deeper understanding of annotation processing now. I have to say it once again: Annotation processing is a very powerful tool and helps reducing writing boiler plate code. I also want to mention that with annotation processors you can do much more complex things than I show in this simple factory sample, for example type erasure on Generics, because annotation processing happens before type erasure. As you have seen there are two common problems you have to deal when writing: First, if you want to use ElementUtils, TypeUtils and Messager in other  classes then you have to pass them as parameters somehow. In <a href="https://github.com/sockeqwe/AnnotatedAdapter">AnnotatedAdapter</a>, one of my annotation processors for android, I tried to solve that problem with Dagger (Dependency Injection). It feels a little bit to much overhead for such a simple processor, however it has worked well. The second thing you have to deal is you have to make &ldquo;queries&rdquo; for <code>Elements</code>. As I said before, working with elements can be seen as parsing XML or HTML. For HTML you can use jQuery. Something similar to jQuery for annotation processing would be really awesome. Please comment below if you know any similar library.</p>
+<p><strong>Please note that parts of the code of FactoryProcessor has some edges and pitfalls. These &ldquo;mistakes&rdquo; are placed explicit by me to struggle through them as I explain common mistakes while writing annotation processors (like  &ldquo;Attempt to recreate a file&rdquo;). If you start writing your own annotation processor based on FactoryProcessor DON&rsquo;T copy and paste this pitfalls. Instead you should avoid them from the very beginning.</strong></p>
+<p>In a future blog post (Annotation Processing 102) I will write about unit testing annotation processors. However, my next blog post will be about software architecture in android. Stay tuned.</p>
+<h3 id="update">Update</h3>
+<p>I gave a talk about Annotation Processing at droidcon Germany 2015. The video of my talk can be found at <a href="https://www.youtube.com/watch?v=43FFfTyDYEg">youtube</a>:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/43FFfTyDYEg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

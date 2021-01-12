@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Android Navigation with the coordinator pattern">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>In-App Navigation with Coordinators</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>May 05, 2018</li>
+        </ul>
+        <article class="content">
+          
+          <p>Over the last years we have established best practices for writing android apps: clean architecture, architectural patterns like MVP, MVVM, MVI, Repository pattern and so on. But what about in-app navigation? In this blog post I would like to talk about the Coordinator pattern and how we could apply this pattern in android development to organize our in-app navigation code.</p>
+<p>The <a href="http://khanlou.com/2015/01/the-coordinator/">Coordinator pattern</a> is a common pattern in iOS development introduced by Soroush Khanlou to help organizing in-app navigation code,
+which seems to be inspired by <a href="https://martinfowler.com/eaaCatalog/applicationController.html">Application Controller</a> (part of the book <a href="https://martinfowler.com/books/eaa.html">patterns of Enterprise Application Architecture</a> Martin Fowler et al.).</p>
+<p>The goals of this pattern is:</p>
+<ul>
+<li>Avoiding so called Massive ViewControllers (think God-Activity) with way to much responsibilities.</li>
+<li>Give in-app navigation flow logic a home.</li>
+<li>Reuse ViewControllers (think Activity or Fragments) because they are not coupled to in-app navigation.</li>
+</ul>
+<p>Before we get deeper into what the Coordinator pattern is and how it can be implemented, let&rsquo;s take a look at what the current state of in-app navigation in android development is.</p>
+<h2 id="navigation-logic-in-activity-or-fragments">Navigation logic in Activity or Fragments</h2>
+<p>Since the Android SDK requires an Context to start a new Activity (or FragmentManager to put a new Fragment on the back stack) it&rsquo;s quite common to put in-app navigation code directly into your Activity like this (you can find such code in the official android <a href="https://developer.android.com/training/basics/firstapp/starting-activity">guides</a> provided by Google):</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">ShoppingCartActivity</span> <span class="p">:</span> <span class="n">Activity</span><span class="p">()</span> <span class="p">{</span>  
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">b</span> <span class="p">:</span> <span class="n">Bundle</span><span class="p">?){</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">setContentView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">activity_shopping_cart</span><span class="p">)</span>
+    <span class="k">val</span> <span class="py">checkoutButton</span> <span class="p">=</span> <span class="n">findViewById</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">checkoutButton</span><span class="p">)</span>
+    <span class="n">checkoutButton</span><span class="p">.</span><span class="n">setOnClickListener</span> <span class="p">{</span>
+      <span class="k">val</span> <span class="py">intent</span> <span class="p">=</span> <span class="n">Intent</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">CheckoutActivity</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">)</span>
+      <span class="n">startActivity</span><span class="p">(</span><span class="n">intent</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>In-app navigation logic is &ldquo;hard coded&rdquo; in <strong>ShoppingCartActivity</strong> which means navigation is tightly coupled to that activity.
+Can we test this code easily?
+One could argue that we could decouple that by having something like a <strong>Navigator</strong> that can be injected (dependency injection) like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">ShoppingCartActivity</span> <span class="p">:</span> <span class="n">Activity</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">@Inject</span> <span class="k">lateinit</span> <span class="k">var</span> <span class="py">navigator</span> <span class="p">:</span> <span class="n">Navigator</span>  
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">b</span> <span class="p">:</span> <span class="n">Bundle</span><span class="p">?){</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">setContentView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">activity_shopping_cart</span><span class="p">)</span>
+    <span class="k">val</span> <span class="py">checkoutButton</span> <span class="p">=</span> <span class="n">findViewById</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">checkoutButton</span><span class="p">)</span>
+    <span class="n">checkoutButton</span><span class="p">.</span><span class="n">setOnClickListener</span> <span class="p">{</span>
+      <span class="n">navigator</span><span class="p">.</span><span class="n">showCheckout</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">Navigator</span> <span class="p">{</span>
+   <span class="k">fun</span> <span class="nf">showCheckout</span><span class="p">(</span><span class="n">activity</span> <span class="p">:</span> <span class="n">Activity</span><span class="p">){</span>
+    <span class="k">val</span> <span class="py">intent</span> <span class="p">=</span> <span class="n">Intent</span><span class="p">(</span><span class="n">activity</span><span class="p">,</span> <span class="n">CheckoutActivity</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">)</span>
+    <span class="n">activity</span><span class="p">.</span><span class="n">startActivity</span><span class="p">(</span><span class="n">intent</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Okay slightly better but can we do it even better?</p>
+<h2 id="navigation-in-mvvm-or-mvp">Navigation in MVVM or MVP</h2>
+<p>Let me ask you a question: if you use MVP or MVVM where do you put in-app navigation logic?</p>
+<ul>
+<li>
+<p>The layer below Presenter (let&rsquo;s call it business logic)? Not a good idea because the chances are high that you are going to reuse or share parts of your business logic in other different ViewModels or Presenters.</p>
+</li>
+<li>
+<p>In View layer? Do you like playing ping pong between View and Presenter (or ViewModel)?</p>
+</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">ShoppingCartActivity</span> <span class="p">:</span> <span class="n">ShoppingCartView</span><span class="p">,</span> <span class="n">Activity</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">@Inject</span> <span class="k">lateinit</span> <span class="k">var</span> <span class="py">navigator</span> <span class="p">:</span> <span class="n">Navigator</span>
+  <span class="n">@Inject</span> <span class="k">lateinit</span> <span class="k">var</span> <span class="py">presenter</span> <span class="p">:</span> <span class="n">ShoppingCartPresenter</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">b</span> <span class="p">:</span> <span class="n">Bundle</span><span class="p">?){</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">setContentView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">activity_shopping_cart</span><span class="p">)</span>
+    <span class="k">val</span> <span class="py">checkoutButton</span> <span class="p">=</span> <span class="n">findViewById</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">checkoutButton</span><span class="p">)</span>
+    <span class="n">checkoutButton</span><span class="p">.</span><span class="n">setOnClickListener</span> <span class="p">{</span>
+      <span class="n">presenter</span><span class="p">.</span><span class="n">checkoutClicked</span><span class="p">()</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">navigateToCheckout</span><span class="p">(){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showCheckout</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">ShoppingCartPresenter</span> <span class="p">:</span> <span class="n">Presenter</span><span class="p">&lt;</span><span class="n">ShoppingCartView</span><span class="p">&gt;</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">checkoutClicked</span><span class="p">(){</span>
+    <span class="n">view</span><span class="o">?.</span><span class="n">navigateToCheckout</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Or if you prefer MVVM over MVP you might use <a href="https://github.com/googlesamples/android-architecture-components/issues/63">SingleLiveEvents</a> or <a href="https://medium.com/google-developers/livedata-with-snackbar-navigation-and-other-events-the-singleliveevent-case-ac2622673150">EventObserver</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">ShoppingCartActivity</span> <span class="p">:</span> <span class="n">ShoppingCartView</span><span class="p">,</span> <span class="n">Activity</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">@Inject</span> <span class="k">lateinit</span> <span class="k">var</span> <span class="py">navigator</span> <span class="p">:</span> <span class="n">Navigator</span>
+  <span class="n">@Inject</span> <span class="k">lateinit</span> <span class="k">var</span> <span class="py">viewModel</span> <span class="p">:</span> <span class="n">ViewModel</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">b</span> <span class="p">:</span> <span class="n">Bundle</span><span class="p">?){</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">setContentView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">activity_shopping_cart</span><span class="p">)</span>
+    <span class="k">val</span> <span class="py">checkoutButton</span> <span class="p">=</span> <span class="n">findViewById</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">checkoutButton</span><span class="p">)</span>
+    <span class="n">checkoutButton</span><span class="p">.</span><span class="n">setOnClickListener</span> <span class="p">{</span>
+      <span class="n">viewModel</span><span class="p">.</span><span class="n">checkoutClicked</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="n">viewModel</span><span class="p">.</span><span class="n">navigateToCheckout</span><span class="p">.</span><span class="n">observe</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">Observer</span> <span class="p">{</span>
+      <span class="n">navigator</span><span class="p">.</span><span class="n">showCheckout</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">ShoppingCartViewModel</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">val</span> <span class="py">navigateToCheckout</span> <span class="p">=</span> <span class="n">MutableLiveData</span><span class="p">&lt;</span><span class="n">Event</span><span class="p">&lt;</span><span class="n">Unit</span><span class="p">&gt;&gt;</span>
+  <span class="k">fun</span> <span class="nf">checkoutClicked</span><span class="p">(){</span>
+    <span class="n">navigateToCheckout</span><span class="p">.</span><span class="n">value</span> <span class="p">=</span> <span class="n">Event</span><span class="p">(</span><span class="n">Unit</span><span class="p">)</span> <span class="c1">// Trigger the event by setting a new Event as a new value
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><ul>
+<li>So let&rsquo;s put the Navigator into our ViewModel (or Presenter) rather than using EventObserver as shown above?</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">ShoppingCartViewModel</span> <span class="n">@Inject</span> <span class="k">constructor</span><span class="p">(</span><span class="k">val</span> <span class="py">navigator</span> <span class="p">:</span> <span class="n">Navigator</span><span class="p">)</span>  <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">fun</span> <span class="nf">checkoutClicked</span><span class="p">(){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showCheckout</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Please note that the code snipped shown above can be translated to Presenter too (injecting Navigator as constructor parameter to Presenter).
+Also, we ignore the fact that Navigator could leak the Activity if it internally holds a reference to it (that is solvable somehow with a workaround).</p>
+<h2 id="coordinators">Coordinators</h2>
+<p>So where do we put in-app navigation logic? Business Logic is not a good idea (as described above) and playing ping pong between View and ViewModel (or Presenter) might work but doesn&rsquo;t seem to be a elegant solution.
+Moreover, View still has navigation related responsibilities even if it&rsquo;s just calling <strong>navigator</strong>.
+Therefore, doing navigation in the ViewModel seems to be a considerable alternative but is it really the responsibility of the ViewModel (or Presenter) to care about navigation?
+Shouldn&rsquo;t it be just the glue to present data?
+That&rsquo;s why we introduce a Coordinator.
+Yet another level of abstraction?
+Is it really worthwhile?
+Maybe not for a small app but for more complex apps or apps that run A/B tests this could be useful.
+Even if a user can create an account and sign in you have already some major navigation logic -
+somewhere you have to check if the user is logged in or not and navigate to the login screen or to the main screen, right?
+A Coordinator can be useful in this case.
+Also note that Coordinators are not helping you to write less code, they help you to organize in-app navigation related code by giving it a home (and take that responsibility out of View or ViewModel).</p>
+<p>The idea is simple: a Coordinator just knows to which screen to go next.
+For example by clicking on the checkout button the Coordinator gets notified and knows where to go next (Checkout).
+It&rsquo;s that simple.
+However, in iOS development it seems to be common to use Coordinator to create ViewControllers, service locator (or dependency injection) and back stack management.
+That&rsquo;s quite a bit for a Coordinator (single responsibility?).
+On Android the operating system instantiates Activities, we have Dagger for dependency injection and we can use Activity or Fragment back stack.
+Therefore, I would like to go back to the roots of a Coordinator: A Coordinator just knows where to go next.</p>
+<h2 id="case-study-a-newspaper-app-using-the-coordinator-pattern">Case Study: A newspaper app using the Coordinator pattern</h2>
+<p>Finally: let&rsquo;s talk about concrete Coordinators.
+Let&rsquo;s say we have to build a small application for a newspaper with a simple in-app navigation flow:
+As a user you see a list of news articles.
+Once you click on an article the app opens a new screen where you can read the full article.</p>
+<p><img src="/images/coordinators/NewsSimpleFlow.png" alt="NewsFlow"></p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">NewsFlowCoordinator</span> <span class="p">(</span><span class="k">val</span> <span class="py">navigator</span> <span class="p">:</span> <span class="n">Navigator</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="k">fun</span> <span class="nf">start</span><span class="p">(){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showNewsList</span><span class="p">()</span>
+  <span class="p">}</span> 
+
+  <span class="k">fun</span> <span class="nf">readNewsArticle</span><span class="p">(</span><span class="n">id</span> <span class="p">:</span> <span class="n">Int</span><span class="p">){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showNewsArticle</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>A Flow contains one or more screens.
+In our case the &ldquo;news flow&rdquo; consists of two screens: news list and read the full news article.
+That&rsquo;s it. It&rsquo;s so simple we don&rsquo;t need a library.
+Whenever we start the app, we call <strong>NewsFlowCoordinator.start()</strong> to show the list of all news articles.
+Once the user clicks on a news article <strong>NewsFlowCoordinator.readNewsArticle(id)</strong>  gets called and that news article gets displayed.
+We still have a Navigator (we will talk about it in a minute) where we delegate the actual &ldquo;screen swapping&rdquo; work to.
+A Coordinator is completely stateless, independent from the underlying back stack implementation and only has one responsibility principle: It handles where to go next.</p>
+<p>The next question is how do we connect a Coordinator with our ViewModel?
+We follow the push don&rsquo;t pull principle: We pass a lambda (think callback or click listener) into the ViewModel that is triggered once the user clicks on a news article in the UI like that:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">NewsListViewModel</span><span class="p">(</span>
+  <span class="n">newsRepository</span> <span class="p">:</span> <span class="n">NewsRepository</span><span class="p">,</span> 
+  <span class="k">var</span> <span class="py">onNewsItemClicked</span><span class="p">:</span> <span class="p">(</span> <span class="p">(</span><span class="n">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span> <span class="p">)?</span>
+<span class="p">)</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+  
+  <span class="k">val</span> <span class="py">newsArticles</span> <span class="p">=</span> <span class="n">MutableLiveData</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">News</span><span class="p">&gt;&gt;</span>
+
+  <span class="k">private</span> <span class="k">val</span> <span class="py">disposable</span> <span class="p">=</span> <span class="n">newsRepository</span><span class="p">.</span><span class="n">getNewsArticles</span><span class="p">().</span><span class="n">subscribe</span> <span class="p">{</span> 
+      <span class="n">newsArticles</span><span class="p">.</span><span class="n">value</span> <span class="p">=</span> <span class="n">it</span>
+  <span class="p">}</span>
+
+  <span class="k">fun</span> <span class="nf">newsArticleClicked</span><span class="p">(</span><span class="n">id</span> <span class="p">:</span> <span class="n">Int</span><span class="p">){</span>
+    <span class="n">onNewsItemClicked</span><span class="o">!!</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="c1">// call the lambda
+</span><span class="c1"></span>  <span class="p">}</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCleared</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">disposable</span><span class="p">.</span><span class="n">dispose</span><span class="p">()</span>
+    <span class="n">onNewsItemClicked</span> <span class="p">=</span> <span class="k">null</span> <span class="c1">// to avoid memory leaks
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p><strong>onNewsItemClicked: (Int) -&gt; Unit</strong> is just a lambda that takes an integer as input and returns Unit.
+We pass that lambda as nullable into our ViewModel, hence the surrounding <strong>( &hellip; )?</strong>. This allows us to clear the reference to that lambda to avoid memory leaks.
+The next question is: what is actually happening by invoking this lambda?
+It&rsquo;s the navigation flow handler, in other words: a callback to the <strong>NewsFlowCoordinator</strong>.
+Whoever creates the <strong>NewsListViewModel</strong> (i.e. Dagger) has to pass in the function <strong>NewsFlowCoordinator::readNewsArticle</strong> like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">return</span> <span class="n">NewsListViewModel</span><span class="p">(</span>
+  <span class="n">newsRepository</span> <span class="p">=</span> <span class="n">newsRepository</span><span class="p">,</span>
+  <span class="n">onNewsItemClicked</span> <span class="p">=</span> <span class="n">newsFlowCoordinator</span><span class="o">::</span><span class="n">readNewsArticle</span>
+<span class="p">)</span>
+</code></pre></div><p>If you are not an Kotlin expert let me quickly explain you what&rsquo;s going on here.
+Whenever the user clicks on a item in the news list <strong>viewModel.newsArticleClicked(id)</strong> gets called which then invokes <strong>onNewsItemClicked(id)</strong> which is actually the function <strong>readNewsArticle(id)</strong> of NewsFlowCoordinator.
+So a click on a news list item triggers eventually <strong>NewsFlowCoordinator.readNewsArticle(id)</strong>.</p>
+<p>The next question is: how is <strong>Navigator</strong> implemented?
+This is mostly left as an exercise for the reader because it depends on your concrete use case and personal preferences.
+In this example we use a single Activity with multiple Fragments (each screen is a Fragment with corresponding ViewModel).
+Hence a very naive implementation could look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">Navigator</span><span class="p">{</span>
+  <span class="k">var</span> <span class="py">activity</span> <span class="p">:</span> <span class="n">FragmentActivity</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span>
+
+  <span class="k">fun</span> <span class="nf">showNewsList</span><span class="p">(){</span>
+    <span class="n">activty</span><span class="o">!!</span><span class="p">.</span><span class="n">supportFragmentManager</span>
+      <span class="p">.</span><span class="n">beginTransaction</span><span class="p">()</span>
+      <span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">fragmentContainer</span><span class="p">,</span> <span class="n">NewsListFragment</span><span class="p">())</span>
+      <span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="k">fun</span> <span class="nf">showNewsDetails</span><span class="p">(</span><span class="n">newsId</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">activty</span><span class="o">!!</span><span class="p">.</span><span class="n">supportFragmentManager</span>
+      <span class="p">.</span><span class="n">beginTransaction</span><span class="p">()</span>
+      <span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">fragmentContainer</span><span class="p">,</span> <span class="n">NewsDetailFragment</span><span class="p">.</span><span class="n">newInstance</span><span class="p">(</span><span class="n">newsId</span><span class="p">))</span>
+      <span class="p">.</span><span class="n">addToBackStack</span><span class="p">(</span><span class="s">&#34;NewsDetail&#34;</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">MainActivity</span> <span class="p">:</span> <span class="n">AppCompatActivity</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">@Inject</span> <span class="k">lateinit</span> <span class="k">var</span> <span class="py">navigator</span> <span class="p">:</span> <span class="n">Navigator</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="n">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
+    <span class="n">setContentView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">activity_main</span><span class="p">)</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">activty</span> <span class="p">=</span> <span class="k">this</span>
+  <span class="p">}</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">onDestroy</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onDestroy</span><span class="p">()</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">activty</span> <span class="p">=</span> <span class="k">null</span> <span class="c1">// Avoid memory leaks
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>The presented Navigator implementation is not perfect at all.
+The focus of this blog post is the Coordinator pattern, not the Navigator implementation.
+One thing to note though is that since Navigator and NewsFlowCoordinator are stateless they can be in application wide scope (think @Singleton scope in Dagger) and can be instantiated for example in Application.onCreate().</p>
+<p>So let&rsquo;s add user authentication functionality to our newspaper app.
+We define a new login screen (LoginFragment + LoginViewModel, we skip &ldquo;forgot password&rdquo; and &ldquo;sign up&rdquo; in this blog post) and a LoginFlowCoordinator.<br>
+Why not add this functionality to <strong>NewsFlowCoordinator</strong>?
+We don&rsquo;t want to have a God-Coordinator, right?
+Also, login related screens belong to a different navigation flow (not reading news), right?</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">LoginFlowCoordinator</span><span class="p">(</span>
+  <span class="k">val</span> <span class="py">navigator</span><span class="p">:</span> <span class="n">Navigator</span>
+<span class="p">)</span> <span class="p">{</span>
+  <span class="k">fun</span> <span class="nf">start</span><span class="p">(){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showLogin</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="k">fun</span> <span class="nf">registerNewUser</span><span class="p">(){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showRegistration</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="k">fun</span> <span class="nf">forgotPassword</span><span class="p">(){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showRecoverPassword</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">LoginViewModel</span><span class="p">(</span>
+  <span class="k">val</span> <span class="py">usermanager</span><span class="p">:</span> <span class="n">Usermanager</span><span class="p">,</span>
+  <span class="k">var</span> <span class="py">onSignUpClicked</span><span class="p">:</span> <span class="p">(</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="n">Unit</span> <span class="p">)?,</span>
+  <span class="k">var</span> <span class="py">onForgotPasswordClicked</span><span class="p">:</span> <span class="p">(</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="n">Unit</span> <span class="p">)?</span>
+<span class="p">)</span> <span class="p">{</span>
+  <span class="k">fun</span> <span class="nf">login</span><span class="p">(</span><span class="n">username</span> <span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="n">String</span><span class="p">){</span>
+    <span class="n">usermanager</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="p">...</span>
+  <span class="p">}</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><p>There are two things in <strong>LoginViewModel</strong> worthwhile to discuss: First for every kind of navigation we define it&rsquo;s own lambda (sign up and forgot password) that gets invoked once the user clicks on the corresponding UI widget.
+But why is there no &ldquo;login successful&rdquo; lambda?
+How do we trigger navigation to next screen after the user is authenticated?<br>
+This is yet another implementation detail (there totally could be a &ldquo;login successful&rdquo; lambda) I think it makes more sense to do the following: We add a new <strong>RootFlowCoordinator</strong>  and observe the <strong>Usermanager</strong> (business logic) for changes.
+The Usermanager provides API to sign in and to subscribe (observe, i.e. RxJava) for the current user.</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">RootFlowCoordinator</span><span class="p">(</span>
+  <span class="k">val</span> <span class="py">usermanager</span><span class="p">:</span> <span class="n">Usermanager</span><span class="p">,</span>
+  <span class="k">val</span> <span class="py">loginFlowCoordinator</span><span class="p">:</span> <span class="n">LoginFlowCoordinator</span><span class="p">,</span>
+  <span class="k">val</span> <span class="py">newsFlowCoordinator</span><span class="p">:</span> <span class="n">NewsFlowCoordinator</span><span class="p">,</span>
+  <span class="k">val</span> <span class="py">onboardingFlowCoordinator</span><span class="p">:</span> <span class="n">OnboardingFlowCoordinator</span>
+<span class="p">)</span> <span class="p">{</span>
+
+  <span class="n">init</span> <span class="p">{</span>
+    <span class="n">usermanager</span><span class="p">.</span><span class="n">currentUser</span><span class="p">.</span><span class="n">subscribe</span> <span class="p">{</span> <span class="n">user</span> <span class="p">-&gt;</span>
+      <span class="k">when</span> <span class="p">(</span><span class="n">user</span><span class="p">){</span>
+        <span class="k">is</span> <span class="n">NotAuthenticatedUser</span> <span class="p">-&gt;</span> <span class="n">loginFlowCoordinator</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">is</span> <span class="n">AuthenticatedUser</span> <span class="p">-&gt;</span> <span class="k">if</span> <span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">onBoardingCompleted</span><span class="p">)</span>
+                                    <span class="n">newsFlowCoordinator</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+                                <span class="k">else</span>
+                                    <span class="n">onboardingFlowCoordinator</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">fun</span> <span class="nf">onboardingCompleted</span><span class="p">(){</span>
+    <span class="n">newsFlowCoordinator</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>As the name already suggests, <strong>RootFlowCoordinator</strong> becomes our new starting point (not NewsFlowCoordinator.start() anymore).
+Let&rsquo;s take a closer look at the RootFlowCoordinator.
+As already mentioned RootFlowCoordinator observes the <strong>Usermanager</strong> whether or not the current user is authenticated.
+If user is not authenticated, then we start the <strong>LoginFlowCoordinator</strong>.
+If the user is authenticated (note that if the login in LoginFragment was successful it will propagated to this piece of code, hence no &ldquo;login successful&rdquo; lambda in LoginViewModel) then we check if the user already did the onboarding (we will talk about it in a minute) and start the <strong>NewsFlowCoordinator</strong>, otherwise we start the <strong>OnboardingFlowCoordinator</strong>.
+Please note that starting a coordinator doesnt mean creating a new instance, it means calling the start() method.
+Let&rsquo;s take a look at the Onboarding flow</p>
+<p><img src="/images/coordinators/OnboardingFlow.png" alt="OnboardingFlow"></p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">OnboardingFlowCoordinator</span><span class="p">(</span>
+  <span class="k">val</span> <span class="py">navigator</span><span class="p">:</span> <span class="n">Navigator</span><span class="p">,</span>
+  <span class="k">val</span> <span class="py">onboardingFinished</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="n">Unit</span> <span class="c1">// this is RootFlowCoordinator.onboardingCompleted()
+</span><span class="c1"></span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="k">fun</span> <span class="nf">start</span><span class="p">(){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showOnboardingWelcome</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="k">fun</span> <span class="nf">welcomeShown</span><span class="p">(){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showOnboardingPersonalInterestChooser</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="k">fun</span> <span class="nf">onboardingCompleted</span><span class="p">(){</span>
+    <span class="n">onboardingFinished</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Onboarding starts with  <strong>OnboardingFlowCoordinator.start()</strong> which shows WelcomeFragment (WelcomeViewModel).
+Once the use clicks the &ldquo;next button&rdquo; <strong>OnboardingFlowCoordinator.welcomeShown()</strong> is invoked which then shows the next screen (PersonalInterestFragment + PersonalInterestViewModel) where the user can set categories of news he is interested in.
+Once categories are selected and user clicked &ldquo;next button&rdquo; <strong>OnboardingFlowCoordinator.onboardingCompleted()</strong> is invoked which is then actually invoking <strong>RootFlowCoordinator.onboardingCompleted()</strong> which then calls <strong>NewsFlowCoordinator.start()</strong>.
+This is how we solve parent-child relations with coordinators: lambdas (or callbacks) to the parent coordinator.</p>
+<p>I have mentioned before that Coordinators are useful for A/B tests.
+Let&rsquo;s add a screen that asks the user to do an in app purchase extend our NewsFlowCoordinator so that either the user sees that new screen or not depending on if he is part of group B of the A/B test.</p>
+<p><img src="/images/coordinators/NewsFlowAB.png" alt="NewsFlowWithABTest"></p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">NewsFlowCoordinator</span> <span class="p">(</span>
+  <span class="k">val</span> <span class="py">navigator</span> <span class="p">:</span> <span class="n">Navigator</span><span class="p">,</span>
+  <span class="k">val</span> <span class="py">abTest</span> <span class="p">:</span> <span class="n">AbTest</span>
+<span class="p">)</span> <span class="p">{</span>
+
+  <span class="k">fun</span> <span class="nf">start</span><span class="p">(){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showNewsList</span><span class="p">()</span>
+  <span class="p">}</span> 
+
+  <span class="k">fun</span> <span class="nf">readNewsArticle</span><span class="p">(</span><span class="n">id</span> <span class="p">:</span> <span class="n">Int</span><span class="p">){</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showNewsArticle</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">fun</span> <span class="nf">closeNews</span><span class="p">(){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">abTest</span><span class="p">.</span><span class="n">isB</span><span class="p">){</span>
+      <span class="n">navigator</span><span class="p">.</span><span class="n">showInAppPurchases</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">navigator</span><span class="p">.</span><span class="n">closeNews</span><span class="p">()</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Again, no navigation logic is in your View or ViewModel but rather the Coordinator knows how to deal with A/B tests.
+Do you have to add the <strong>InAppPurchaseFragment</strong> to the onboarding flow too?
+You can do that because the InAppPurchaseFragment nor the corresponding ViewModel is coupled to navigation related code and therefore it is possible to reuse Fragments and ViewModel in other flows.
+All we have to pass to the ViewModel is a different lambda as navigation callback.
+Is your A/B test bigger than just adding one screen, for example two different onboarding flows you want to A/B test?
+No problem, just create a OnboardingFlowACoordinator and OnboardingFlowBCoordinator.</p>
+<p>You can find the source code <a href="https://github.com/sockeqwe/CoordinatorsAndroid">on Github</a>. If you are too lazy to compile and run the app yourself, here is a little video of the final result:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/PfRLZeRLvTo" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p><strong>Pro Tip:</strong>
+With Kotlin you can create nice DSLs for your Coordinators.
+This makes your in-app navigation code even more readable because basically you are creating a navigation graph.</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">newsFlowCoordinator</span><span class="p">(</span><span class="n">navigator</span><span class="p">,</span> <span class="n">abTest</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="n">start</span> <span class="p">{</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showNewsList</span><span class="p">()</span>
+  <span class="p">}</span> 
+
+  <span class="n">readNewsArticle</span> <span class="p">{</span> <span class="n">id</span> <span class="p">-&gt;</span>
+    <span class="n">navigator</span><span class="p">.</span><span class="n">showNewsArticle</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="n">closeNews</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">abTest</span><span class="p">.</span><span class="n">isB</span><span class="p">){</span>
+      <span class="n">navigator</span><span class="p">.</span><span class="n">showInAppPurchases</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">navigator</span><span class="p">.</span><span class="n">closeNews</span><span class="p">()</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="conclusion">Conclusion</h2>
+<p>Coordinators can help you to organize in-app navigation logic by creating loosely coupled components with single responsibility and great testability.
+Coordinators can be scoped similar to singleton because they are stateless and you don&rsquo;t create new navigation flows at runtime, therefore you can &ldquo;hard code&rdquo; all your in app navigation flows with very readable Kotlin DSL&rsquo;s.
+Are Coordinators on Android ready for prime time?
+As already said, this is not a library, this is just an idea and concept.
+Is this idea applicable in your app?
+I dont know, ultimately it&rsquo;s your app and you know best if there is need for the Coordinator pattern and how easy it is to integrate it into your existing app architecture.
+Maybe it&rsquo;s a good idea to create a small sample application to try this pattern out.</p>
+<h2 id="faq">FAQ</h2>
+<ul>
+<li>What about Model-View-Intent? Does the Coordinator pattern work well with MVI too? Sure, take a look <a href="http://hannesdorfmann.com/android/mosby3-mvi-8">here</a></li>
+<li>What about <strong>Navigation Controller</strong> from Android Jetpack? This is an implementation detail. Instead of using Navigator use Navigation Controller (or inside your Navigator implementation: rather than executing FragmentTransactions directly use Navigation Controller).</li>
+<li>What if I don&rsquo;t want to use Fragments at all? How hard is it to write my own back stack that plays nice with the Coordinator pattern (i.e. just using custom ViewGroups)? Stay tuned, I&rsquo;m working on a prove of concept and will share it in my blog. Hint: Finite state machines FTW.</li>
+<li>Do I have to use a single Activity? No, use whatever you want to do. You can have multiple activities with multiple fragments, whatever works best for you. These implementation details are hidden behind the Navigator class</li>
+<li>Do I have to have one giant Navigator class? Absolutely not! Create multiple Navigator classes (i.e. one for each flow) to keep them small and maintainable.</li>
+<li>What about animations like shared element transitions?
+Don&rsquo;t put them directly into your Fragment (or Activity or ViewGroup, whatever you use in your app) because if you do so your Fragment is highly coupled to the &ldquo;previous&rdquo; or &ldquo;next&rdquo; fragment and that is exactly what we want to avoid.
+Put shared element transition code (or animation code in general) in your Navigator.
+But how dows a Navigator knows when it&rsquo;s time to start the animation?
+Let&rsquo;s assume you have to navigate from <strong>Fragment A</strong> to <strong>Fragment B</strong> and you want to show a shared element transition.
+Add a <a href="https://developer.android.com/reference/android/support/v4/app/FragmentManager.FragmentLifecycleCallbacks">FragmentLifecycleCallback</a> to Fragment so that you can listen for <strong>onFragmentViewCreated(v : View)</strong>.
+Next do pretty the same as you would do directly in your Fragment:
+Add a <strong>OnPreDrawListener</strong> to wait until everything is ready and call <strong>startPostponedEnterTransition()</strong>.
+You can apply the same idea for Activities by using <a href="https://developer.android.com/reference/android/app/Application.ActivityLifecycleCallbacks">ActivityLifecycleCallbacks</a> or ViewGroups with OnHierarchyChangeListener and others.
+Just be careful to unregister listeners to avoid memory leaks.</li>
+</ul>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

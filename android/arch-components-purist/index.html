@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="MVI and LiveData? How does that fit together in google Archutecture Components sample">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Architecture Components - I&#39;m not a purist but ...</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Jun 25, 2017</li>
+        </ul>
+        <article class="content">
+          
+          <p>At I/O 2017 Google surprised us with a new initiative: <a href="https://developer.android.com/topic/libraries/architecture/index.html">Architecture Components</a>. I really appreciate this initiative. In this blog post I would like to share my thoughts about ViewModel and some pitfalls you might stumble upon when using ViewModel and LiveData by taking a look at the official Google samples.</p>
+<h2 id="the-state-problem">The State Problem</h2>
+<p>It is not a secret that I&rsquo;m a big fan of <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">Model-View-Intent (MVI)</a>.
+This is just a matter of personal preference one could argue and I&rsquo;m not disagreeing.
+I like MVI because state management, unidirectional data flow and immutability is a core part of the pattern.
+On the other hand MVVM and MVP don&rsquo;t talk about state management although it can be (and should) applied in these patterns too.
+For example Laimonas Turauskas from Instacart wrote a <a href="https://tech.instacart.com/lce-modeling-data-loading-in-rxjava-b798ac98d80">blog post</a>
+how they do state management in their MVP based app.
+Fortunately, Google&rsquo;s MVVM samples show how to do that with ViewModel and LiveData too.
+Take a look at <a href="https://github.com/googlesamples/android-architecture-components">this example</a> which is an app that let&rsquo;s you browse Github. It&rsquo;s a very simplified Github client that uses Githubs REST API to display some data about git repositories and users.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">enum</span> <span class="n">Status</span> <span class="o">{</span>
+    <span class="n">SUCCESS</span><span class="o">,</span>
+    <span class="n">ERROR</span><span class="o">,</span>
+    <span class="n">LOADING</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Resource</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">final</span> <span class="n">Status</span> <span class="n">status</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">message</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="n">T</span> <span class="n">data</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Resource</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">Status</span> <span class="n">status</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">T</span> <span class="n">data</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="n">status</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Resource</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">success</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">T</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">Resource</span><span class="o">&lt;&gt;(</span><span class="n">SUCCESS</span><span class="o">,</span> <span class="n">data</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Resource</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">error</span><span class="o">(</span><span class="n">String</span> <span class="n">msg</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">T</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">Resource</span><span class="o">&lt;&gt;(</span><span class="n">ERROR</span><span class="o">,</span> <span class="n">data</span><span class="o">,</span> <span class="n">msg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Resource</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">loading</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">T</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">Resource</span><span class="o">&lt;&gt;(</span><span class="n">LOADING</span><span class="o">,</span> <span class="n">data</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>A <code>Resource</code> is used for example to wrap a http response i.e. <code>Resource&lt;ApiResponse&gt;</code> (ApiResponse holds the json parsed data returned from github.com).
+Btw. if you use Kotlin, you should take a look at <code>sealed classes</code>.</p>
+<p>I&rsquo;m super happy to see such state management related code in official Google samples and
+encourage developers to build your apps with proper state management in mind.
+However, in the same Google example we can scroll through a infinite list of search results (uses pagination). Some interesting observation:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SearchViewModel</span> <span class="kd">extends</span> <span class="n">ViewModel</span> <span class="o">{</span>
+  <span class="o">...</span>
+  <span class="kd">public</span> <span class="n">LiveData</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Repo</span><span class="o">&gt;&gt;&gt;</span> <span class="nf">getResults</span><span class="o">()</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+  <span class="kd">public</span> <span class="n">LiveData</span><span class="o">&lt;</span><span class="n">LoadMoreState</span><span class="o">&gt;</span> <span class="nf">getLoadMoreStatus</span><span class="o">()</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p><code>getResults()</code> is used to represent the search results whereas <code>getLoadingMoreStatus()</code> is used for consecutive pagingation.</p>
+<p>Why not just one <code>LiveData&lt;State&gt; getState()</code>? Wouldn&rsquo;t it make state management especially in a multi threaded environment more predictable and deterministic?</p>
+<p>I&rsquo;m not a purist but it leaves a stale after-taste &hellip;</p>
+<h2 id="the-mantra-problem">The mantra problem</h2>
+<p><code>LiveData</code> seems to be a very simplified version of RxJava&rsquo;s <code>Observable</code>.
+LiveData is lifecycle aware so that we as developer don&rsquo;t have to unsubscribe explicitly as we have to do with RxJava&rsquo;s Observable. Both implement the Observer pattern.
+LiveData doesn&rsquo;t provide all this fancy functional programming operators as RxJava does although architecture components provides some functional concepts via <code>Transformations</code> helper class such as <code>Transformations.map()</code> and <code>Transformations.switchMap()</code>.</p>
+<p>Quite often I hear developers saying how much they like functional reactive programming and pure functions without side effects but then we write code like <code>mutableLiveData.setValue(...)</code>.</p>
+<p>I&rsquo;m not a purist but it leaves a stale after-taste &hellip;</p>
+<h2 id="the-state-restoration-race">The state restoration race</h2>
+<p><a href="https://twitter.com/riggaroo">Rebecca Franks</a> who seems to be working on a sample app
+(with LiveData and Architecture Components) asked an interesting question in a public slack chat about a Google TODO app example, more specific about the screen where the user can create a new TODO Task:</p>
+<blockquote>
+<p>Is there a reason why the Fragment passes information back to the ViewModel when calling <code>saveTask(title, description)</code>. The ViewModel has the title and description already, so does that need to be passed into the saveTask(title, description) method explicitly?</p>
+</blockquote>
+<p>The code she is referring to can be found <a href="https://github.com/googlesamples/android-architecture/blob/dev-todo-mvvm-live/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/addedittask/AddEditTaskFragment.java#L111">here</a>.
+At first glance the answer seems to be obvious: <em>&ldquo;No, there is no reason to pass that information back from View to the ViewModel because the ViewModel already holds this information&rdquo;</em>.
+Is that always true?</p>
+<p>Well, ViewModel is &ldquo;only&rdquo; kept across screen orientation changes.
+On the other hand UI widgets like EditText store and restore their own state.
+Do you see the conflict potential?
+Just for fun, let&rsquo;s also add android data binding into this equation:
+the problem is that data binding will override the value of the restored UI widget (Update: this problem might be <a href="https://github.com/googlesamples/android-architecture-components/issues/47#issuecomment-310928267">addressed</a> in the future).</p>
+<p>I&rsquo;m not really answering  Rebecca&rsquo;s question because the previous answer that has seemed to be so obvious is actually not that obvious anymore. So which one is the source of truth? Should the ViewModel&rsquo;s state be persisted too (see <a href="https://proandroiddev.com/customizing-the-new-viewmodel-cf28b8a7c5fc">this post</a> by <a href="https://twitter.com/PreusslerBerlin">Danny Preussler</a> and <a href="https://developer.android.com/topic/libraries/architecture/viewmodel.html#viewmodel_vs_savedinstancestate">official docs</a>)? Which one wins the state restoration race?</p>
+<p>I&rsquo;m not a purist but it leaves a stale after-taste &hellip;</p>
+<h2 id="the-singleliveevent-problem">The &ldquo;SingleLiveEvent&rdquo; problem</h2>
+<p><a href="https://twitter.com/fabiocollini">Fabio Collini</a> raised another very interesting <a href="https://github.com/googlesamples/android-architecture-components/issues/63">question</a> about the Google&rsquo;s sample github client app that is powered by the new Architecture Components:</p>
+<blockquote>
+<p>Sometimes the ViewModel needs to invoke an action using an Activity (for example to show a snack bar or to navigate to a new activity). Using MVP it&rsquo;s easy to implement it because the presenter has a reference to the Activity. The ViewModel doesn&rsquo;t contain a reference to the Activity, what&rsquo;s the best way to implement this feature?</p>
+</blockquote>
+<p>What he means is an &ldquo;action&rdquo; that takes place only one time like displaying a SnackBar or a Toast.
+If you would model this problem in MVVM you would have a <code>LiveData&lt;String&gt; getSnackBarErrorMessage()</code>  in your ViewModel and the View subscribes to it.
+If the emitted String (error message) is null, don&rsquo;t display a SnackBar, otherwise display it.
+The problem he is facing is that this flag must be cleared somehow
+otherwise the SnackBar is shown again after a screen orientation change because LiveData is emitting the latest (cached) value when the view (re)subscribes to it.</p>
+<p>In the Google samples they have added a class called <a href="https://github.com/googlesamples/android-architecture/blob/dev-todo-mvvm-live/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/SingleLiveEvent.java">SingleLiveEvent extends LiveData</a>.
+The idea is that once an event has been dispatched it  <del>sets the internal value to null</del>
+doesn&rsquo;t dispatch the value (Update: I was wrong, it doesn&rsquo;t set the value internally to null, thanks Jose Alcérreca for the hint).
+This prevents the SnackBar to appear a second time after screen orientation change.</p>
+<p>Well, SingleLiveEvent seems to solve this problem, but isn&rsquo;t it just hiding the real underlying problem (hint: state management)?</p>
+<p>Additionally, if we introduce something like a SingeLiveEvent because of showing something only
+once (i.e SnackBar) wouldn&rsquo;t we then leak an implementation detail from the View Layer down to underlying layers like ViewModel or business logic?
+What if one day we would like to change the way such a message is displayed from SnackBar to TextView, which layers would we have to change? Only the View (UI) layer?
+Btw. I have commented on that issue too and suggested an <a href="https://github.com/googlesamples/android-architecture-components/issues/63#issuecomment-310422475">alternative solution</a></p>
+<p>I&rsquo;m not a purist but it leaves a stale after-taste &hellip;</p>
+<h2 id="conclusion-im-a-purist">Conclusion: I&rsquo;m a purist</h2>
+<p>As you see, even in such small sample apps like a Github client or a TODO app we face some tricky edge cases.
+From my point of view this is not related to any particular architectural pattern.
+It doesn&rsquo;t matter if you prefer MVVM with the new Architecture Components or MVP or MVI or whatever else.
+This kind of problems are just the symptoms of a much deeper issue we face but maybe haven&rsquo;t thought about it yet: proper state management. I guess I am a purist when it comes to state management.</p>
+<p>Google&rsquo;s Architecture Components are awesome and this blog post is by no means a critique on that great library nor on the examples Google (and many other external contributors) provided us.
+I just think that with the introduction of Architecture Components we (including Android Developers from around the world and Google Developers) have a very unique chance
+to create examples that can be considered as a reference implementation.
+These are great starting point for any Junior Android developer.
+By agreeing on the importance of state management, regardless if you are a purist or not, such a reference implementation could
+help a lot developers avoiding pain points in the future from lessons we have already learned the hard way in the past.
+Let&rsquo;s reflect that in official Google examples.
+They are open source, let&rsquo;s contribute!</p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

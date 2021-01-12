@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="A simple library to show debug logs on top of your android app">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Debug Overlay</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Oct 16, 2015</li>
+        </ul>
+        <article class="content">
+          
+          <p>Lately I was looking for a way to display some app internal information to an external staff  that is not a developer. I haven&rsquo;t found a library that fit my needs. Hence I have written my own tiny library called <strong>DebugOverlay</strong> to do this job.</p>
+<p>Usually we as developers would log app internal things by using logcat <strong>Log.d()</strong>. But what if we have to provide app internal logs to non developers? Can they access logcat? Do they have to install android studio and enable developer options on their android device? Wouldn&rsquo;t it be nice if non developers could just see these logging information directly in the app somehow?
+In my concrete use case I was looking for a way to display tracking information on screen to allow external staff (not developers) to validate that the app was tracking the right information as the string to be tracked is computed dynamically for each screen (plenty of parameters and conditions).</p>
+<p>Obviously, we can and should write unit tests for that (Robolectric powered unit tests could do that job much faster as instrumentation tests). However, there is a lot of money depending on the correctness of the tracking (advertisement contracts are negated on the reach of the app) and therefore an external staff has to verify manually that the tracking works correctly. As already said this external staff is not a developer. Hence he need a comfortable way to get displayed this information directly in the app. So how could we display the tracking information? The simplest way is to display a <strong>Toast</strong>, but that doesn&rsquo;t work well when navigating fast in the app like swiping in a <strong>ViewPager</strong>. An alternative could be to add a <strong>TextView</strong> dynamically on each Activity and Fragment&rsquo;s root layout. The problem with that approach is that this leads to fragile code.</p>
+<p>What I really want is having an independent window just for displaying tracking information in a logcat alike fashion, something like this:</p>
+<p><img src="/images/debugoverlay.png" alt="Debug Overlay"></p>
+<p>Why an independent window? Because I want avoid side effects on my production code. How to implement such a window? It&rsquo;s easier than you might have thought before. I guess you have already heard or already used <a href="https://www.facebook.com/help/android-app/101495056700254?rdrhc">facebook&rsquo;s chat heads</a>. I&rsquo;m sure there are plenty tutorials and blog post out there describing how to implement something like that. In a nutshell: Implement your own android <strong>Service</strong> and use the <strong>WindowManager</strong> to add a View. Yes, services can have Views:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">DebugOverlayService</span> <span class="kd">extends</span> <span class="n">Service</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(){</span>
+    <span class="n">FrameLayout</span> <span class="n">rootLayout</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FrameLayout</span><span class="o">();</span>
+    <span class="n">rootLayout</span><span class="o">.</span><span class="na">addView</span><span class="o">(</span><span class="n">listView</span><span class="o">);</span>
+    <span class="n">rootLayout</span><span class="o">.</span><span class="na">addView</span><span class="o">(</span><span class="n">closeButton</span><span class="o">);</span>
+
+    <span class="n">WindowManager</span> <span class="n">windowManager</span> <span class="o">=</span> <span class="o">(</span><span class="n">WindowManager</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getSystemService</span><span class="o">(</span><span class="n">Context</span><span class="o">.</span><span class="na">WINDOW_SERVICE</span><span class="o">);</span>
+
+    <span class="n">WindowManager</span><span class="o">.</span><span class="na">LayoutParams</span> <span class="n">windowParams</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WindowManager</span><span class="o">.</span><span class="na">LayoutParams</span><span class="o">(</span>
+            <span class="n">LayoutParams</span><span class="o">.</span><span class="na">MATCH_PARENT</span><span class="o">,</span> <span class="n">LayoutParams</span><span class="o">.</span> <span class="n">WRAP_CONTENT</span><span class="o">,</span>
+            <span class="n">WindowManager</span><span class="o">.</span><span class="na">LayoutParams</span><span class="o">.</span><span class="na">TYPE_PHONE</span><span class="o">,</span>
+            <span class="n">WindowManager</span><span class="o">.</span><span class="na">LayoutParams</span><span class="o">.</span><span class="na">FLAG_NOT_FOCUSABLE</span><span class="o">,</span>
+            <span class="n">PixelFormat</span><span class="o">.</span><span class="na">TRANSLUCENT</span><span class="o">);</span>
+
+    <span class="n">windowManager</span><span class="o">.</span><span class="na">addView</span><span class="o">(</span><span class="n">rootLayout</span><span class="o">,</span> <span class="n">windowParams</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>As you see, I use the chat heads idea to put a <strong>FrameLayout</strong> containing a <strong>ListView</strong> and a close button in an dedicated window. By clicking on the close button the service will be stopped and the dedicated window removed:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// called when the close button has been clicked
+</span><span class="c1"></span><span class="n">windowManager</span><span class="o">.</span><span class="na">removeView</span><span class="o">(</span><span class="n">rootLayout</span><span class="o">)</span>
+<span class="n">service</span><span class="o">.</span><span class="na">stopSelf</span><span class="o">();</span>
+</code></pre></div><p>At the end I put this simple service in a library and have created a facade class called <strong>DebugOverlay</strong> as public API. This class is also responsible to start and bind the service and to submit new log message to this service. So we can use the <strong>DebugOverlay</strong> like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">DebugOverlay</span><span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="n">context</span><span class="o">).</span><span class="na">log</span><span class="o">(</span><span class="s">&#34;Hello World&#34;</span><span class="o">);</span>
+</code></pre></div><p>Next you may ask how do I ensure that this debug overlay window is just added to debug builds and not to the release builds. I have created a second library artifact with the same <strong>DebugOverlay</strong> facade API but does nothing on method calls.</p>
+<div class="highlight"><pre class="chroma"><code class="language-groovy" data-lang="groovy"><span class="n">debugCompile</span><span class="o">(</span><span class="s1">&#39;com.hannesdorfmann:debugoverlay:0.2.0&#39;</span><span class="o">)</span> <span class="c1">// Starts the service and displays the overlay
+</span><span class="c1"></span><span class="n">releaseCompile</span><span class="o">(</span><span class="s1">&#39;com.hannesdorfmann:debugoverlay-noop:0.2.0&#39;</span><span class="o">)</span> <span class="c1">// Does nothing
+</span></code></pre></div><p>I use gralde build types to include the <strong>debugoverlay</strong> dependency that do display the debug overlay window in debug builds and use the other <strong>debugoverlay-noop</strong> dependency for release builds.</p>
+<p>The <strong>debugoverlay-noop</strong> adds 1 class and 3 methods to your release dex file, which from my point of view is an acceptable compromise.</p>
+<p><strong>Please note</strong> that <strong>com.hannesdorfmann:debugoverlay:0.2.0</strong> will add <strong>android.permission.SYSTEM_ALERT_WINDOW</strong> permission to your <strong>apk</strong>. Hence you should avoid to use that dependency in your release <strong>.apk</strong></p>
+<p>You can find this tiny library on <a href="https://github.com/sockeqwe/debugoverlay">github</a> and is available on maven central.</p>
+<h4 id="update">Update</h4>
+<p>It seems that I have missed some already existing libraries that could do the same job as <strong>DebugOverlay</strong>:</p>
+<ul>
+<li><a href="https://github.com/jgilfelt/GhostLog">GhostLog</a> by Jeff Gilfelt</li>
+<li><a href="https://github.com/inaka/galgo">Galgo</a> by Inaka</li>
+<li><a href="https://github.com/pedrovgs/Lynx">Lynx</a> by Pedro Vicente Gómez Sánchez</li>
+</ul>
+<p>Thanks to everyone for reporting these libraries.</p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

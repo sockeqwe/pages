@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Model-View-Intent MVI on Android by using Mosby 3. Focusing on Independent UI Components and state managment in MVI">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Feb 25, 2017</li>
+        </ul>
+        <article class="content">
+          
+          <p>In this blog post we will discuss how to build
+independent UI components and clarify why Parent-Child relations are a code smell in my opinion. Furthermore, we will discuss why I think such relations are needless.</p>
+<p>One question that arises from time to time with architectural design patterns such as Model-View-Intent, Model-View-Presenter or
+Model-View-ViewModel is how do Presenters (or ViewModels) communicate with
+each other? Or even more specific: How does a &ldquo;Child-Presenter&rdquo; communicate with its &ldquo;Parent-Presenter&rdquo;?</p>
+<p><img src="/images/mvi-mosby3/wtf.jpg" alt="wtf"></p>
+<p>From my point of view such Parent-Child relations are a code smell, because they introduce a
+direct coupling between both Parent and Child, which leads to code that is hard to read, hard to maintain, where changing
+requirement affects a lot of components (hence it&rsquo;s a virtually impossible task in large systems)
+and last but not least introduces shared state that is hard to predict and even harder to reproduce
+and debug.</p>
+<p>So far so good, but somehow the information must flow from Presenter A to Presenter B: How does a Presenter communicate with another Presenter? <strong>They don&rsquo;t!</strong>
+What would a Presenter have to tell another Presenter? <em>Event X</em> has happened? Presenters don&rsquo;t
+have to talk to each other, they just observe the same Model (or the same part of the business
+logic to be precise). That&rsquo;s how they get notified about changes: from the underlying layer.</p>
+<p><img src="/images/mvi-mosby3/mvp-business-logic.png" alt="Presenter-Businesslogic"></p>
+<p>Whenever an <em>Event X</em> happens (i.e. a user clicked on a button in View 1), the Presenter lets that information sink
+down to the business logic. Since the other Presenters are observing the same
+business logic, they get notified by the business logic that something has changed (model has been updated).</p>
+<p><img src="/images/mvi-mosby3/mvp-business-logic2.png" alt="Presenter-Businesslogic"></p>
+<p>We have already discussed the importance of this principle (unidirectional data flow) in the <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">first part</a>.</p>
+<p>Let&rsquo;s implement this for a real world example: In our shopping app we can put items into the
+shopping basket. Additionally, there is a screen where we can see the content of our basket and we
+can select and remove multiple items at once.</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/ZvnceMj8NoY" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>Wouldn&rsquo;t it be cool if we could split that big screen into multiple smaller, independent and reusable UI components.
+Let&rsquo;s say a Toolbar, that displays the number of items that are selected, and a
+RecyclerView that actually displays the list of items in the shopping basket.</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;LinearLayout&gt;</span>
+  <span class="nt">&lt;com.hannesdorfmann.SelectedCountToolbar</span>
+      <span class="na">android:id=</span><span class="s">&#34;@+id/selectedCountToolbar&#34;</span>
+      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+      <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span>
+      <span class="nt">/&gt;</span>
+
+  <span class="nt">&lt;com.hannesdorfmann.ShoppingBasketRecyclerView</span>
+      <span class="na">android:id=</span><span class="s">&#34;@+id/shoppingBasketRecyclerView&#34;</span>
+      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+      <span class="na">android:layout_height=</span><span class="s">&#34;0dp&#34;</span>
+      <span class="na">android:layout_weight=</span><span class="s">&#34;1&#34;</span>
+      <span class="nt">/&gt;</span>
+<span class="nt">&lt;/LinearLayout&gt;</span>
+</code></pre></div><p>But how do these components communicate with each other? Obviously each component has its own Presenter: <strong>SelectedCountPresenter</strong> and <strong>ShoppingBasketPresenter</strong>. Is that a Parent-Child relation? No, both are just observing the same Model (updated from the same business logic):</p>
+<p><img src="/images/mvi-mosby3/shoppingcart-businesslogic.png" alt="ShoppingCart-Businesslogic"></p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SelectedCountPresenter</span>
+    <span class="kd">extends</span> <span class="n">MviBasePresenter</span><span class="o">&lt;</span><span class="n">SelectedCountView</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">ShoppingCart</span> <span class="n">shoppingCart</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">SelectedCountPresenter</span><span class="o">(</span><span class="n">ShoppingCart</span> <span class="n">shoppingCart</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">shoppingCart</span> <span class="o">=</span> <span class="n">shoppingCart</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">bindIntents</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">subscribeViewState</span><span class="o">(</span><span class="n">shoppingCart</span><span class="o">.</span><span class="na">getSelectedItemsObservable</span><span class="o">(),</span> <span class="n">SelectedCountView</span><span class="o">::</span><span class="n">render</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">class</span> <span class="nc">SelectedCountToolbar</span> <span class="kd">extends</span> <span class="n">Toolbar</span> <span class="kd">implements</span> <span class="n">SelectedCountView</span> <span class="o">{</span>
+
+  <span class="o">...</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">render</span><span class="o">(</span><span class="kt">int</span> <span class="n">selectedCount</span><span class="o">)</span> <span class="o">{</span>
+   <span class="k">if</span> <span class="o">(</span><span class="n">selectedCount</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+     <span class="n">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+   <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+       <span class="n">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">INVISIBLE</span><span class="o">);</span>
+   <span class="o">}</span>
+ <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>The code for <strong>ShoppingBasketRecyclerView</strong> looks pretty much the same and therefore we skip that here. However, if we take a closer look at <strong>SelectedCountPresenter</strong> we notice that this Presenter is coupled to <strong>ShoppingCart</strong>. We would like to use the UI component also on other screens in our app. To make that component reusable we have to remove this dependency, which is actually an easy refactoring: The presenter gets an <strong>Observable&lt;Integer&gt;</strong> as Model through the constructor instead of ShoppingCart:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SelectedCountPresenter</span>
+    <span class="kd">extends</span> <span class="n">MviBasePresenter</span><span class="o">&lt;</span><span class="n">SelectedCountView</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">selectedCountObservable</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">SelectedCountPresenter</span><span class="o">(</span><span class="n">Observable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">selectedCountObservable</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">selectedCountObservable</span> <span class="o">=</span> <span class="n">selectedCountObservable</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">bindIntents</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">subscribeViewState</span><span class="o">(</span><span class="n">selectedCountObservable</span><span class="o">,</span> <span class="n">SelectedCountToolbarView</span><span class="o">::</span><span class="n">render</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Et voilà, we are able to use the SelectedCountToolbar component whenever we have to display the number
+of items currently selected. That can be the number of items in ShoppingCart but this UI component could also be used in an entirely different context and screen in your app. Moreover, this UI component could be put into a standalone library and used in another app like a photos app to display the number of selected photos.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Observable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">selectedCount</span> <span class="o">=</span> <span class="n">photoManager</span><span class="o">.</span><span class="na">getPhotos</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">photos</span> <span class="o">-&gt;</span> <span class="o">{</span>
+       <span class="kt">int</span> <span class="n">selected</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+       <span class="k">for</span> <span class="o">(</span><span class="n">Photo</span> <span class="n">item</span> <span class="o">:</span> <span class="n">photos</span><span class="o">)</span> <span class="o">{</span>
+         <span class="k">if</span> <span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">isSelected</span><span class="o">())</span> <span class="n">selected</span><span class="o">++;</span>
+       <span class="o">}</span>
+       <span class="k">return</span> <span class="n">selected</span><span class="o">;</span>
+    <span class="o">});</span>
+
+<span class="k">return</span> <span class="k">new</span> <span class="n">SelectedCountToolbarPresnter</span><span class="o">(</span><span class="n">selectedCount</span><span class="o">);</span>
+</code></pre></div><h2 id="conclusion">Conclusion</h2>
+<p>The aim of this blog post is to demonstrate that a Parent-Child relation is usually not needed at all
+and can be avoided by simply observing the same part of your business logic. No EventBus, no findViewById() from a parent Activity / Fragment, no presenter.getParentPresenter() or other workarounds are required. Just the observer pattern. With the help of RxJava, which basically implements the observer pattern, we are able to build such reactive UI components easily.</p>
+<h3 id="additional-thoughts">Additional thoughts</h3>
+<p>In contrast to MVP or MVVM in MVI we are forced (in a positive way) that business
+logic drives the state of a certain component. Hence developers with more experience in MVI could
+come to the following conclusion:</p>
+<blockquote>
+<p>What if such a view state is the model of another component?
+What if a view state change of one component is an intent for another component?</p>
+</blockquote>
+<p>Example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Observable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">selectedItemCountObservable</span> <span class="o">=</span>
+        <span class="n">shoppingBasketPresenter</span>
+           <span class="o">.</span><span class="na">getViewStateObservable</span><span class="o">()</span>
+           <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">items</span> <span class="o">-&gt;</span> <span class="o">{</span>
+              <span class="kt">int</span> <span class="n">selected</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+              <span class="k">for</span> <span class="o">(</span><span class="n">ShoppingCartItem</span> <span class="n">item</span> <span class="o">:</span> <span class="n">items</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">isSelected</span><span class="o">())</span> <span class="n">selected</span><span class="o">++;</span>
+              <span class="o">}</span>
+              <span class="k">return</span> <span class="n">selected</span><span class="o">;</span>
+            <span class="o">});</span>
+
+<span class="n">Observable</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;</span> <span class="n">doSomethingBecauseOtherComponentReadyIntent</span> <span class="o">=</span>
+        <span class="n">shoppingBasketPresenter</span>
+          <span class="o">.</span><span class="na">getViewStateObservable</span><span class="o">()</span>
+          <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">state</span> <span class="o">-&gt;</span> <span class="n">state</span><span class="o">.</span><span class="na">isShowingData</span><span class="o">())</span>
+          <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">state</span> <span class="o">-&gt;</span> <span class="kc">true</span><span class="o">);</span>
+
+<span class="k">return</span> <span class="k">new</span> <span class="n">SelectedCountToolbarPresenter</span><span class="o">(</span>
+              <span class="n">selectedItemCountObservable</span><span class="o">,</span>
+              <span class="n">doSomethingBecauseOtherComponentReadyIntent</span><span class="o">);</span>
+</code></pre></div><p>At first glance this seems like a valid approach, but isn&rsquo;t it a variant of a Parent-Child
+relation? Sure, it&rsquo;s not a traditional hierarchical Parent-Child relation, it&rsquo;s more like an onion
+(the inner one offers a state to the outer one) which seems to be better, but still, a tightly
+coupled relation, isn&rsquo;t it? I haven&rsquo;t made up my mind but I think avoiding this onion-like
+relation is better for now. If you have a different opinion please leave a comment below. I would
+love to hear your thoughts.</p>
+
+    
+    <div class="series-box">
+        <h5>This is a post in the 
+        <u>Reactive Apps with Model-View-Intent</u> series.</span></h5>
+        <p>Other posts in this series:</p>
+
+        
+        
+        <ul>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">Reactive Apps with Model-View-Intent - Part 1: Model</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-2/">Reactive Apps with Model-View-Intent - Part 2: View and Intent</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-3/">Reactive Apps with Model-View-Intent - Part 3: State Reducer</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-4/">Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-5/">Reactive Apps with Model-View-Intent - Part 5: Debugging with ease</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-6/">Reactive Apps with Model-View-Intent - Part 6: Restoring State</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a>
+            </li>
+        
+        </ul>
+    </div>
+ 
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

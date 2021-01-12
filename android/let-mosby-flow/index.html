@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Using Mosby MVP library on Android in combination with Square&#39;s Flow as an alternative to Android Fragments">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Let Mosby Flow - An alternative to Fragments</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Mar 01, 2016</li>
+        </ul>
+        <article class="content">
+          
+          <p>The usage of Fragments in Android apps is highly controversial. While some developers love them, others hate them. In this blog post I will give you a short introduction of how to use Mosby 3.0 to build MVP base screens and square&rsquo;s Flow library as navigation stack replacement.</p>
+<p><strong>Preface:</strong> Usually I use Fragments in my apps and 99% of the time they work well. However, I do understand developers who are advocating against Fragments. We want build the best apps we are able to and if Fragments are a source for errors then this 1% is probably to much.</p>
+<p>In this blog post I will show you how to write a little <strong>atlas app</strong> entirely without Fragments by using <a href="https://github.com/sockeqwe/mosby">Mosby</a> and <a href="https://github.com/square/flow">Flow</a>. Our app has just two screens: A list of countries and a details screen where information about a certain country is displayed. Let&rsquo;s have a look at a short demo video (please note that this demo app is able to deal with screen orientation changes):</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/lNG1odHSNXg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<h2 id="flow-for-navigation">Flow for navigation</h2>
+<p>The app itself will be a single Activity. As already said, there are basically two screens the user can navigate to:</p>
+<ul>
+<li><strong>CountriesListLayout</strong>: Displays a list of countries. The user can click on a country to display details about this country.</li>
+<li><strong>CountryDetailsLayout</strong>: Displays details about a certain country like population, currency and some photos.</li>
+</ul>
+<h3 id="dispatcher-and-keys">Dispatcher and Keys</h3>
+<p>To integrate flow in your activity you have to do the following (kotlin programming language):</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">MainActivity</span> <span class="o">:</span> <span class="n">AppCompatActivity</span><span class="o">()</span> <span class="o">{</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">attachBaseContext</span><span class="o">(</span><span class="n">baseContext</span><span class="o">:</span> <span class="n">Context</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">val</span> <span class="n">flowContextWrapper</span> <span class="o">=</span> <span class="n">Flow</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">baseContext</span><span class="o">,</span> <span class="k">this</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">dispatcher</span><span class="o">(</span><span class="n">AtlasAppDispatcher</span><span class="o">(</span><span class="k">this</span><span class="o">))</span>
+        <span class="o">.</span><span class="na">defaultKey</span><span class="o">(</span><span class="n">CountriesScreen</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">keyParceler</span><span class="o">(</span><span class="n">AtlasAppKeyParceler</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">install</span><span class="o">()</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">attachBaseContext</span><span class="o">(</span><span class="n">flowContextWrapper</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">onBackPressed</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">Flow</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">goBack</span><span class="o">())</span> <span class="o">{</span>
+      <span class="kd">super</span><span class="o">.</span><span class="na">onBackPressed</span><span class="o">();</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">:</span> <span class="n">Bundle</span><span class="o">?)</span> <span class="o">{</span>
+      <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">)</span>
+      <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_main</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Let&rsquo;s start with an easy thing to spot: We override <strong>onBackPressed()</strong> to forward the press of android&rsquo;s back button to Flow.</p>
+<p>Just for completeness, <strong>R.layout.activity_main</strong> is just a FrameLayout &ldquo;container&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;</span>
+<span class="nt">&lt;FrameLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+    <span class="na">android:id=</span><span class="s">&#34;@+id/container&#34;</span>
+    <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+    <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+    <span class="nt">/&gt;</span>
+</code></pre></div><p>Next, we will focus on how to configure Flow. To install Flow in our Activity we have to override <strong>attachBaseContext()</strong>. Why? Well, internally Flow will create a <a href="https://developer.android.com/reference/android/content/ContextWrapper.html">ContextWrapper</a> and we have to use that special context wrapper returned by Flow for our Activity by calling <strong>super.attachBaseContext(flowContextWrapper)</strong>.</p>
+<p>Flow is highly customizable which on one hand is great and allows you to be very flexible. On the other hand that means that you have to write some &ldquo;boilerplate&rdquo; code. To tell Flow how to navigate in our app we have to define a <strong>Dispatcher</strong>. The Dispatcher is responsible to &ldquo;dispatch&rdquo; changes on Flow&rsquo;s navigation (history) stack.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nf">AtlasAppDispatcher</span><span class="o">(</span><span class="kd">private</span> <span class="n">val</span> <span class="n">activity</span><span class="o">:</span> <span class="n">Activity</span><span class="o">)</span> <span class="o">:</span> <span class="n">Dispatcher</span> <span class="o">{</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">dispatch</span><span class="o">(</span><span class="n">traversal</span><span class="o">:</span> <span class="n">Traversal</span><span class="o">,</span> <span class="n">callback</span><span class="o">:</span> <span class="n">TraversalCallback</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">val</span> <span class="n">destination</span> <span class="o">=</span> <span class="n">traversal</span><span class="o">.</span><span class="na">destination</span><span class="o">.</span><span class="na">top</span><span class="o">&lt;</span><span class="n">Any</span><span class="o">&gt;()</span> <span class="c1">// destination key
+</span><span class="c1"></span>
+    <span class="n">val</span> <span class="n">layoutRes</span> <span class="o">=</span> <span class="n">when</span> <span class="o">(</span><span class="n">destination</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">is</span> <span class="n">CountriesScreen</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">screen_countries</span>
+      <span class="n">is</span> <span class="n">CountryDetailsScreen</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">screen_countrydetails</span>
+      <span class="k">else</span> <span class="o">-&gt;</span> <span class="k">throw</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Unknown screen $destination&#34;</span><span class="o">)</span>
+    <span class="o">}</span>
+
+    <span class="n">val</span> <span class="n">newView</span> <span class="o">=</span> <span class="n">LayoutInflater</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">traversal</span><span class="o">.</span><span class="na">createContext</span><span class="o">(</span><span class="n">destination</span><span class="o">,</span> <span class="n">activity</span><span class="o">))</span>
+        <span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">layoutRes</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span>
+
+    <span class="c1">// Update container: remove oldView, insert newView
+</span><span class="c1"></span>    <span class="n">val</span> <span class="n">container</span> <span class="o">=</span> <span class="n">activity</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">container</span><span class="o">)</span> <span class="n">as</span> <span class="n">ViewGroup</span>
+
+    <span class="c1">// Remove current screen from container
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">traversal</span><span class="o">.</span><span class="na">origin</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">container</span><span class="o">.</span><span class="na">childCount</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">val</span> <span class="n">currentScreen</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="na">getChildAt</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
+      <span class="c1">// Save the state manually
+</span><span class="c1"></span>      <span class="n">traversal</span><span class="o">.</span><span class="na">getState</span><span class="o">((</span><span class="n">traversal</span><span class="o">.</span><span class="na">origin</span> <span class="n">as</span> <span class="n">History</span><span class="o">).</span><span class="na">top</span><span class="o">()).</span><span class="na">save</span><span class="o">(</span><span class="n">currentScreen</span><span class="o">)</span>
+      <span class="n">container</span><span class="o">.</span><span class="na">removeAllViews</span><span class="o">()</span> <span class="c1">// remove oldView
+</span><span class="c1"></span>    <span class="o">}</span>
+
+    <span class="c1">// Restore state before adding view (i.e. caused by onBackPressed)
+</span><span class="c1"></span>    <span class="n">traversal</span><span class="o">.</span><span class="na">getState</span><span class="o">(</span><span class="n">traversal</span><span class="o">.</span><span class="na">destination</span><span class="o">.</span><span class="na">top</span><span class="o">()).</span><span class="na">restore</span><span class="o">(</span><span class="n">newView</span><span class="o">)</span>
+
+    <span class="c1">// add new screen
+</span><span class="c1"></span>    <span class="n">container</span><span class="o">.</span><span class="na">addView</span><span class="o">(</span><span class="n">newView</span><span class="o">)</span>
+
+    <span class="n">callback</span><span class="o">.</span><span class="na">onTraversalCompleted</span><span class="o">()</span> <span class="c1">// Tell Flow that we are done
+</span><span class="c1"></span>  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Alright, let&rsquo;s discuss some key aspects of the code shown above:
+As you see we have to implement Flow&rsquo;s interface <strong>Dispatcher</strong> with the method <strong>dispatch()</strong>. This method will be invoked whenever we use Flow to navigate through the app and we have to specify (manually) how to apply the navigation changes to your view. In the Atlas app we have a &ldquo;container&rdquo; (FrameLayout) and whenever we navigate from screen to the next screen (or back to previous screen) we simply remove the current screen from the container and add the new screen.
+Flow gives us a <strong>Traversal</strong> object as parameter which contains all the information we need to apply navigation stack changes. We get a &ldquo;key&rdquo; <strong>destination = traversal.destination.top()</strong> from Flow. Every &ldquo;screen&rdquo; is identified by a key and you have to make a mapping from key to a android.view.View like we do here:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">val</span> <span class="n">layoutRes</span> <span class="o">=</span> <span class="n">when</span> <span class="o">(</span><span class="n">destination</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">is</span> <span class="n">CountriesScreen</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">screen_countries</span>
+  <span class="n">is</span> <span class="n">CountryDetailsScreen</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">screen_countrydetails</span>
+  <span class="k">else</span> <span class="o">-&gt;</span> <span class="k">throw</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Unknown screen $destination&#34;</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></div><p>You may ask yourself &ldquo;what is a key&rdquo;? Basically everything (java.lang.Object) can be used as a key for a screen in Flow. It seems to be good practice that &ldquo;keys&rdquo; are named with &ldquo;Screen&rdquo; suffix. In our atlas app we have two &ldquo;screens&rdquo; we can navigate to. Hence we have two &ldquo;key&rdquo; classes named <strong>CountriesScreen</strong> and <strong>CountryDetailsScreen</strong>. This &ldquo;key&rdquo; classes have two responsibilities: First, as already discussed a key maps to an android view, and second the key contains all the required data the screen needs to display. I think that can be compared to fragment arguments. For example the <strong>CountryDetailsScreen</strong> contains an id (country id) which then is used in the corresponding view to load the data for the given country id.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nf">CountryDetailsScreen</span><span class="o">(</span><span class="n">val</span> <span class="n">countryId</span><span class="o">:</span> <span class="n">Int</span><span class="o">)</span> <span class="o">:</span> <span class="n">Parcelable</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="nf">constructor</span><span class="o">(</span><span class="n">p</span><span class="o">:</span> <span class="n">Parcel</span><span class="o">)</span> <span class="o">:</span> <span class="k">this</span><span class="o">(</span><span class="n">p</span><span class="o">.</span><span class="na">readInt</span><span class="o">())</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">writeToParcel</span><span class="o">(</span><span class="n">parcel</span><span class="o">:</span> <span class="n">Parcel</span><span class="o">,</span> <span class="n">p1</span><span class="o">:</span> <span class="n">Int</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">parcel</span><span class="o">.</span><span class="na">writeInt</span><span class="o">(</span><span class="n">countryId</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">describeContents</span><span class="o">():</span> <span class="n">Int</span> <span class="o">=</span> <span class="n">0</span>
+
+  <span class="n">companion</span> <span class="n">object</span> <span class="o">{</span>
+    <span class="n">val</span> <span class="n">CREATOR</span> <span class="o">=</span> <span class="n">object</span> <span class="o">:</span> <span class="n">Parcelable</span><span class="o">.</span><span class="na">Creator</span><span class="o">&lt;</span><span class="n">CountryDetailsScreen</span><span class="o">&gt;</span> <span class="o">{</span>
+      <span class="n">override</span> <span class="n">fun</span> <span class="nf">createFromParcel</span><span class="o">(</span><span class="n">p</span><span class="o">:</span> <span class="n">Parcel</span><span class="o">):</span> <span class="n">CountryDetailsScreen</span> <span class="o">=</span> <span class="n">CountryDetailsScreen</span><span class="o">(</span><span class="n">p</span><span class="o">)</span>
+
+      <span class="n">override</span> <span class="n">fun</span> <span class="nf">newArray</span><span class="o">(</span><span class="n">size</span><span class="o">:</span> <span class="n">Int</span><span class="o">):</span> <span class="n">Array</span><span class="o">&lt;</span><span class="n">out</span> <span class="n">CountryDetailsScreen</span><span class="o">&gt;?</span> <span class="o">=</span> <span class="n">Array</span><span class="o">(</span><span class="n">size</span><span class="o">,</span>
+          <span class="o">{</span> <span class="n">CountryDetailsScreen</span><span class="o">(-</span><span class="n">1</span><span class="o">)</span> <span class="o">})</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>I guess I know your next question: &ldquo;Why do we need to implement the parcelable interface?&rdquo;. I have said earlier that &ldquo;everything&rdquo; can be a key and that&rsquo;s still true. However, at some point (during process death, i.e. activity gets destroyed while in background) Flow has to save your keys persistently in a Bundle (as Parcelable) to be able to restore the navigation stack history after your activity gets restarted (i.e. activity comes in the foreground again). Therefore, we have to provide a <strong>KeyParceler</strong> to Flow which is responsible to write and read a &ldquo;key&rdquo; as parcelable. The easiest way to do so is to make the &ldquo;key&rdquo; like <strong>CountryDetailsScreen</strong> itself parcelable because then our <strong>KeyParceler</strong> implementation is basically just casting the &ldquo;key&rdquo; object like we do in our atlas app:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">AtlasAppKeyParceler</span> <span class="o">:</span> <span class="n">KeyParceler</span> <span class="o">{</span>
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">toParcelable</span><span class="o">(</span><span class="n">key</span><span class="o">:</span> <span class="n">Any</span><span class="o">?):</span> <span class="n">Parcelable</span> <span class="o">=</span> <span class="n">key</span> <span class="n">as</span> <span class="n">Parcelable</span>
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">toKey</span><span class="o">(</span><span class="n">parcelable</span><span class="o">:</span> <span class="n">Parcelable</span><span class="o">)</span> <span class="o">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">parcelable</span>
+<span class="o">}</span>
+</code></pre></div><p>To sum it up, to use Flow in our Activity we have to do:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">MainActivity</span> <span class="o">:</span> <span class="n">AppCompatActivity</span><span class="o">()</span> <span class="o">{</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">attachBaseContext</span><span class="o">(</span><span class="n">baseContext</span><span class="o">:</span> <span class="n">Context</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">val</span> <span class="n">newBase</span> <span class="o">=</span> <span class="n">Flow</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">baseContext</span><span class="o">,</span> <span class="k">this</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">dispatcher</span><span class="o">(</span><span class="n">AtlasAppDispatcher</span><span class="o">(</span><span class="k">this</span><span class="o">))</span>
+        <span class="o">.</span><span class="na">defaultKey</span><span class="o">(</span><span class="n">CountriesScreen</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">keyParceler</span><span class="o">(</span><span class="n">AtlasAppKeyParceler</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">install</span><span class="o">()</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">attachBaseContext</span><span class="o">(</span><span class="n">newBase</span><span class="o">)</span>
+  <span class="o">}</span>
+  <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div><p>With <strong>.defaultKey(CountriesScreen())</strong> we specify what is our start key / screen:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">CountriesScreen</span> <span class="o">:</span> <span class="n">Parcelable</span> <span class="c1">// Doesn&#39;t have any data, it&#39;s just an empty object
+</span></code></pre></div><h2 id="mvp-with-mosby">MVP with Mosby</h2>
+<p>Alright, so far we have talked about how to setup Flow as navigation stack replacement.
+We haven&rsquo;t discussed yet how to build the UI without Fragments. We simply write custom Views by extending from ViewGroups like FrameLayout etc. Furthermore, we want to have a separation of concerns (separation from UI and business logic). This is the point where Mosby comes in.</p>
+<p>Mosby is a Model-View-Presenter (MVP) library for Android. For our atlas app we will use Mosby 3.0, which is not released at the time of writing this blog post. However, 3.0.0-SNAPSHOT is available and changes until the final 3.0 release will mainly be &ldquo;under the hood&rdquo;. In other words, the API is mostly stable (and compatible to Mosby 2.0).</p>
+<h3 id="screen-orientation-changes">Screen orientation changes</h3>
+<p>One of the most loved features of Mosby is that Presenters can survive screen orientation changes. Additionally, Mosby has a tiny companion object to the Presenter and View called <strong>ViewState</strong>. Typically, in MVP (passive view) the Presenter coordinates the View. So the Presenter tells the View to display a ProgressBar like <strong>view.showLoading()</strong> while loading data and then the RecyclerView <strong>view.showContent()</strong> once the data has been loaded. Mosby&rsquo;s ViewState is some kind of hook sitting between Presenter and View and keeps track of all the methods the presenter has invoked on the view. The idea is that after a screen orientation change we can &ldquo;apply&rdquo; the ViewState and invoke the same methods on the View to get back to the UI state as before the screen orientation change.</p>
+<p>If you have used Mosby 2.0 before this is nothing new to you. This feature was already available for Activities and Fragments. With Mosby 3.0 this feature is now fully supported for subclasses of android.view.ViewGroup like FrameLayout, RelativeLayout and so on (there was already partial support for that in Mosby 2.0).</p>
+<p>Let&rsquo;s have a look how we have implemented the screen that displays a list of countries:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nf">CountriesListLayout</span><span class="o">(</span><span class="n">c</span><span class="o">:</span> <span class="n">Context</span><span class="o">,</span> <span class="n">atts</span><span class="o">:</span> <span class="n">AttributeSet</span><span class="o">)</span> <span class="o">:</span> <span class="n">CountriesView</span><span class="o">,</span> <span class="n">MvpViewStateFrameLayout</span><span class="o">&lt;</span><span class="n">CountriesView</span><span class="o">,</span> <span class="n">CountriesPresenter</span><span class="o">&gt;(</span>
+    <span class="n">c</span><span class="o">,</span> <span class="n">atts</span><span class="o">)</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">val</span> <span class="n">recyclerView</span><span class="o">:</span> <span class="n">RecyclerView</span> <span class="n">by</span> <span class="nf">bindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">recyclerView</span><span class="o">)</span>
+  <span class="kd">private</span> <span class="n">val</span> <span class="n">swipeRefreshLayout</span><span class="o">:</span> <span class="n">SwipeRefreshLayout</span> <span class="n">by</span> <span class="nf">bindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">swipeRefreshLayout</span><span class="o">)</span>
+  <span class="kd">private</span> <span class="n">val</span> <span class="n">errorView</span><span class="o">:</span> <span class="n">View</span> <span class="n">by</span> <span class="nf">bindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">errorView</span><span class="o">)</span>
+  <span class="kd">private</span> <span class="n">val</span> <span class="n">loadingView</span><span class="o">:</span> <span class="n">View</span> <span class="n">by</span> <span class="nf">bindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">loadingView</span><span class="o">)</span>
+
+  <span class="kd">private</span> <span class="n">val</span> <span class="n">adapter</span> <span class="o">=</span> <span class="n">CountriesAdapter</span><span class="o">(</span>
+      <span class="o">{</span> <span class="c1">// OnClickListener, navigates to details screen
+</span><span class="c1"></span>        <span class="n">country</span> <span class="o">-&gt;</span>
+        <span class="n">Flow</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="n">CountryDetailsScreen</span><span class="o">(</span><span class="n">country</span><span class="o">.</span><span class="na">id</span><span class="o">))</span>
+      <span class="o">})</span>
+
+  <span class="n">init</span> <span class="o">{</span>
+    <span class="c1">// inflates the layout containing a SwipeRefreshLayout, RecyclerView, ProgressBar etc.
+</span><span class="c1"></span>    <span class="n">LayoutInflater</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">context</span><span class="o">).</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">recycler_swiperefresh_view</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">adapter</span> <span class="o">=</span> <span class="n">adapter</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">layoutManager</span> <span class="o">=</span> <span class="n">LinearLayoutManager</span><span class="o">(</span><span class="n">context</span><span class="o">)</span>
+
+    <span class="n">errorView</span><span class="o">.</span><span class="na">setOnClickListener</span> <span class="o">{</span>
+      <span class="n">loadData</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+    <span class="o">}</span>
+
+    <span class="n">swipeRefreshLayout</span><span class="o">.</span><span class="na">setOnRefreshListener</span> <span class="o">{</span>
+      <span class="n">loadData</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="n">fun</span> <span class="nf">loadData</span><span class="o">(</span><span class="n">pullToRefresh</span><span class="o">:</span> <span class="n">Boolean</span><span class="o">)</span> <span class="o">=</span> <span class="n">presenter</span><span class="o">.</span><span class="na">loadCountries</span><span class="o">(</span><span class="n">pullToRefresh</span><span class="o">)</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">createPresenter</span><span class="o">():</span> <span class="n">CountriesPresenter</span> <span class="o">=</span>
+    <span class="n">AtlasApplication</span><span class="o">.</span><span class="na">getComponent</span><span class="o">(</span><span class="n">context</span><span class="o">).</span><span class="na">countriesPresenter</span><span class="o">()</span> <span class="c1">// We use dagger 2
+</span><span class="c1"></span>
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">createViewState</span><span class="o">():</span> <span class="n">ViewState</span><span class="o">&lt;</span><span class="n">CountriesView</span><span class="o">&gt;</span> <span class="o">=</span> <span class="n">RetainingLceViewState</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;,</span> <span class="n">CountriesView</span><span class="o">&gt;()</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">showLoading</span><span class="o">(</span><span class="n">pullToRefresh</span><span class="o">:</span> <span class="n">Boolean</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">loadingView</span><span class="o">.</span><span class="na">visibility</span> <span class="o">=</span> <span class="n">VISIBLE</span>
+      <span class="n">errorView</span><span class="o">.</span><span class="na">visibility</span> <span class="o">=</span> <span class="n">GONE</span>
+      <span class="n">swipeRefreshLayout</span><span class="o">.</span><span class="na">visibility</span> <span class="o">=</span> <span class="n">GONE</span>
+  <span class="o">}</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">showContent</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">loadingView</span><span class="o">.</span><span class="na">visibility</span> <span class="o">=</span> <span class="n">GONE</span>
+    <span class="n">errorView</span><span class="o">.</span><span class="na">visibility</span> <span class="o">=</span> <span class="n">GONE</span>
+    <span class="n">swipeRefreshLayout</span><span class="o">.</span><span class="na">visibility</span> <span class="o">=</span> <span class="n">VISIBILE</span>
+    <span class="n">swipeRefreshLayout</span><span class="o">.</span><span class="na">isRefreshing</span> <span class="o">=</span> <span class="kc">false</span>
+  <span class="o">}</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">showError</span><span class="o">(</span><span class="n">e</span><span class="o">:</span> <span class="n">Throwable</span><span class="o">?,</span> <span class="n">pullToRefresh</span><span class="o">:</span> <span class="n">Boolean</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">swipeRefreshLayout</span><span class="o">.</span><span class="na">visibility</span> <span class="o">=</span> <span class="n">GONE</span>
+    <span class="n">loadingView</span><span class="o">.</span><span class="na">visibility</span> <span class="o">=</span> <span class="n">GONE</span>
+    <span class="n">errorView</span><span class="o">.</span><span class="na">visibility</span> <span class="o">=</span> <span class="n">VISIBLE</span>
+    <span class="n">swipeRefreshLayout</span><span class="o">.</span><span class="na">isRefreshing</span> <span class="o">=</span> <span class="kc">false</span>
+  <span class="o">}</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">setData</span><span class="o">(</span><span class="n">data</span><span class="o">:</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;)</span> <span class="o">{</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">items</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">notifyDataSetChanged</span><span class="o">()</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>For more details about Mosby you should read <a href="http://hannesdorfmann.com/mosby/">Mosby&rsquo;s documentation</a>. As you might have already noticed we extend from <strong>MvpViewStateFrameLayout</strong> which is provided by Mosby. Since Mosby follows the delegation principle is quite easy to make every ViewGroup work Mosby. All you have to do is to implement <strong>ViewGroupViewStateDelegateCallback</strong> in your custom ViewGroup class and forward &ldquo;lifecycle events&rdquo; like <strong>onAttachedToWindow()</strong> and <strong>onDetachedFromWindow()</strong> to Mosby&rsquo;s <strong>ViewGroupMvpDelegate</strong>. This sounds more complex than it actually is. Let&rsquo;s have a look at <strong>MvpViewStateFrameLayouts</strong> source code:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">MvpViewStateFrameLayout</span><span class="o">&lt;</span><span class="n">V</span><span class="o">,</span> <span class="n">P</span><span class="o">&gt;</span>
+    <span class="kd">extends</span> <span class="n">FrameLayout</span> <span class="kd">implements</span> <span class="n">ViewGroupViewStateDelegateCallback</span><span class="o">&lt;</span><span class="n">V</span><span class="o">,</span> <span class="n">P</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">ViewGroupMvpDelegate</span> <span class="n">mvpDelegate</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ViewGroupMvpViewStateDelegateImpl</span><span class="o">&lt;</span><span class="n">V</span><span class="o">,</span> <span class="n">P</span><span class="o">&gt;(</span><span class="k">this</span><span class="o">);</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onAttachedToWindow</span><span class="o">()</span> <span class="o">{</span>
+      <span class="kd">super</span><span class="o">.</span><span class="na">onAttachedToWindow</span><span class="o">();</span>
+      <span class="n">mvpDelegate</span><span class="o">.</span><span class="na">onAttachedToWindow</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onDetachedFromWindow</span><span class="o">()</span> <span class="o">{</span>
+      <span class="kd">super</span><span class="o">.</span><span class="na">onDetachedFromWindow</span><span class="o">();</span>
+      <span class="n">mvpDelegate</span><span class="o">.</span><span class="na">onDetachedFromWindow</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="c1">// Implement in subclass
+</span><span class="c1"></span>  <span class="kd">abstract</span> <span class="n">ViewState</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span> <span class="nf">createViewState</span><span class="o">();</span>
+  <span class="kd">abstract</span> <span class="n">P</span> <span class="nf">createPresenter</span><span class="o">();</span>
+
+<span class="o">}</span>
+</code></pre></div><p>The <strong>CountriesPresenter</strong> loads a List<!-- raw HTML omitted --> from Atlas (business logic, injected by dagger 2) and we use RxJava to connect the dots:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">CountriesPresenter</span> <span class="nd">@Inject</span> <span class="n">constructor</span><span class="o">(</span><span class="n">val</span> <span class="n">atlas</span><span class="o">:</span> <span class="n">Atlas</span><span class="o">)</span> <span class="o">:</span> <span class="n">MvpBasePresenter</span><span class="o">&lt;</span><span class="n">CountriesView</span><span class="o">&gt;()</span> <span class="o">{</span>
+
+  <span class="n">var</span> <span class="n">subscription</span><span class="o">:</span> <span class="n">Subscription</span><span class="o">?</span> <span class="o">=</span> <span class="kc">null</span>
+
+  <span class="n">fun</span> <span class="nf">loadCountries</span><span class="o">(</span><span class="n">pullToRefresh</span><span class="o">:</span> <span class="n">Boolean</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">view</span><span class="o">?.</span><span class="na">showLoading</span><span class="o">(</span><span class="n">pullToRefresh</span><span class="o">)</span>
+    <span class="n">subscription</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="na">getCountries</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">subscribeOn</span><span class="o">(</span><span class="n">Schedulers</span><span class="o">.</span><span class="na">io</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">observeOn</span><span class="o">(</span><span class="n">AndroidSchedulers</span><span class="o">.</span><span class="na">mainThread</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">subscribe</span><span class="o">(</span>
+            <span class="o">{</span> <span class="n">view</span><span class="o">?.</span><span class="na">setData</span><span class="o">(</span><span class="n">it</span><span class="o">)</span> <span class="o">},</span>
+            <span class="o">{</span> <span class="n">view</span><span class="o">?.</span><span class="na">showError</span><span class="o">(</span><span class="n">it</span><span class="o">,</span> <span class="n">pullToRefresh</span><span class="o">)</span> <span class="o">},</span>
+            <span class="o">{</span> <span class="n">view</span><span class="o">?.</span><span class="na">showContent</span><span class="o">()</span> <span class="o">}</span>
+        <span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">detachView</span><span class="o">(</span><span class="n">retainInstance</span><span class="o">:</span> <span class="n">Boolean</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">detachView</span><span class="o">(</span><span class="n">retainInstance</span><span class="o">)</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">retainInstance</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">subscription</span><span class="o">?.</span><span class="na">unsubscribe</span><span class="o">()</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>As already said, in Mosby the Presenter survives screen orientation changes and the view gets simply attached and detached from the presenter. Mosby is smart enough to detect when the user has been navigated to another screen so that the Presenter will be destroyed permanently.
+The screen displaying a country details is basically the same and therefore not worth posting the code here again. You can checkout the whole sample code on <a href="https://github.com/sockeqwe/mosby/tree/master/sample-flow">github</a>.</p>
+<h2 id="summary">Summary</h2>
+<p>The aim of this blog post was to demonstrate that we can build an app without Fragments by using Flow for navigation and Mosby for MVP. Both, Flow and Mosby can deal with process deaths (Activity destroyed in background), however, Mosby requires to make the ViewState parcelable (that means that the loaded data, i.e. list of country, has to implement parcelable as well, see <a href="hannesdorfmann.com/mosby/">documentation</a>). I, personally, think that 95% of app developers just want that their app survive screen orientation changes painlessly and therefore a &ldquo;simple view state&rdquo; (not implementing parcelable) is enough (if process death occurs then data will be reloaded entirely).</p>
+<p>Depending on your app, Flow may requires you to write a lot of code (especially for <strong>Dispatcher</strong>). Nevertheless, Flow is really powerful (still in 1.0-alpha) and we haven&rsquo;t discussed all features of Flow in detail like complex dispatchers with views on top of each other like dialogs or cases where you don&rsquo;t have a single &ldquo;container&rdquo; to display a view but rather something similar as child-fragments (Fragment&rsquo;s in Fragments) with back button support  or Flow services or how does Flow save the instance state (you have to save and restore that manually, see <strong>AtlasAppDispatcher</strong>). Also &ldquo;keys&rdquo; have to override <strong>equals()</strong> and <strong>hashCode()</strong> properly. In a nutshell: Flow is not designed for android dev beginners, but the benefit of Flow is huge (if you hate fragments)!</p>
+<p>If you are looking for something more simple then Flow you might find  <a href="https://github.com/mattlogan/Pancakes">Pancakes</a> interesting which is also a navigation stack library but not as powerful as Flow. With <strong>Pancakes</strong> you would provide a <strong>ViewFactory</strong> for each &ldquo;screen&rdquo; like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">CountriesListLayoutFactory</span> <span class="kd">implements</span> <span class="n">ViewFactory</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">createView</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">LayoutInflater</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">context</span><span class="o">).</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">screen_countries</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Mosby should work with Pancakes  (and any other navigation stack library) as great as with Flow.</p>
+<p>One last thing: people asked me why Mosby doesn&rsquo;t provide it&rsquo;s own navigation stack implementation? The reason is that Mosby should and will ever be that tiny little MVP library. Take Mosby as a base scaffold to build your app on top of it with that development stack you like the most (like Flow or Pancakes for navigation or even with Fragments). See the thing is, since Mosby is a library (and not a framework) you can use as much or as little as you want from Mosby&rsquo;s functionality. Furthermore, implementing a clean navigation stack library is not that easy as it seems or why do you think that the brilliant guys over at square took quite a long time to design and implement Flow?</p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

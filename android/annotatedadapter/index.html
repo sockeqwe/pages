@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="AnnotatedAdapter">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>AnnotatedAdapter</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Sep 24, 2014</li>
+        </ul>
+        <article class="content">
+          
+          <p>With <a href="http://hannesdorfmann.com/android/fragmentargs">FragmentArgs</a> and <a href="http://hannesdorfmann.com/android/ParcelablePlease">ParcelablePlease</a> I have already shown that <strong>Annotation Processor</strong> is really helpful to speedup development by reducing writing boilerplate code. Regarding Android I found one scenario where I find myself writing nearly the same code ever and ever again. I&rsquo;m looking at you <strong>Adapter</strong> with your ViewHolders, layout inflating code and view types. In this blog post I want to announce <a href="https://github.com/sockeqwe/AnnotatedAdapter">AnnotatedAdapter</a></p>
+<p>In nearly every app you will find a <strong>RecyclerView</strong> (or <strong>ListView</strong> or <strong>GridView</strong>). Under the hood Adapter classes are used to inflate and fill the view cell of <strong>RecyclerView</strong> and to bind the data to it&rsquo;s graphical representation (view cell) within the RecyclerView. There are serval things you as developer have to implement:</p>
+<ol>
+<li><strong>Inflate xml layout</strong></li>
+<li>Create a <strong>ViewHolder</strong> class and write <strong>findViewById()</strong> for every subview in it</li>
+<li><strong>Bind the model</strong> to the view holder</li>
+</ol>
+<p>Furthermore not every view cell should look the same and you probably have multiple layouts for your view cells. So called <strong>view types</strong>, represented as integer constant in adapters code, are used to distinguish different type of view cells. Fortunately in <strong>RecyclerView</strong> (unlikely <strong>ListView</strong>) you don&rsquo;t have to implement the recycling part by hand. However, you have to implement those three steps from above (infalte layout, ViewHolder, bind model) for each view type in your adapter.</p>
+<h2 id="annotatedadapter">AnnotatedAdapter</h2>
+<p>At this point I started thinking to myself: <em>&ldquo;could that be generated with an annotation processor?&quot;</em> Finally I came to the conclusion: <em>Yes it can</em> and here is how this will be done by using <strong>AnnotatedAdapter</strong>.</p>
+<p>Lets assume we want to display two different view cells in a RecyclerView, one with just a TextView and one with a TextView and an ImageView (icon). I know for such simple layouts we would not need two different view types but could simply change ImageViews visibility. But lets keep this example simple. I just want to give you an idea of how AnnotatedAdapter works. So our model class looks like this;</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Item</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="n">String</span> <span class="n">text</span><span class="o">;</span>
+  <span class="kd">public</span> <span class="kt">int</span> <span class="n">iconRes</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="c1">// R.drawable.foo
+</span><span class="c1"></span>
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">hasIcon</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">iconRes</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">;</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>If <strong>Item</strong> has no icon then the iconRes will be <strong>0</strong>. In this case we want to use the view type and layout with just one TextView. Otherwise we use the other layout (TextView and ImageView). The xml layouts look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;FrameLayout</span>
+  <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+  <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;TextView</span>
+      <span class="na">android:id=</span><span class="s">&#34;+@id/textView&#34;</span>
+      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+      <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/FrameLayout&gt;</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;LinearLayout</span>
+  <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+  <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span>
+  <span class="na">android:orientation=</span><span class="s">&#34;horizontal&#34;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;ImageView</span>
+      <span class="na">android:id=</span><span class="s">&#34;+@id/iconImageView&#34;</span>
+      <span class="na">android:layout_width=</span><span class="s">&#34;20dp&#34;</span>
+      <span class="na">android:layout_height=</span><span class="s">&#34;20dp&#34;</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;TextView</span>
+      <span class="na">android:id=</span><span class="s">&#34;+@id/textView&#34;</span>
+      <span class="na">android:layout_width=</span><span class="s">&#34;0dp&#34;</span>
+      <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span>
+      <span class="na">android:layout_weight=</span><span class="s">&#34;1&#34;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/LinearLayout&gt;</span>
+</code></pre></div><p>Every Adapter in <strong>AnnotatedAdapter</strong> must extend from <strong>SupportAnnotatedAdapter</strong> (for RecyclerView) or <strong>AbsListAnnotatedAdapter</strong> (for AbsListView widgets like ListView or GridView). This important because in this base adapters the generated code will be sticked together with your handwritten data-binding code and the internal view cell recycling mechanism.</p>
+<p>Let&rsquo;s have a look at the complete Adapter by using AnnotatedAdapter. Afterwars we will go through the code line by line:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SampleAdapter</span> <span class="kd">extends</span> <span class="n">SupportAnnotatedAdapter</span>
+                          <span class="kd">implements</span> <span class="n">SampleAdapterBinder</span> <span class="o">{</span>
+
+  <span class="nd">@ViewType</span><span class="o">(</span>
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">cell_simple</span><span class="o">,</span>
+    <span class="n">views</span> <span class="o">=</span> <span class="nd">@ViewField</span><span class="o">(</span>
+        <span class="n">type</span> <span class="o">=</span> <span class="n">TextView</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;text&#34;</span><span class="o">,</span>
+        <span class="n">id</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView</span>
+        <span class="o">)</span>
+  <span class="o">)</span>
+  <span class="kd">public</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">simpleRow</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+
+
+    <span class="nd">@ViewType</span><span class="o">(</span>
+      <span class="n">layout</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">cell_with_icon</span><span class="o">,</span>
+      <span class="n">views</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="nd">@ViewField</span><span class="o">(</span>
+          <span class="n">type</span> <span class="o">=</span> <span class="n">TextView</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+          <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;text&#34;</span><span class="o">,</span>
+          <span class="n">id</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView</span>
+          <span class="o">),</span>
+        <span class="nd">@ViewField</span><span class="o">(</span>
+          <span class="n">type</span> <span class="o">=</span> <span class="n">ImageView</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+          <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;icon&#34;</span><span class="o">,</span>
+          <span class="n">id</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">iconImageView</span>
+          <span class="o">)</span>
+        <span class="o">}</span>
+    <span class="o">)</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">iconRow</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+
+
+
+  <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">SampleAdapter</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemCount</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">items</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">0</span> <span class="o">:</span> <span class="n">items</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemViewType</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">postion</span><span class="o">).</span><span class="na">hasIcon</span><span class="o">())</span>
+        <span class="k">return</span> <span class="n">iconRow</span>
+    <span class="k">else</span>
+        <span class="k">return</span> <span class="n">simpleRow</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+   <span class="nd">@Override</span>
+   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">bindViewHolder</span><span class="o">(</span><span class="n">SampleAdapterHolders</span><span class="o">.</span><span class="na">IconRowViewHolder</span> <span class="n">vh</span><span class="o">,</span>
+        <span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+
+      <span class="n">Item</span> <span class="n">item</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+      <span class="n">vh</span><span class="o">.</span><span class="na">text</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">text</span><span class="o">);</span>
+      <span class="n">vh</span><span class="o">.</span><span class="na">icon</span><span class="o">.</span><span class="na">setImageResource</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">icon</span><span class="o">)</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">bindViewHolder</span><span class="o">(</span><span class="n">SampleAdapterHolders</span><span class="o">.</span><span class="na">SimpleRowViewHolder</span> <span class="n">vh</span><span class="o">,</span>
+         <span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+
+       <span class="n">Item</span> <span class="n">item</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+       <span class="n">vh</span><span class="o">.</span><span class="na">text</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">text</span><span class="o">);</span>
+     <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>At first look you have noticed that there is less code. However AnnotatedAdapter can&rsquo;t read your mind. Therefore we have to give some information by using <strong>@ViewType</strong> annotation. In short: less code, more annotations. With the <strong>@ViewType</strong> annotation we specify the view types integer constant, the xml layout we want to inflate for this view type and with <strong>@ViewField</strong> you define the view holder class. Have a look at the <strong>int iconRow = 1</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@ViewType</span><span class="o">(</span>
+  <span class="n">layout</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">cell_with_icon</span><span class="o">,</span>
+  <span class="n">views</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nd">@ViewField</span><span class="o">(</span>
+      <span class="n">type</span> <span class="o">=</span> <span class="n">TextView</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+      <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;text&#34;</span><span class="o">,</span>
+      <span class="n">id</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView</span>
+      <span class="o">),</span>
+    <span class="nd">@ViewField</span><span class="o">(</span>
+      <span class="n">type</span> <span class="o">=</span> <span class="n">ImageView</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+      <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;icon&#34;</span><span class="o">,</span>
+      <span class="n">id</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">iconImageView</span>
+      <span class="o">)</span>
+    <span class="o">}</span>
+<span class="o">)</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">iconRow</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+</code></pre></div><p>AnnotatedAdapter will generate a view holder class called <strong>IconRowViewHolder</strong> that looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">IconRowViewHolder</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="n">TextView</span> <span class="n">text</span><span class="o">;</span>
+  <span class="kd">public</span> <span class="n">ImageView</span> <span class="n">icon</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">RowWithPicViewHolder</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
+
+     <span class="kd">super</span><span class="o">(</span><span class="n">view</span><span class="o">);</span>
+
+     <span class="n">text</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">view</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView</span><span class="o">);</span>
+     <span class="n">icon</span> <span class="o">=</span> <span class="o">(</span><span class="n">ImageView</span><span class="o">)</span> <span class="n">view</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">iconImageView</span><span class="o">);</span>
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><ul>
+<li><strong>@ViewField ( type = &hellip; )</strong> specifies the class of the view in the view holde</li>
+<li><strong>@ViewField ( name = &hellip; )</strong> specifies the name of the field for this subview in the viewholder</li>
+<li><strong>@ViewField ( id = &hellip; )</strong> specifies the id of to get the subview instance by using <strong>findViewById()</strong></li>
+</ul>
+<p>You can also specify non UI related fields (not bound by <strong>findViewById()</strong> ), for instance a <strong>OnClickListener</strong>, as part of the generated view holder. You can do that by using <strong>@Field</strong> like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@ViewType</span><span class="o">(</span>
+  <span class="n">layout</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">cell_with_icon</span><span class="o">,</span>
+  <span class="n">views</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nd">@ViewField</span><span class="o">(</span>
+      <span class="n">type</span> <span class="o">=</span> <span class="n">TextView</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+      <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;text&#34;</span><span class="o">,</span>
+      <span class="n">id</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView</span>
+      <span class="o">),</span>
+    <span class="nd">@ViewField</span><span class="o">(</span>
+      <span class="n">type</span> <span class="o">=</span> <span class="n">ImageView</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+      <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;icon&#34;</span><span class="o">,</span>
+      <span class="n">id</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">iconImageView</span>
+      <span class="o">)</span>
+    <span class="o">},</span>
+  <span class="n">fields</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nd">@Field</span><span class="o">(</span>
+      <span class="n">type</span> <span class="o">=</span> <span class="n">OnClickListener</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+      <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;clickListener&#34;</span>
+      <span class="o">)</span>
+    <span class="o">}</span>
+
+<span class="o">)</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">iconRow</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+</code></pre></div><p>Then the generated <strong>IconRowViewHolder</strong> contains this <strong>@Field</strong> as well:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">IconRowViewHolder</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="n">TextView</span> <span class="n">text</span><span class="o">;</span>
+  <span class="kd">public</span> <span class="n">ImageView</span> <span class="n">icon</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="n">OnClickListener</span> <span class="n">clickListener</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">RowWithPicViewHolder</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
+
+     <span class="kd">super</span><span class="o">(</span><span class="n">view</span><span class="o">);</span>
+
+     <span class="n">text</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">view</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView</span><span class="o">);</span>
+     <span class="n">icon</span> <span class="o">=</span> <span class="o">(</span><span class="n">ImageView</span><span class="o">)</span> <span class="n">view</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">iconImageView</span><span class="o">);</span>
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>Next you see two methods that you already know if you ever have written an Adapter by hand:</p>
+<ul>
+<li><strong>getItemCount()</strong>: Returns the total number of items in the data set hold by the adapter</li>
+<li><strong>getItemViewType(int position)</strong>: Return the view type of the item at position for the purposes of view recycling</li>
+</ul>
+<p>Last you notice that there are <strong>bindViewHolder()</strong> methods. In this methods you bind the data item to the view cell by using the corresponding ViewHolder. Where does this methods come from? This methods are defined in the interface <strong>SampleAdapterBinder</strong>. This interface is generated by AnnotatedAdapter by evaluating the <strong>@ViewType</strong> annotation. Hence <strong>SampleAdapter</strong> has to implement the interface <strong>SampleAdapterBinder</strong>.</p>
+<blockquote>
+<p>That&rsquo;s all? That sounds to good to be true?</p>
+</blockquote>
+<p>Yes, that&rsquo;s all, <strong>but</strong> there is one thing you have to know about android studio (I assume the most of you are using Android Studio): Since the interface <strong>AdapterBinder</strong> is generated at compile time this interface is not available when you start creating a brand new Adapter. The interface is  available only after compiling at least once. Hence I would consider the following step as best practice when creating a brand new adpater class using <strong>AnnotatedAdapter</strong>:</p>
+<ol>
+<li>Create the new java file for your adapter and let the adapter class extends <strong>SupportAnnotatedAdapter</strong>.</li>
+<li>Define your view types by using <strong>@ViewType</strong> and <strong>@ViewField</strong></li>
+<li>In Android Studio: Main Menu Bar -&gt; <strong>Build -&gt; Rebuild Project</strong>. This will force the compiler to  generate the <strong>AdapterBinder</strong> interface.</li>
+<li>Let your adapter class implement the binder interface and implement all binder methods</li>
+</ol>
+<p>I can guaranty that by following this instructions you will write your next adapter in less than 5 minutes (creating xml layouts excluded). <strong>Note</strong> that you have to trigger <strong>Build -&gt; Rebuild Project</strong> only at the very first time you create a brand new adapter class. Once done you can change your adapters code, you can add or remove view types and the interface will be regenerated automatically every time you compile/install your app on your device.</p>
+<h4 id="i-need-your-help">I need your help</h4>
+<p>From my point of view <strong>AnnotatedAdapter</strong> reduces writing boilerplate code a lot. However, it&rsquo;s not perfect, since you have to use <strong>@ViewField</strong> annotations to define the ViewHolder. I want to remove this  and make AnnotatedAdapter by parse the xml layout files to retrieve all needed informations to generate the view holder classes. Unfortunately that&rsquo;s not as simple as it sounds, but I&rsquo;m sure that there are smarter people than me out there. If you have an idea of how to solve that problem please use <a href="https://github.com/sockeqwe/AnnotatedAdapter/issues/4">this issue on github</a> to get in touch with me.</p>
+<p>AnnotatedAdapter supports also <strong>AbsListView</strong> widgets, inheritance and other little features you may find useful. You can find more information about <a href="https://github.com/sockeqwe/AnnotatedAdapter">AnnotatedAdapter on github</a></p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="In Java 8 we can use mixins also known as interfaces with default implementation to do what inheritance does">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Mixins as an alternative to inheritance in Java 8</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Apr 26, 2016</li>
+        </ul>
+        <article class="content">
+          
+          <p>Starting in Android N Google has added some java 8 language features. One of those features is the ability to add default methods to interfaces. Surprisingly (since java 8 has already been released 2 years ago) I haven&rsquo;t found good articles describing the advantage of default methods for interfaces: <strong>Mixins!</strong></p>
+<p>Let&rsquo;s straight jump into a simple example. Let&rsquo;s say we have a class <em>Ship</em>. A <em>Ship</em> can carry <em>Cargo</em>. Let&rsquo;s model that in Java like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Ship</span> <span class="o">{</span>
+
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Cargo</span><span class="o">&gt;</span> <span class="n">cargoes</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addCargo</span><span class="o">(</span><span class="n">Cargo</span> <span class="n">c</span><span class="o">){</span>
+    <span class="n">cargoes</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">removeCargo</span><span class="o">(</span><span class="n">Cargo</span> <span class="n">c</span><span class="o">){</span>
+    <span class="n">cargoes</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>We also have an <em>Airport</em> where <em>Aircrafts</em> can land and depart:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Airport</span> <span class="o">{</span>
+
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Aircraft</span><span class="o">&gt;</span> <span class="n">aircrafts</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">land</span><span class="o">(</span><span class="n">Aircraft</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">aircrafts</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">depart</span><span class="o">(</span><span class="n">Aircraft</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">aircrafts</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Given that, what if we want to have another class that is <em>Airport</em> and <em>Ship</em> at the same time? Unrealistic? What about an <em>AircraftCarrier</em>. Since java doesn&rsquo;t support multiple inheritance we can&rsquo;t declare a class <em>AircraftCarrier</em> that extends from <em>Airport</em> and <em>Ship</em>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">AircraftCarrier</span> <span class="kd">extends</span> <span class="n">Airport</span><span class="o">,</span> <span class="n">Ship</span> <span class="c1">// doesn&#39;t compile
+</span></code></pre></div><p>So what alternatives do we have to make <em>AircraftCarrier</em> be a <em>Ship</em> and a <em>Airport</em> at the same time? Well, we could use delegation (&ldquo;favor composition over inheritance&rdquo;) or some tricks from  <a href="https://javadeveloperslife.wordpress.com/2013/06/17/Mixins-with-pure-java/">aspect</a>  orientated programming, but none of them are really natively supported by java programming language.</p>
+<p>However, java does support multiple inheritance on interfaces and allows classes to implement arbitrary many interfaces. So let&rsquo;s convert <em>Ship</em> and <em>Airport</em> to interfaces:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Ship</span> <span class="o">{</span>
+  <span class="kt">void</span> <span class="nf">addCargo</span><span class="o">(</span><span class="n">Cargo</span> <span class="n">c</span><span class="o">);</span>
+  <span class="kt">void</span> <span class="nf">removeCargo</span><span class="o">(</span><span class="n">Cargo</span> <span class="n">c</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Airport</span> <span class="o">{</span>
+  <span class="kt">void</span> <span class="nf">land</span><span class="o">(</span><span class="n">Aircraft</span> <span class="n">a</span><span class="o">);</span>
+  <span class="kt">void</span> <span class="nf">depart</span><span class="o">(</span><span class="n">Aircraft</span> <span class="n">a</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">AircraftCarrier</span> <span class="kd">implements</span> <span class="n">Ship</span><span class="o">,</span> <span class="n">Airport</span> <span class="o">{</span>
+
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Aircraft</span><span class="o">&gt;</span> <span class="n">aircrafts</span><span class="o">;</span>
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Cargo</span><span class="o">&gt;</span> <span class="n">cargoes</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">land</span><span class="o">(</span><span class="n">Aircraft</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">aircrafts</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">depart</span><span class="o">(</span><span class="n">Aircraft</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">aircrafts</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addCargo</span><span class="o">(</span><span class="n">Cargo</span> <span class="n">c</span><span class="o">){</span>
+    <span class="n">cargoes</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">removeCargo</span><span class="o">(</span><span class="n">Cargo</span> <span class="n">c</span><span class="o">){</span>
+    <span class="n">cargoes</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>But now we have to implement the methods from each interface manually. Not a big deal in this simple example because it&rsquo;s basically just one line of code for each method but I guess you get the point.</p>
+<p>How does Ruby programmers deal with inheritance? Experienced Ruby programmers don&rsquo;t use inheritance for such things. They use Mixins:</p>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">Airport</span>  <span class="c1"># for simplicity: module is same as class</span>
+
+  <span class="vi">@aircrafts</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="n">new</span>    <span class="c1"># variable</span>
+
+  <span class="k">def</span> <span class="nf">land</span><span class="p">(</span><span class="n">aircraft</span><span class="p">)</span>
+    <span class="n">aircrafts</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">aircraft</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">depart</span><span class="p">(</span><span class="n">aircraft</span><span class="p">)</span>
+    <span class="n">aircraft</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">aircraft</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+
+<span class="k">class</span> <span class="nc">AircraftCarrier</span>
+  <span class="kp">include</span> <span class="no">Ship</span>
+  <span class="kp">include</span> <span class="no">Airport</span>
+<span class="k">end</span>
+</code></pre></div><p>With Mixins we can compose <em>AircraftCarrier</em> by &ldquo;including&rdquo; (or mixing in) the functionality of Ship and Airport without inheritance. Ship definition has been omitted for better readability but I guess you can imagine how the code for <em>module Ship</em> will look like. Please note that this is not multiple inheritance as C++ offers (<a href="https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem">diamond problem</a>). Mixins are a different concept. The Ruby programming language has native support for Mixins. What about other languages like Scala? Scala has support for Mixins as well. In Scala those are called Traits. Traits are Mixins just with some slightly different properties from a programming language designers point of view like Mixins require linearization while Traits are flattened and Traits traditionally don&rsquo;t contain states. But that shouldn&rsquo;t worry you too much. For the sake of simplicity we can say Mixins and Traits are the same.</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Ship</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">cargoes</span> <span class="k">:</span> <span class="kt">ListBuffer</span><span class="o">[</span><span class="kt">Cargo</span><span class="o">]</span>
+
+  <span class="k">def</span> <span class="n">addCargo</span><span class="o">(</span><span class="n">c</span> <span class="k">:</span> <span class="kt">Cargo</span><span class="o">){</span>
+    <span class="n">cargoes</span> <span class="o">+=</span> <span class="n">c</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">removeCargo</span><span class="o">(</span><span class="n">c</span> <span class="k">:</span> <span class="kt">Cargo</span><span class="o">){</span>
+    <span class="n">cargoes</span> <span class="o">-=</span> <span class="n">c</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>And then with Scala we can do something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">AircraftCarrier</span> <span class="k">with</span> <span class="nc">Ship</span> <span class="k">with</span> <span class="nc">Airport</span>
+</code></pre></div><p>See the thing is both, Ruby and Scala, natively have language support for Mixins. But what about java? With Java 8 and default methods for interfaces we can do pretty the same thing:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Airport</span> <span class="o">{</span>
+
+  <span class="c1">// To be implemented in subclass
+</span><span class="c1"></span>  <span class="n">List</span><span class="o">&lt;</span><span class="n">Aircraft</span><span class="o">&gt;</span> <span class="nf">getAircrafts</span><span class="o">();</span>
+
+  <span class="k">default</span> <span class="kt">void</span> <span class="nf">land</span><span class="o">(</span><span class="n">Aircraft</span> <span class="n">aircraft</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">getAircrafts</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="n">aircraft</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="k">default</span> <span class="kt">void</span> <span class="nf">depart</span><span class="o">(</span><span class="n">Aircraft</span> <span class="n">aircraft</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">getAircrafts</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">aircraft</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>We will do the same for <em>Ship</em> (interface with default method implementations) and then we can do something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">AircraftCarrier</span> <span class="kd">implements</span> <span class="n">Ship</span><span class="o">,</span> <span class="n">Airport</span> <span class="o">{</span>
+
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Aircraft</span><span class="o">&gt;</span> <span class="n">aircrafts</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Cargo</span><span class="o">&gt;</span> <span class="n">cargoes</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Aircraft</span><span class="o">&gt;</span> <span class="nf">getAircrafts</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">aircrafts</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Cargo</span><span class="o">&gt;</span> <span class="nf">getCargoes</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">cargoes</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">AircraftCarrier</span> <span class="n">carrier</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AircraftCarrier</span><span class="o">();</span>
+<span class="n">carrier</span><span class="o">.</span><span class="na">addCargo</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+<span class="n">carrier</span><span class="o">.</span><span class="na">land</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+</code></pre></div><p>Moreover, now we can compose new classes even more easily and without traditional inheritance:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Houseboat</span> <span class="kd">implements</span> <span class="n">House</span><span class="o">,</span> <span class="n">Ship</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">MilitaryHouseboat</span> <span class="kd">implements</span> <span class="n">House</span><span class="o">,</span> <span class="n">Ship</span><span class="o">,</span> <span class="n">Airport</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+</code></pre></div><p>I guess you get the point. With Java 8 and default methods for interfaces we can use Mixins instead of inheritance. kotlin also offers Mixins via interfaces with default methods:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">interface</span> <span class="nc">Ship</span> <span class="p">{</span>
+  <span class="k">val</span> <span class="py">cargoes</span> <span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Cargo</span><span class="p">&gt;</span>
+
+  <span class="k">fun</span> <span class="nf">addCargo</span><span class="p">(</span><span class="n">c</span> <span class="p">:</span> <span class="n">Cargo</span><span class="p">){</span>
+    <span class="n">cargoes</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">fun</span> <span class="nf">removeCargo</span><span class="p">(</span><span class="n">c</span> <span class="p">:</span> <span class="n">Cargo</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cargoes</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">AircraftCarrier</span> <span class="p">:</span> <span class="n">Ship</span><span class="p">,</span> <span class="n">Airport</span> <span class="p">{</span>
+  <span class="k">override</span> <span class="k">val</span> <span class="py">cargoes</span> <span class="p">=</span> <span class="n">ArrayList</span><span class="p">()</span>
+  <span class="k">override</span> <span class="k">val</span> <span class="py">aircrafts</span> <span class="p">=</span> <span class="n">ArrayList</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div><p>Hopefully you see that Mixins may be a better choice than traditional inheritance. But how does that help in android development. In android we always have to extend from Activity or Fragment, which are obviously two different base classes. With Mixins, we can share code between both classes that extends from Activity and classes that extends from Fragment. Sure this is not the main use case of Mixins (delegation might be a better choice) because those methods defined in the Mixin will be used internally from the Fragment or Activity himself which are implementing the Mixin interface, but it is a valid option though. Unfortunately, interfaces with default methods on Android requires <strong>min sdk 24 (Android N)</strong> and Jack as compiler.</p>
+<p>See the moral of the story is it is good to have an alternative to inheritance and I have the feeling that unfortunately Mixins via interfaces with default implementation are not used that much in the java world.</p>
+<p>My general advice about inheritance:</p>
+<blockquote>
+<p>Inheritance doesn&rsquo;t scale well! Use inheritance for inheriting properties but not for inheriting functionality! Mixins are better suited for &ldquo;inheriting&rdquo; functionality.</p>
+</blockquote>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

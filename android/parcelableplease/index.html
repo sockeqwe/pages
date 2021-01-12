@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="ParcelablePlease">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>ParcelablePlease</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Sep 24, 2014</li>
+        </ul>
+        <article class="content">
+          
+          <p>In my last blog post I have introduced <a href="http://hannesdorfmann.com/android/fragmentargs">FragmentArgs</a> an  <strong>Annotation Processor</strong> for Fragments that reduces writing boilerplate code. In this post I want to talk about a similar problem android developer face: Writing boilerplate code for <strong>Parcelable</strong></p>
+<blockquote>
+<p>This post is part of a series of posts about useful annotation processors like <a href="http://hannesdorfmann.com/android/fragmentargs">FragmentArgs</a> or <a href="http://hannesdorfmann.com/android/AnnotatedAdapter">AnnotatedAdapter</a></p>
+</blockquote>
+<p>Parcelable is a extreme fast way to serialize objects on Android. Unfortunately the developer has to implement both the <code>Parcelable interface</code> and the <code>CREATOR</code> for each model class. You may ask yourself: &ldquo;Does not someone else could write that code for me?&rdquo;. Annotation processing can be used to generate java code and it is possible to generate <code>Parcelable</code> code. There are already two good libraries that are doing this job: <a href="https://github.com/johncarl81/parceler">Parceler</a> and <a href="https://github.com/frankiesardo/auto-parcel">AutoParcel</a>. However I ended up by writing my own annotation processor called <a href="https://github.com/sockeqwe/ParcelablePlease">ParcelablePlease</a> and I want to explain why.</p>
+<h2 id="parceler">Parceler</h2>
+<p>Parceler seems to be the easiest way to make classes Parcelable. All you have to do is to annotate your class with <code>@Parcel</code>. However the class itself will not implement the Parcelable interface. The Parceler annotation processor creates a wrapper class for each <code>@Parcel</code> annotated class and this generated class implements Parcelable and is responsible to set the values of the real model class (annotated with @Parcel) and vice versa. Hence the model class itself is not an instance of <code>Parcelable</code> and you have to wrap and unwrap the real model class:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Parcel</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Example</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Example</span><span class="o">(){</span> <span class="cm">/*Required empty bean constructor*/</span> <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="c1">// Write as Parcelable
+</span><span class="c1"></span><span class="n">Bundle</span> <span class="n">bundle</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bundle</span><span class="o">();</span>
+<span class="n">bundle</span><span class="o">.</span><span class="na">putParcelable</span><span class="o">(</span><span class="s">&#34;example&#34;</span><span class="o">,</span> <span class="n">Parcels</span><span class="o">.</span><span class="na">wrap</span><span class="o">(</span><span class="n">example</span><span class="o">));</span>
+
+
+<span class="c1">// Read as Parcelable
+</span><span class="c1"></span><span class="n">Example</span> <span class="n">example</span> <span class="o">=</span> <span class="n">Parcels</span><span class="o">.</span><span class="na">unwrap</span><span class="o">(</span><span class="n">getIntent</span><span class="o">().</span><span class="na">getExtras</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="s">&#34;example&#34;</span><span class="o">))</span>
+</code></pre></div><p>The downside is that <strong>Parceler</strong> is not compatible with other libraries who require a <strong>Parcelable</strong> object like <a href="http://hannesdorfmann.com/android/fragmentargs">FragmentArgs</a> does. That&rsquo;s the reason why in the most of my apps I can&rsquo;t use Parceler.</p>
+<h2 id="autoparcel">AutoParcel</h2>
+<p>AutoParcel is an annotation processor, inspired by Google&rsquo;s AutoValue to generate parcelable classes. The idea of AutoValue is that you declare an abstract class with abstract methods. This abstract methods are detected by an annotation processor at compile time. Furthermore, the annotation processor creates a class that extends from this abstract class and implements the missing abstract methods (and generates the fields). Additionally AutoValue generates <strong>null-checks</strong>, <strong>toString()</strong>, <strong>hashCode()</strong>, <strong>equals()</strong> and other methods for you. Basically it does something similar like <a href="http://www.projectlombok.org">project lombok</a> by using annotation processing instead of magic byte code manipulation (weaving). Like the name already suggests, AutoParcel does pretty the same with the goal to generate the <strong>Parcelable</strong> code for you. So a class using AutoParcel looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@AutoParcel</span>
+<span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">SomeModel</span> <span class="kd">implements</span> <span class="n">Parcelable</span> <span class="o">{</span>
+  <span class="kd">abstract</span> <span class="n">String</span> <span class="nf">name</span><span class="o">();</span>
+  <span class="kd">abstract</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">SomeSubModel</span><span class="o">&gt;</span> <span class="nf">subModels</span><span class="o">();</span>
+  <span class="kd">abstract</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">OtherSubModel</span><span class="o">&gt;</span> <span class="nf">modelsMap</span><span class="o">();</span>
+
+  <span class="kd">static</span> <span class="n">SomeModel</span> <span class="nf">create</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">SomeSubModel</span><span class="o">&gt;</span> <span class="n">subModels</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">OtherSubModel</span><span class="o">&gt;</span> <span class="n">modelsMap</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">AutoParcel_SomeModel</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">subModels</span><span class="o">,</span> <span class="n">modelsMap</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>As you can see <code>SomeModel</code> is an abstract class and the full implementation of this abstract class <code>AutoParcel_SomeModel</code> is generated by the annotation processor. This seems to be a very straightforward solution since <code>SomeModel</code> is a &ldquo;real&rdquo; <code>Parcelable</code> (unlikely Parcelers approach). I have to admit that I&rsquo;m a big AutoValue fan and I use it quite often in backend applications. I was really excited to see this concept for Parcelable on Android. AutoParcel supports a lot of types, generics and inheritance. However there is one big issue with this approach that makes it not useable in my apps: You can&rsquo;t easily use it with other frameworks where you have to annotate fields or methods like many json parsers require. In the most of the android apps I have written so far I parse json (with jackson or gson) and I want to make this classes Parcelable to pass them trough intents or as fragment arguments. There may be some workarounds but they seem to be not very handy. For example there is an ongoing discussion of how to parse with <a href="https://github.com/frankiesardo/auto-parcel/issues/6">Gson an AutoParcel</a>.The most promising solution is to write your own gson <strong>JsonDeserializer</strong> for each AutoValue generated class to map between <code>SomeModel</code> and the generated <code>AutoValue_SomeModel</code>. You could automate this step by writing an additional Annotation Processor for <a href="https://gist.github.com/JakeWharton/0d67d01badcee0ae7bc9">generating TypeAdapterFactory</a> for gson. But it isn&rsquo;t a handy solution and what about other third party libraries?</p>
+<p><strong>Update:</strong> Since AutoValue 1.3 supports extensions AutoParcel is not needed anymore because you can directly use AutoValue with Parcelable extension and Gson extension.</p>
+<h2 id="parcelableplease">ParcelablePlease</h2>
+<p>At the end I ended up by writing a small Annotation Processor called <a href="https://github.com/sockeqwe/ParcelablePlease">ParcelablePlease</a>. The goal was to support the most scenarios you face in real world apps. Hence it&rsquo;s not that powerful as AutoValue is (I only spend few hours on this project), but it will directly implement the Parcelable interface on the model class to avoid to run into the same problems as Parceler or AutoParcel.
+Simply annotate your model class with <code>@ParcelablePlease</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@ParcelablePlease</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Model</span> <span class="kd">implements</span> <span class="n">Parcelable</span> <span class="o">{</span>
+
+  <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+  <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+  <span class="n">OtherModel</span> <span class="n">otherModel</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">describeContents</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">0</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">writeToParcel</span><span class="o">(</span><span class="n">Parcel</span> <span class="n">dest</span><span class="o">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">ModelParcelablePlease</span><span class="o">.</span><span class="na">writeToParcel</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">dest</span><span class="o">,</span> <span class="n">flags</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Creator</span><span class="o">&lt;</span><span class="n">Model</span><span class="o">&gt;</span> <span class="n">CREATOR</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Creator</span><span class="o">&lt;</span><span class="n">Model</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Model</span> <span class="nf">createFromParcel</span><span class="o">(</span><span class="n">Parcel</span> <span class="n">source</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">Model</span> <span class="n">target</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Model</span><span class="o">();</span>
+      <span class="n">ModelParcelablePlease</span><span class="o">.</span><span class="na">readFromParcel</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">source</span><span class="o">);</span>
+      <span class="k">return</span> <span class="n">target</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">Model</span><span class="o">[]</span> <span class="nf">newArray</span><span class="o">(</span><span class="kt">int</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">Model</span><span class="o">[</span><span class="n">size</span><span class="o">];</span>
+    <span class="o">}</span>
+  <span class="o">};</span>
+<span class="o">}</span>
+</code></pre></div><p>Like you have seen above you have to write the code to connect the generated code (ModelParcelablePlease) with your Model class. I know that&rsquo;s not what we want. So I was searching for a solution for not writing this boilerplate code. One option was to use compile time code weaving like you can do with <a href="https://github.com/stephanenicolas/afterburner">afterburn</a>. However, I was not convinced that this would be the right direction. I have a bad vibe about byte code manipulation. I don&rsquo;t like this &ldquo;magic&rdquo; things, because it&rsquo;s not easy to debug them. So at the end I came to a unspectacular but efficient solution. I wrote an intellij plugin that generates the CREATOR and Parcelable code where the Model class gets connected to the generated code (Annotation Processor). It&rsquo;s some kind of hybrid solution: you only have to run the IntelliJ plugin to generate the @Parcelable Annotation, the CREATOR and writeToParcel(). The serialization code is generated by the annotation processor. Adding or removing a field does not mean you have to rerun the IntelliJ plugin because the annotation processor is responsible for serializing and deserializing all class fields.</p>
+<p>Like mentioned before <strong>ParcelablePlease</strong> has been built with the aim to make it work in real applications. Therefore in <strong>ParcelabelPlease</strong> you can specify which fields you want to make parcelable by using <code>@ParcelableThisPlease</code> and <code>@ParcelableNoThanks</code> as well as setting default configurations. Another feature for edge cases is <code>@Bagger</code>. With <strong>@Bagger</strong> you provide a implementation of how a field should be serialized.</p>
+<p>For example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DateBagger</span> <span class="kd">implements</span> <span class="n">ParcelBagger</span><span class="o">&lt;</span><span class="n">Date</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">Date</span> <span class="n">value</span><span class="o">,</span> <span class="n">Parcel</span> <span class="n">out</span><span class="o">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">out</span><span class="o">.</span><span class="na">writeLong</span><span class="o">(-</span><span class="n">1</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="n">out</span><span class="o">.</span><span class="na">writeLong</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">getTime</span><span class="o">());</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">Date</span> <span class="nf">read</span><span class="o">(</span><span class="n">Parcel</span> <span class="n">in</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="kt">long</span> <span class="n">timeMillis</span> <span class="o">=</span> <span class="n">in</span><span class="o">.</span><span class="na">readLong</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">timeMillis</span> <span class="o">==</span> <span class="o">-</span><span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="k">new</span> <span class="n">Date</span><span class="o">(</span><span class="n">timeMillis</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@ParcelablePlease</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="kd">implements</span> <span class="n">Parcelable</span> <span class="o">{</span>
+
+  <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+  <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+
+  <span class="nd">@Bagger</span><span class="o">(</span><span class="n">DateBagger</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+  <span class="n">Date</span> <span class="n">date</span><span class="o">;</span>
+
+<span class="o">}</span>
+</code></pre></div><p>Note that java.util.Date is already supported by ParcelablePlease. The example above is just to give you an idea of how a implementation of @Bagger and ParcelBagger could look like. More inforation can be found at the <a href="https://github.com/sockeqwe/ParcelablePlease">ParcelablePlease github site</a></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Annotation Processor can reduce writing boilerplate code to make a class <strong>Parcelable</strong>. <strong>AutoParcel</strong> is a very promising approach. Unfortunately there are issues with other third party libraries. I really would love to use <strong>AutoParcel</strong> but right now (from my point of view) it&rsquo;s not the best solution for the most of my apps. In the meantime you may find <strong>ParcelablePlase</strong> useful. However, I will keep an eye on you AutoParcel!</p>
+<p>In my next post I want to talk about <a href="http://hannesdorfmann.com/android/AnnotatedAdapter/">AnnotatedAdapter</a>, an annotation processor for RecyclerView&rsquo;s adapter.</p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

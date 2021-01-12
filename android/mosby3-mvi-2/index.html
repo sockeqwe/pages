@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Model-View-Intent MVI on Android by using Mosby 3. Focusing on View and Intnet in this post.">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Reactive Apps with Model-View-Intent - Part 2: View and Intent</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Jan 17, 2017</li>
+        </ul>
+        <article class="content">
+          
+          <p>In the <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">first part</a> we have discussed what a Model actually is,
+the relation to State and how a well defined Model can solve some common issues in android development.
+In this blog post we continue our journey towards &ldquo;Reactive Apps&rdquo; by introducing the <strong>M</strong>odel-<strong>V</strong>iew-<strong>I</strong>ntent pattern to build Reactive Apps.</p>
+<p>If you haven&rsquo;t read <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">part 1</a> yet, you should read that before continue with this blog post. To summarize:
+Rather then writing code like this (for example in &ldquo;traditional&rdquo; MVP)</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">PersonsPresenter</span> <span class="kd">extends</span> <span class="n">Presenter</span><span class="o">&lt;</span><span class="n">PersonsView</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">load</span><span class="o">(){</span>
+    <span class="n">getView</span><span class="o">().</span><span class="na">showLoading</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span> <span class="c1">// Displays a ProgressBar on the screen
+</span><span class="c1"></span>
+    <span class="n">backend</span><span class="o">.</span><span class="na">loadPersons</span><span class="o">(</span><span class="k">new</span> <span class="n">Callback</span><span class="o">(){</span>
+      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">persons</span><span class="o">){</span>
+        <span class="n">getView</span><span class="o">().</span><span class="na">showPersons</span><span class="o">(</span><span class="n">persons</span><span class="o">);</span> <span class="c1">// Displays a list of Persons on the screen
+</span><span class="c1"></span>      <span class="o">}</span>
+
+      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onError</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">error</span><span class="o">){</span>
+        <span class="n">getView</span><span class="o">().</span><span class="na">showError</span><span class="o">(</span><span class="n">error</span><span class="o">);</span> <span class="c1">// Displays a error message on the screen
+</span><span class="c1"></span>      <span class="o">}</span>
+    <span class="o">});</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>we should create a &ldquo;Model&rdquo; that reflects the &ldquo;State&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">PersonsModel</span> <span class="o">{</span>
+  <span class="c1">// In a real application fields would be private
+</span><span class="c1"></span>  <span class="c1">// and we would have getters to access them
+</span><span class="c1"></span>  <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">loading</span><span class="o">;</span>
+  <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">persons</span><span class="o">;</span>
+  <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">error</span><span class="o">;</span>
+
+  <span class="kd">public</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">loading</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">persons</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">error</span><span class="o">){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">loading</span> <span class="o">=</span> <span class="n">loading</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">persons</span> <span class="o">=</span> <span class="n">persons</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">error</span> <span class="o">=</span> <span class="n">error</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>And then the Presenter could be implemented like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">PersonsPresenter</span> <span class="kd">extends</span> <span class="n">Presenter</span><span class="o">&lt;</span><span class="n">PersonsView</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">load</span><span class="o">(){</span>
+    <span class="n">getView</span><span class="o">().</span><span class="na">render</span><span class="o">(</span> <span class="k">new</span> <span class="n">PersonsModel</span><span class="o">(</span><span class="kc">true</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">)</span> <span class="o">);</span> <span class="c1">// Displays a ProgressBar
+</span><span class="c1"></span>
+    <span class="n">backend</span><span class="o">.</span><span class="na">loadPersons</span><span class="o">(</span><span class="k">new</span> <span class="n">Callback</span><span class="o">(){</span>
+      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">persons</span><span class="o">){</span>
+        <span class="n">getView</span><span class="o">().</span><span class="na">render</span><span class="o">(</span> <span class="k">new</span> <span class="n">PersonsModel</span><span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="n">persons</span><span class="o">,</span> <span class="kc">null</span><span class="o">)</span> <span class="o">);</span> <span class="c1">// Displays a list of Persons
+</span><span class="c1"></span>      <span class="o">}</span>
+
+      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onError</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">error</span><span class="o">){</span>
+          <span class="n">getView</span><span class="o">().</span><span class="na">render</span><span class="o">(</span> <span class="k">new</span> <span class="n">PersonsModel</span><span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">error</span><span class="o">)</span> <span class="o">);</span> <span class="c1">// Displays a error message
+</span><span class="c1"></span>      <span class="o">}</span>
+    <span class="o">});</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Now the View has a Model which then will be &ldquo;rendered&rdquo; on the screen simply by invoking <strong>render(personsModel)</strong>.
+In the first part we also talked about the importance of an unidirectional data flow and that your business logic should drive this model. Before we start to connect the dots lets quickly discuss the main idea of MVI.</p>
+<h2 id="model-view-intent-mvi">Model-View-Intent (MVI)</h2>
+<p>This pattern was specified by <a href="https://twitter.com/andrestaltz">André Medeiros (Staltz)</a> for a JavaScript framework he has written called <a href="https://cycle.js.org">cycle.js</a>.
+From a theoretical (and mathematical) point of view we could describe Model-View-Intent as follows:</p>
+<p><img src="/images/mvi/mvi-func2.png" alt="MVI"></p>
+<ul>
+<li><strong>intent()</strong>: This function takes the input from the user (i.e. UI events, like click events) and
+translate it to &ldquo;something&rdquo; that will be passed as parameter to <strong>model()</strong> function.
+This could be a simple string to set a value of the model to or more complex data structure like an Object. We could say we have the intention to change the model with an intent.</li>
+<li><strong>model()</strong>: The model() function takes the output from <strong>intent()</strong> as input to manipulate the Model.
+The output of this function is a new Model (state changed). So it should not update an already existing Model. <strong>We want immutability!</strong> In the <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">first part</a> I gave a concrete example with a &ldquo;counter app&rdquo;. Again, we don&rsquo;t change an already existing Model object instance. We create a new Model according to the changes described by the intent.
+Please note, that the model() function is the only piece of your code that is allowed to create a new Model object. Then this new immutable Model is the output of this function. Basically, the model() function calls our apps business logic (could be an Interactor, Usecase, Repository &hellip;
+whatever pattern / terminology you use in your app) and delivers a new Model object as result.</li>
+<li><strong>view()</strong>: This method takes the model returned from <strong>model()</strong> function and gives it as input to the  <strong>view()</strong> function. Then the View simply displays this Model somehow. view() is basically the same as <strong>view.render(model)</strong>.</li>
+</ul>
+<p>But we want to build a &ldquo;Reactive App&rdquo;, don&rsquo;t we?
+So how is MVI &ldquo;reactive&rdquo;? What does &ldquo;reactive&rdquo; actually means in this context? With &ldquo;reactive&rdquo; we mean apps with a UI that reacts on state changes.
+Since &ldquo;State&rdquo; is reflected by a &ldquo;Model&rdquo; essentially we want that our Business logic &ldquo;reacts&rdquo; on input events (intents) and produces a &ldquo;Model&rdquo; as output which then can be displayed in the View by calling view&rsquo;s render(model) method.</p>
+<h2 id="connecting-the-dots-with-rxjava">Connecting the dots with RxJava</h2>
+<p>We want that our data flows unidirectional. Here comes RxJava into play. Do we need RxJava to build reactive apps with an unidirectional data flow or MVI based apps? No, we could also write imperative and procedural code. However, RxJava is very good for event based programming. Since UI are event based too using RxJava makes a lot of sense.</p>
+<p>In this blog post we are going to build a simple app for a fictional online shop. We make http requests to a backend to load products that we display in the app. We can search for certain products and add products into a shopping basket. Overall the final app looks like this:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/rmR9mV1Dsqk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>The source code can be found on <a href="https://github.com/sockeqwe/mosby/tree/master/sample-mvi">github</a>.
+Let&rsquo;s start by implementing a simple screen: Let&rsquo;s implement the search.
+First, we define a Model which at the end is displayed by the View as described in Part 1 of this blog post series.
+<strong>In this blog post series we give all our Model classes a &ldquo;ViewState&rdquo; suffix</strong>, i.e. our Model
+class for the screen to search for products in our online shop app is called <strong>SearchViewState</strong>
+because the Model reflects the State. Also alternative names like SearchModel
+sounds a little bit strange or SearchViewModel could lead to confusion with MVVM. Naming is hard.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SearchViewState</span> <span class="o">{</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The search has not been stared yet
+</span><span class="cm">   */</span>
+  <span class="kd">final</span> <span class="kd">class</span> <span class="nc">SearchNotStartedYet</span> <span class="kd">implements</span> <span class="n">SearchViewState</span> <span class="o">{</span>
+  <span class="o">}</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Loading: Currently waiting for search result
+</span><span class="cm">   */</span>
+  <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Loading</span> <span class="kd">implements</span> <span class="n">SearchViewState</span> <span class="o">{</span>
+  <span class="o">}</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Indicates that the search has delivered an empty result set
+</span><span class="cm">   */</span>
+  <span class="kd">final</span> <span class="kd">class</span> <span class="nc">EmptyResult</span> <span class="kd">implements</span> <span class="n">SearchViewState</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">searchQueryText</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">EmptyResult</span><span class="o">(</span><span class="n">String</span> <span class="n">searchQueryText</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">searchQueryText</span> <span class="o">=</span> <span class="n">searchQueryText</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getSearchQueryText</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">searchQueryText</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * A valid search result. Contains a list of items that have matched the searching criteria.
+</span><span class="cm">   */</span>
+  <span class="kd">final</span> <span class="kd">class</span> <span class="nc">SearchResult</span> <span class="kd">implements</span> <span class="n">SearchViewState</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">searchQueryText</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">SearchResult</span><span class="o">(</span><span class="n">String</span> <span class="n">searchQueryText</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">searchQueryText</span> <span class="o">=</span> <span class="n">searchQueryText</span><span class="o">;</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getSearchQueryText</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">searchQueryText</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span> <span class="nf">getResult</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Indicates that an error has occurred while searching
+</span><span class="cm">   */</span>
+  <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Error</span> <span class="kd">implements</span> <span class="n">SearchViewState</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">searchQueryText</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">error</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Error</span><span class="o">(</span><span class="n">String</span> <span class="n">searchQueryText</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">error</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">searchQueryText</span> <span class="o">=</span> <span class="n">searchQueryText</span><span class="o">;</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">error</span> <span class="o">=</span> <span class="n">error</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getSearchQueryText</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">searchQueryText</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">Throwable</span> <span class="nf">getError</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">error</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Since Java is a strongly typed language we have chosen a type safe approach for our Model class by splitting each &ldquo;sub-state&rdquo; in its own class.
+Our business logic returns an object of type <strong>SearchViewState</strong> which could be an instance of SearchViewState.Error etc.
+This is just a personal preference. We could have also modeled this entirely different, for example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">SearchViewState</span> <span class="o">{</span>
+  <span class="n">Throwable</span> <span class="n">error</span><span class="o">;</span> <span class="c1">// if not null, an error has occurred
+</span><span class="c1"></span>  <span class="kt">boolean</span> <span class="n">loading</span><span class="o">;</span> <span class="c1">// if true loading data is in progress
+</span><span class="c1"></span>  <span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">;</span> <span class="c1">// if not null this is the result of the search
+</span><span class="c1"></span>  <span class="kt">boolean</span> <span class="n">SearchNotStartedYet</span><span class="o">;</span> <span class="c1">// if true, we have the search not started yet
+</span><span class="c1"></span><span class="o">}</span>
+</code></pre></div><p>Again, how you model your Models is just a matter of personal preferences. If you use the kotlin programming language then sealed classes are a great choice.</p>
+<p>Next, let&rsquo;s focus on the Business Logic. Let&rsquo;s introduce a <strong>SearchInteractor</strong> which is responsible to execute the search. As already said the &ldquo;output&rdquo; is a <strong>SearchViewState</strong> object.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SearchInteractor</span> <span class="o">{</span>
+  <span class="kd">final</span> <span class="n">SearchEngine</span> <span class="n">searchEngine</span><span class="o">;</span> <span class="c1">// Makes http calls
+</span><span class="c1"></span>
+  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">SearchViewState</span><span class="o">&gt;</span> <span class="nf">search</span><span class="o">(</span><span class="n">String</span> <span class="n">searchString</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Empty String, so no search
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">searchString</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">Observable</span><span class="o">.</span><span class="na">just</span><span class="o">(</span><span class="k">new</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">SearchNotStartedYet</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="c1">// search for products
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">searchEngine</span><span class="o">.</span><span class="na">searchFor</span><span class="o">(</span><span class="n">searchString</span><span class="o">)</span> <span class="c1">// Observable&lt;List&lt;Product&gt;&gt;
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">products</span> <span class="o">-&gt;</span> <span class="o">{</span>
+          <span class="k">if</span> <span class="o">(</span><span class="n">products</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">EmptyResult</span><span class="o">(</span><span class="n">searchString</span><span class="o">);</span>
+          <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">SearchResult</span><span class="o">(</span><span class="n">searchString</span><span class="o">,</span> <span class="n">products</span><span class="o">);</span>
+          <span class="o">}</span>
+        <span class="o">})</span>
+        <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="k">new</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">Loading</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">onErrorReturn</span><span class="o">(</span><span class="n">error</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">Error</span><span class="o">(</span><span class="n">searchString</span><span class="o">,</span> <span class="n">error</span><span class="o">));</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Let&rsquo;s take a look at the method signature of SearchInteractor.search(): We have <strong>String searchString</strong> as input parameter and <strong>Observable&lt;SearchViewState&gt;</strong> as output. This already hints that we expect that arbitrary many instances of SearchViewState are emitted on this observable stream over time.
+<strong>startWith()</strong> says before we are actually starting the search query (via SearchEngine which executes the http request) we emit <strong>SearchViewState.Loading</strong>.
+At the end this will force the View to display a ProgressBar while executing the search.</p>
+<p><strong>onErrorReturn()</strong> catches any Exceptions that may occur while executing the search and emits a <strong>SearchViewState.Error</strong>.
+Couldn&rsquo;t we just use the onError callback when we subscribe to this Observable?
+This is a common misunderstanding in RxJava: the error callback is meant to be used when the whole observable stream runs into an unrecoverable error and therefore the observable stream terminates.
+In our case an error like no active internet connection is not an unrecoverable error.
+It is yet just another state represented by our Model. Furthermore, we can move to another state afterwards i.e. once
+the an active internet connection is available we can move to the &ldquo;loading state&rdquo; represented by
+<strong>SearchViewState.Loading</strong> .  So we establish an observable stream from our business logic to our view emitting a changed Model every time the &ldquo;State&rdquo; changes.
+We certainly don&rsquo;t want to terminate this observable stream on a internet connection error. Therefore, such errors are handled as a State (rather than a fatal error that terminates the stream) which is reflected by the Model and emitted to the observable stream when an error occurs. Usually in MVI the  Model Observable never terminates (never reaches the subscriber&rsquo;s onComplete() or onError() ).</p>
+<p>To sum it up: <strong>SearchInteractor</strong> (business logic) offers an observable stream <strong>Observable&lt;SearchViewState&gt;</strong> and emits a new SearchViewState every time the state changes.</p>
+<p>Next let&rsquo;s discuss how our View layer looks like. What should the View do? Well, obviously the view should display the Model. We have agreed that the View should have a function like <strong>render(model)</strong>. Additionally, the view should offer a way for other layers to react on user input events. These are called <strong>intents</strong> in MVI. In our case there is only one intent: the user can search for a product by typing a String into a input field. We implement MVI in a similar way to MVP. It is good practice in MVP to define a interface for the View layer so let&rsquo;s do this in MVI too.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SearchView</span> <span class="o">{</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The search intent
+</span><span class="cm">   *
+</span><span class="cm">   * @return An observable emitting the search query text
+</span><span class="cm">   */</span>
+  <span class="n">Observable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">searchIntent</span><span class="o">();</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Renders the View
+</span><span class="cm">   *
+</span><span class="cm">   * @param viewState The current viewState state that should be displayed
+</span><span class="cm">   */</span>
+  <span class="kt">void</span> <span class="nf">render</span><span class="o">(</span><span class="n">SearchViewState</span> <span class="n">viewState</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>In this case our View only offers one intent but in general a View could offer multiple intents. In <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">part 1</a> we have discussed why a single render() function is a nice approach, if it is unclear why we should prefer a single render() you should read part 1 again (or leave a comment below; see also comment section in part 1). Before we start with the concrete implementation of the View layer, let&rsquo;s take a look how the final result should look like:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/07pkkbFQhtk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SearchFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="kd">implements</span> <span class="n">SearchView</span> <span class="o">{</span>
+
+  <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">searchView</span><span class="o">)</span> <span class="n">android</span><span class="o">.</span><span class="na">widget</span><span class="o">.</span><span class="na">SearchView</span> <span class="n">searchView</span><span class="o">;</span>
+  <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">container</span><span class="o">)</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">;</span>
+  <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">loadingView</span><span class="o">)</span> <span class="n">View</span> <span class="n">loadingView</span><span class="o">;</span>
+  <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">errorView</span><span class="o">)</span> <span class="n">TextView</span> <span class="n">errorView</span><span class="o">;</span>
+  <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">recyclerView</span><span class="o">)</span> <span class="n">RecyclerView</span> <span class="n">recyclerView</span><span class="o">;</span>
+  <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">emptyView</span><span class="o">)</span> <span class="n">View</span> <span class="n">emptyView</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">SearchAdapter</span> <span class="n">adapter</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">searchIntent</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">RxSearchView</span><span class="o">.</span><span class="na">queryTextChanges</span><span class="o">(</span><span class="n">searchView</span><span class="o">)</span> <span class="c1">// Thanks Jake Wharton :)
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">queryString</span> <span class="o">-&gt;</span> <span class="n">queryString</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">3</span> <span class="o">||</span> <span class="n">queryString</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">debounce</span><span class="o">(</span><span class="n">500</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">MILLISECONDS</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">render</span><span class="o">(</span><span class="n">SearchViewState</span> <span class="n">viewState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">viewState</span> <span class="k">instanceof</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">SearchNotStartedYet</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">renderSearchNotStarted</span><span class="o">();</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">viewState</span> <span class="k">instanceof</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">Loading</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">renderLoading</span><span class="o">();</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">viewState</span> <span class="k">instanceof</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">SearchResult</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">renderResult</span><span class="o">(((</span><span class="n">SearchViewState</span><span class="o">.</span><span class="na">SearchResult</span><span class="o">)</span> <span class="n">viewState</span><span class="o">).</span><span class="na">getResult</span><span class="o">());</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">viewState</span> <span class="k">instanceof</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">EmptyResult</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">renderEmptyResult</span><span class="o">();</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">viewState</span> <span class="k">instanceof</span> <span class="n">SearchViewState</span><span class="o">.</span><span class="na">Error</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">renderError</span><span class="o">();</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Don&#39;t know how to render viewState &#34;</span> <span class="o">+</span> <span class="n">viewState</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">renderResult</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">TransitionManager</span><span class="o">.</span><span class="na">beginDelayedTransition</span><span class="o">(</span><span class="n">container</span><span class="o">);</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+    <span class="n">loadingView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">emptyView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">errorView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">setProducts</span><span class="o">(</span><span class="n">result</span><span class="o">);</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">notifyDataSetChanged</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">renderSearchNotStarted</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">TransitionManager</span><span class="o">.</span><span class="na">beginDelayedTransition</span><span class="o">(</span><span class="n">container</span><span class="o">);</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">loadingView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">errorView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">emptyView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">renderLoading</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">TransitionManager</span><span class="o">.</span><span class="na">beginDelayedTransition</span><span class="o">(</span><span class="n">container</span><span class="o">);</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">loadingView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+    <span class="n">errorView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">emptyView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">renderError</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">TransitionManager</span><span class="o">.</span><span class="na">beginDelayedTransition</span><span class="o">(</span><span class="n">container</span><span class="o">);</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">loadingView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">errorView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+    <span class="n">emptyView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">renderEmptyResult</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">TransitionManager</span><span class="o">.</span><span class="na">beginDelayedTransition</span><span class="o">(</span><span class="n">container</span><span class="o">);</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">loadingView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">errorView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+    <span class="n">emptyView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>The <strong>render(SearchViewState)</strong> method should be self explaining. In <strong>searchIntent()</strong> we use
+Jake Wharton&rsquo;s <a href="https://github.com/JakeWharton/RxBinding">RxBindings</a> library that provides
+RxJava bindings like Observable for Android UI widget.
+RxSearchView.queryText() creates an Observable&lt;String&gt; that emits the search string every
+time the user types something into the EditText UI widget.
+We use filter() to only start a search query if the
+user has typed in more than 3 characters and we don&rsquo;t want hit the backend every time the user
+types in a new character but rather we want to wait until the user has finished typing (debounce() waits 500 milliseconds to determine if the user has finished typing).</p>
+<p>So we know that the &ldquo;input&rdquo; for this screen is the searchIntent() and that render() is the &ldquo;output&rdquo;. How do we get from &ldquo;input&rdquo; to &ldquo;output&rdquo;?
+The following video visualizes that:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/oo0SBtqKhMw" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>The remaining question is who or how do we connect the View&rsquo;s intent with the business logic?
+If you take a closer look at the video from above you will see that there is a <strong>flatMap()</strong> operator in the middle.
+This already hints us that there is an additional component involved we haven&rsquo;t talked about yet: a <strong>Presenter</strong>. The Presenter is responsible to connect the dots similar as we would use a presenter in MVP.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SearchPresenter</span> <span class="kd">extends</span> <span class="n">MviBasePresenter</span><span class="o">&lt;</span><span class="n">SearchView</span><span class="o">,</span> <span class="n">SearchViewState</span><span class="o">&gt;</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">SearchInteractor</span> <span class="n">searchInteractor</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">bindIntents</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">SearchViewState</span><span class="o">&gt;</span> <span class="n">search</span> <span class="o">=</span>
+        <span class="n">intent</span><span class="o">(</span><span class="n">SearchView</span><span class="o">::</span><span class="n">searchIntent</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">switchMap</span><span class="o">(</span><span class="n">searchInteractor</span><span class="o">::</span><span class="n">search</span><span class="o">)</span> <span class="c1">// I have used flatMap() in the video above, but switchMap() makes more sense here
+</span><span class="c1"></span>            <span class="o">.</span><span class="na">observeOn</span><span class="o">(</span><span class="n">AndroidSchedulers</span><span class="o">.</span><span class="na">mainThread</span><span class="o">());</span>
+
+    <span class="n">subscribeViewState</span><span class="o">(</span><span class="n">search</span><span class="o">,</span> <span class="n">SearchView</span><span class="o">::</span><span class="n">render</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Please node that <code>SearchView::searchIntent</code> is just a Java 8 shorthand for <code>searchView.searchIntent()</code></p>
+<p>What is <strong>MviBasePresenter</strong> and what are <strong>intent()</strong> and <strong>subscribeViewState()</strong>?
+This class is part of a library I have written called <a href="https://github.com/sockeqwe/mosby">Mosby</a> (Mosby 3.0 has a MVI module). This blog post is not about Mosby but I want briefly talk about how MviBasePresenter works to convince you that there is no black magic involved although I have to admit that at first glance it looks like that.
+Let&rsquo;s start with lifecycle: MviBasePresenter doesn&rsquo;t really have a lifecyle.
+There is a  <strong>bindIntent()</strong> method where you bind the intents from the View to the business logic. Typically, you use flatMap() or switchMap() or concatMap() to &ldquo;forward&rdquo; an intent to the business logic.
+This method is invoked only the first time a View is attached to the Presenter.
+It&rsquo;s not invoked again when the View gets reattached (i.e. after a screen orientation change).</p>
+<p>That may sounds a bit strange and one may ask: &ldquo;Does MviBasePresenter even survive screen orientation changes and if yes how does Mosby ensures that the observable stream remains without leaking the memory?&rdquo;
+This is what <strong>intent()</strong> and <strong>subscribeViewState()</strong> are for. <strong>intent()</strong> creates a <strong>PublishSubject</strong> internally and uses that one as &ldquo;gateway&rdquo; to your business logic.
+So actually this PublishSubject is subscribing to View&rsquo;s intent Observable. Calling intent(o1) actually returns a PublishSubject which is subscribed to o1.</p>
+<p>On orientation change Mosby detaches the View from Presenter but only unsubscribes this internal PublishSubject temporarily from the View and resubscribes the PublishSubject to the View&rsquo;s intent when the view gets reattached to the presenter.</p>
+<p><strong>subscribeViewState()</strong> does the same but the other way around (Presenter to View communication). It creates internally a <strong>BehaviorSubject</strong> as &ldquo;gateway&rdquo; from business logic to View. Since it&rsquo;s a BehaviorSubject we can receive &ldquo;model updates&rdquo; from business logic even if no view is attached at the moment (i.e. View is on the back stack). BehaviorSubjects always keep the latest value it has received and replays that once the View gets reattached.</p>
+<p>The rule is simple: use intent() to &ldquo;wrap&rdquo; any intent of the view. Use subscribeViewState() instead of Observable.subscribe(&hellip;).</p>
+<p><img src="/images/mvi-mosby3/MviBasePresenter.png" alt="MVI"></p>
+<p>The counter part to bindIntent() is  <strong>unbindIntents()</strong> which is invoked exactly one time the View is destroyed permanently. For instance putting a fragment on the back stack doesn&rsquo;t destroy the View permanently, but finishing an Activity does.
+Since intent() and subscribeViewState() already take care of subscription management you only barely need to implement unbindIntents().</p>
+<p>What about other lifecycle events like <strong>onPause()</strong> or <strong>onResume()</strong>? I still think that <a href="http://127.0.0.1:1313/android/presenters-dont-need-lifecycle/">Presenters don&rsquo;t need lifecycle Events</a>. However, if you really think you need them you can simply see a lifecycle event like onPause() as an intent. Your View could offer a <strong>pauseIntent()</strong> which is triggered by android lifecycle instead of a user interaction intent like clicking on a button. But both are valid intents.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this second part we have talked about the basics of Model-View-Intent and implemented a very simple screen by using MVI to get our feet wet. Maybe this example is too simple so that you don&rsquo;t fully see yet the benefits of MVI pattern, a Model which represents State and the unidirectional data flow compared to &ldquo;traditional&rdquo; MVP or MVVM. There is nothing wrong with MVP or MVVM and I&rsquo;m not saying that MVI is better than other architectural patterns. However, I think that MVI helps us to write elegant code for complex problems as we will see in the <a href="http://127.0.0.1:1313/android/mosby3-mvi-3/">next part (Part 3)</a> of this blog series when we are going to talk about state reducers.</p>
+
+    
+    <div class="series-box">
+        <h5>This is a post in the 
+        <u>Reactive Apps with Model-View-Intent</u> series.</span></h5>
+        <p>Other posts in this series:</p>
+
+        
+        
+        <ul>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">Reactive Apps with Model-View-Intent - Part 1: Model</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-2/">Reactive Apps with Model-View-Intent - Part 2: View and Intent</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-3/">Reactive Apps with Model-View-Intent - Part 3: State Reducer</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-4/">Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-5/">Reactive Apps with Model-View-Intent - Part 5: Debugging with ease</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-6/">Reactive Apps with Model-View-Intent - Part 6: Restoring State</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a>
+            </li>
+        
+        </ul>
+    </div>
+ 
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

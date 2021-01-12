@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="MVI Model-View-Intent on Android. How it works and what&#39;s the difference to MVP, MVC and MVVM on Android">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Model-View-Intent on Android</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Mar 04, 2016</li>
+        </ul>
+        <article class="content">
+          
+          <p>As developers we should always think outside the box. A month ago Artem Zinnatullin and I have discussed some architectural trends on android and on other platforms, like .NET and javascript, in his Podcast <a href="https://github.com/artem-zinnatullin/TheContext-Podcast">The Context</a>. A few days later <a href="https://twitter.com/RunChristinaRun">Christina Lee</a> gave an awesome lightning talk <a href="https://www.youtube.com/watch?v=UsuzhTlccRk">Redux-ing UI Bugs</a> during square&rsquo;s <strong>The Journey of Android Engineers</strong> event. She also talked about one of my favorite js libraries: <a href="http://cycle.js.org/">Cycle.js</a>, which defines itself as <strong>Model-View-Intent (MVI)</strong> library. After watching Christina Lee&rsquo;s inspiring talk I finally found motivation to take the time to write down my thoughts about MVI on android.</p>
+<blockquote>
+<p>This blog post is outdated. Please take a look at <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">this blog post series</a> about Model-View-Intent.</p>
+</blockquote>
+<p><strong>Preface:</strong> Model-View-Intent relies heavily on reactive and functional programming (RxJava). Believe me, many people won&rsquo;t understand MVI at the first time. I was in the same situation. A year ago, I definitely gave up and started again several times to understand it, but guess what: that&rsquo;s completely fine! If you don&rsquo;t understand this blog post at the first go, it&rsquo;s ok, relax, take it easy and retry it a few days later again.</p>
+<p>So what is Model-View-Intent? Yet another architecture for user interfaces? Well, I recommend you to watch the following video about cycle.js presented by the inventor <a href="https://twitter.com/andrestaltz">André Medeiros (Staltz)</a> at JSConf Budapest in May 2015 (at least the first 10 minutes) to get a better understanding of the motivation behind MVI:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/1zj7M1LnJV4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>I know it&rsquo;s javascript but the key fundamentals are the same for all UI based platforms, incl. android (just replace DOM with android layouts, UI widgets, &hellip;).</p>
+<h2 id="from-mvc-to-mvi">From MVC to MVI</h2>
+<p>MVI is inspired by some other js frameworks like redux and react, but the key principle comes from Model-View-Controller (MVC). I mean the original MVC introduced 1979 by Trygve Reenskaug to separate View from Model. Again, to clarify, I&rsquo;m not talking about MVC from iOS (ViewController) or Android (Activity / Fragment) or backend frameworks which also (mis)use the word controller. I talk about MVC in his pure original form. A Model that is observed by the View and a Controller that manipulates the Model. Unlikely nowadays, in Reenskaug original idea of MVC almost every UI element has it&rsquo;s own Model and Controller. Imagine a CheckBox UI widget: this one observers his own model, i.e. a boolean. The controller could be a OnCheckboxChangedListener triggered by the user&rsquo;s mouse. From cycle.js docs:</p>
+<blockquote>
+<p>The Controller in MVC is incompatible with our reactive ideals, because it is a proactive component (implying either passive Model or passive View). However, the original idea in MVC was a method for translating information between two worlds: that of the computer’s digital realm and the user’s mental model.</p>
+</blockquote>
+<figure>
+    <img src="/images/mvi/mvc.png"
+         alt="Source: cycle.js.org"/> <figcaption>
+            <p>Source: cycle.js.org</p>
+        </figcaption>
+</figure>
+
+<p>However, in the original MVC the controller may or may not also manipulate the view. But that is not exactly what we want, because we want an <strong>unidirectional data flow</strong> and <strong>immutability</strong> to establish predictable states, which leads to cleaner, more maintainable code and less bugs.</p>
+<figure>
+    <img src="/images/mvi/mvi-cicle.png"
+         alt="Source: cycle.js.org"/> <figcaption>
+            <p>Source: cycle.js.org</p>
+        </figcaption>
+</figure>
+
+<p>Do you see the unidirectional flow? The cycle? The next question is how do we establish such a circle? Well, as you have seen above, the computer takes an input and converts it to an output (display / view). The human, sees the output from computer and takes it as Input and produces Output (UI widgets events like a click on a button) which then will be again the input for the computer. So the concept of taking a input and have an output seems to be familiar, doesn&rsquo;t it? Yes, it&rsquo;s a (mathematical) function.</p>
+<p>So what we basically want to have is a chain of functions like this:</p>
+<p><img src="/images/mvi/mvi-func1.png" alt="MVI"></p>
+<ul>
+<li><strong>intent()</strong>: This function takes the input from the user (i.e. UI events, like click events) and translate it to &ldquo;something&rdquo; that will be passed as parameter to <strong>model()</strong> function. This could be a simple string to set a value of the model to or more complex data structure like an <strong>Actions</strong> or <strong>Commands</strong>. Here in this blog post we will stick with the word <strong>Action</strong>.</li>
+<li><strong>model()</strong>: The model function takes the output from <strong>intent()</strong> as input to manipulate the model. The output of this function is a new model (state changed). So it should not update an already existing model. <strong>We want immutability!</strong> We don&rsquo;t change an already existing one. We copy the existing one and change the state (and afterwards it can not be changed anymore). This function is the only piece of your code that is allowed to change a Model object. Then this new immutable Model is the output of this function.</li>
+<li><strong>view()</strong>: This method takes the model returned from <strong>model()</strong> function and gives it as input to the  <strong>view()</strong> function. Then the view simply displays this model somehow.</li>
+</ul>
+<p>But what about the cycle, one might ask? This is where reactive programming (RxJava, observer pattern) comes in.</p>
+<p><img src="/images/mvi/mvi-func2.png" alt="MVI"></p>
+<p>So the view will generate &ldquo;events&rdquo; (observer pattern) that are passed to the <strong>intent()</strong> function again.</p>
+<p>Sounds quite complex, I know, but once you are into it it&rsquo;s not that hard anymore. Let&rsquo;s say we want to build a simple android app to search github (rest api) for repositories matching a certain name. Something like this:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/ZXwDQML5IXQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>Let&rsquo;s have a look at a very naive implementation (kotlin). We will use Jake Whartons <a href="https://github.com/JakeWharton/RxBinding">RxBinding library</a> to get RxJava Observables from <strong>SearchView</strong> widget. Our data model class looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">data</span> <span class="k">class</span> <span class="nc">SearchModel</span><span class="p">(</span><span class="k">val</span> <span class="py">searchTerm</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="k">val</span> <span class="py">results</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">GithubRepo</span><span class="p">&gt;)</span>
+</code></pre></div><p>And our main Actvitiy:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SearchActivity</span> <span class="p">:</span> <span class="n">AppCompatActivity</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="k">val</span> <span class="py">githubBackend</span> <span class="p">:</span> <span class="n">GitHubBackend</span> <span class="p">=</span> <span class="p">...</span> <span class="p">;</span> <span class="c1">// Retrofit for Github Rest API
+</span><span class="c1"></span>  <span class="k">val</span> <span class="py">editSearch</span><span class="p">:</span> <span class="n">android</span><span class="p">.</span><span class="n">widget</span><span class="p">.</span><span class="n">SearchView</span> <span class="k">by</span> <span class="n">bindView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">searchView</span><span class="p">)</span>
+  <span class="k">val</span> <span class="py">recyclerView</span><span class="p">:</span> <span class="n">RecyclerView</span>  <span class="k">by</span> <span class="n">bindView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">recyclerView</span><span class="p">)</span>
+  <span class="k">val</span> <span class="py">loadingView</span><span class="p">:</span> <span class="n">View</span> <span class="k">by</span> <span class="n">bindView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">loadingView</span><span class="p">)</span>
+  <span class="k">var</span> <span class="py">adapter</span><span class="p">:</span> <span class="n">SearchResultAdapter</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="n">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
+    <span class="n">setContentView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">activity_search</span><span class="p">)</span>
+    <span class="n">setSupportActionBar</span><span class="p">(</span><span class="n">toolbar</span><span class="p">)</span>
+
+    <span class="n">adapter</span> <span class="p">=</span> <span class="n">SearchResultAdapter</span><span class="p">(</span><span class="n">layoutInflater</span><span class="p">)</span>
+    <span class="n">recyclerView</span><span class="p">.</span><span class="n">adapter</span> <span class="p">=</span> <span class="n">adapter</span>
+    <span class="n">recyclerView</span><span class="p">.</span><span class="n">layoutManager</span> <span class="p">=</span> <span class="n">LinearLayoutManager</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+    <span class="c1">// MVI: please note that the following code is chained togehter
+</span><span class="c1"></span>    <span class="c1">// the comments and empty lines are just for legibility
+</span><span class="c1"></span>
+    <span class="c1">// &#34;intent()&#34; maps UI event to &#34;action&#34; (a search string)
+</span><span class="c1"></span>    <span class="n">Observable</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">RxSearchView</span><span class="p">.</span><span class="n">queryTextChangeEvents</span><span class="p">(</span><span class="n">editSearch</span><span class="p">)</span>
+           <span class="p">.</span><span class="n">filter</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">queryText</span><span class="p">().</span><span class="n">count</span><span class="p">()</span> <span class="p">&gt;=</span> <span class="m">3</span> <span class="p">}</span>
+           <span class="p">.</span><span class="n">debounce</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="n">TimeUnit</span><span class="p">.</span><span class="n">MILLISECONDS</span><span class="p">)</span>  <span class="c1">// here: Observable&lt;String&gt;
+</span><span class="c1"></span>
+    <span class="c1">// &#34;model()&#34; loads data from model
+</span><span class="c1"></span>          <span class="p">.</span><span class="n">startWith</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span>  <span class="c1">// If starting the first time we emit empty string as Model
+</span><span class="c1"></span>          <span class="p">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="n">queryString</span> <span class="p">-&gt;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">queryString</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span>
+              <span class="n">Observable</span><span class="p">.</span><span class="n">just</span><span class="p">(</span> <span class="n">SearchModel</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="n">emptyList</span><span class="p">))</span> <span class="c1">// returns Observable&lt;SearchModel&gt;
+</span><span class="c1"></span>            <span class="k">else</span>
+              <span class="n">githubBackend</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">queryString</span><span class="p">)</span> <span class="c1">// Retrofit; here: Observable&lt;GithubResponse&gt;
+</span><span class="c1"></span>                            <span class="p">.</span><span class="n">map</span> <span class="p">{</span>
+                                <span class="n">response</span> <span class="p">-&gt;</span>
+                                <span class="n">SearchModel</span><span class="p">(</span><span class="n">queryString</span><span class="p">,</span> <span class="n">response</span><span class="p">.</span><span class="n">items</span><span class="p">)</span>
+                            <span class="p">}</span>   <span class="c1">// here: Observable&lt;SearchModel&gt;
+</span><span class="c1"></span>          <span class="p">}</span> <span class="c1">// end flatMap; here: Observable&lt;SearchModel&gt;
+</span><span class="c1"></span>
+    <span class="c1">// &#34;view()&#34; method is just subscribing and updating UI
+</span><span class="c1"></span>    <span class="p">.</span><span class="n">observeOn</span><span class="p">(</span><span class="n">AndroidSchedulers</span><span class="p">.</span><span class="n">mainThread</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">subscribe</span><span class="p">({</span> <span class="n">result</span> <span class="p">-&gt;</span> <span class="c1">// SearchModel ; onNext()
+</span><span class="c1"></span>      <span class="n">adapter</span><span class="p">.</span><span class="n">items</span> <span class="p">=</span> <span class="n">result</span><span class="p">.</span><span class="n">items</span>
+      <span class="n">adapter</span><span class="p">.</span><span class="n">notifyDataSetChanged</span><span class="p">()</span>
+      <span class="p">},</span>
+      <span class="p">{</span> <span class="n">error</span> <span class="p">-&gt;</span> <span class="c1">// onError()
+</span><span class="c1"></span>        <span class="n">Toast</span><span class="p">.</span><span class="n">makeText</span><span class="p">(...);</span>
+      <span class="p">}</span>
+    <span class="p">)</span>
+
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>That&rsquo;s a lot of code isn&rsquo;t it. I hope you could follow that code and find my comments helpful.
+In a nutshell: <strong>intent()</strong> function basically listens to SearchView Text changes and gives the query string (kind of action to tell the model to search for that string) to the <strong>model()</strong> function.
+The <strong>model()</strong> function is responsible to manage the &ldquo;model&rdquo;. With <strong>startWith()</strong> we ensure that the first time we subscribe to an &ldquo;empty&rdquo; search result gets forwarded (in other words, we setup the initial state). Otherwise we use retrofit to load a <strong>GithubResponse</strong> that we than have to transform to a <strong>SearchModel</strong>. Last the <strong>view()</strong> gets the SearchModel as result (RxJava Observer) and is responsible to &ldquo;render&rdquo; and display the SearchModel.</p>
+<p>Great, we have a unidirectional data flow. Even better, we have immutability and pure functions (none of this function has side effects or stores or changes the state somehow, except retrofit).
+So are we done?</p>
+<h2 id="the-big-picture">The Big Picture</h2>
+<p>What about all the other things we have learned from other architectural design patterns like MVP? What about concepts they offer like separation of concerns, decoupled &amp; maintainable code, testability, reusability, single responsibility and so on?</p>
+<p>You get it, this code is basically  a common android developer beginner mistake: Put everything in one huge Activity (<a href="https://en.wikipedia.org/wiki/God_object">God object</a>). Well, it has a structure thanks to MVI &amp; RxJava, but is it good code? It&rsquo;s not spaghetti code (maybe reacitve spaghetti code, that&rsquo;s a matter of opinion), but is it good code?</p>
+<p>Nevertheless, we can do it better. So let&rsquo;s refactor this code.
+As you might already know I&rsquo;m a fan of MVP. So lets combine the best of both, MVP and MVI.
+In this sample we will use <a href="https://github.com/sockeqwe/mosby">Mosby</a>, a MVP library. Before we start, let&rsquo;s talk about separation of concerns a little bit. What is the responsibility of the View in MVP? Right, just display the data, and doing what the Presenter &ldquo;commands&rdquo; to display. In MVI what should the GUI do? Exactly, the GUI triggers UI events and the <strong>intent()</strong> function will translate that to &ldquo;actions&rdquo; to manipulate the model afterwards.</p>
+<p>So the MVP View Interface will offer a <strong>intent()</strong> function, in our case we call this method <strong>searchIntent()</strong> function:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">interface</span> <span class="nc">SearchView</span> <span class="p">:</span> <span class="n">MvpView</span> <span class="p">{</span>
+  <span class="k">fun</span> <span class="nf">searchIntent</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="c1">// intent() function
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>Next our Activity will become a MVP View (implements <strong>SearchView</strong>). That means, everything that is not related to updating the UI or generate UI events will be removed.</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SearchActivity</span> <span class="p">:</span> <span class="n">SearchView</span><span class="p">,</span> <span class="n">MvpActivity</span><span class="p">&lt;</span><span class="n">SearchView</span><span class="p">,</span> <span class="n">SearchPresenter</span><span class="p">&gt;()</span> <span class="p">{</span>
+
+  <span class="k">val</span> <span class="py">editSearch</span><span class="p">:</span> <span class="n">android</span><span class="p">.</span><span class="n">widget</span><span class="p">.</span><span class="n">SearchView</span> <span class="k">by</span> <span class="n">bindView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">searchView</span><span class="p">)</span>
+  <span class="k">val</span> <span class="py">recyclerView</span><span class="p">:</span> <span class="n">RecyclerView</span>  <span class="k">by</span> <span class="n">bindView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">recyclerView</span><span class="p">)</span>
+  <span class="k">val</span> <span class="py">loadingView</span><span class="p">:</span> <span class="n">View</span> <span class="k">by</span> <span class="n">bindView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">loadingView</span><span class="p">)</span>
+  <span class="k">var</span> <span class="py">adapter</span><span class="p">:</span> <span class="n">SearchResultAdapter</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="n">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
+    <span class="n">setContentView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">activity_search</span><span class="p">)</span>
+    <span class="n">setSupportActionBar</span><span class="p">(</span><span class="n">toolbar</span><span class="p">)</span>
+
+    <span class="n">adapter</span> <span class="p">=</span> <span class="n">SearchResultAdapter</span><span class="p">(</span><span class="n">layoutInflater</span><span class="p">)</span>
+    <span class="n">recyclerView</span><span class="p">.</span><span class="n">adapter</span> <span class="p">=</span> <span class="n">adapter</span>
+    <span class="n">recyclerView</span><span class="p">.</span><span class="n">layoutManager</span> <span class="p">=</span> <span class="n">LinearLayoutManager</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Provide a intent() function
+</span><span class="c1"></span>  <span class="k">override</span> <span class="k">fun</span> <span class="nf">searchIntent</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="n">RxSearchView</span><span class="p">.</span><span class="n">queryTextChangeEvents</span><span class="p">(</span><span class="n">editSearch</span><span class="p">)</span>
+           <span class="p">.</span><span class="n">filter</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">queryText</span><span class="p">().</span><span class="n">count</span><span class="p">()</span> <span class="p">&gt;=</span> <span class="m">3</span> <span class="p">}</span>
+           <span class="p">.</span><span class="n">debounce</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="n">TimeUnit</span><span class="p">.</span><span class="n">MILLISECONDS</span><span class="p">)</span>
+    <span class="p">}</span>
+
+  <span class="c1">// dependency injection via dagger
+</span><span class="c1"></span>  <span class="k">override</span> <span class="k">fun</span> <span class="nf">createPresenter</span><span class="p">():</span> <span class="n">SearchPresenter</span> <span class="p">=</span> <span class="n">App</span><span class="p">.</span><span class="n">getComponent</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="n">searchPresenter</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div><p>Ah, looks much better now, doesn&rsquo;t it? Let&rsquo;s continue with the Presenter.
+The Presenters responsibility is to coordinate the view and to be the &ldquo;bridge&rdquo; to the business logic. In Mosby, a Presenter has two methods, <strong>attachView()</strong> (called from activity.onCreate() ) and <strong>detachView()</strong> (called from activity.onDestroy()).</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SearchPresenter</span> <span class="p">:</span> <span class="n">MvpBasePresenter</span><span class="p">&lt;</span><span class="n">SearchView</span><span class="p">&gt;()</span> <span class="p">{</span>
+
+  <span class="k">lateinit</span> <span class="k">var</span> <span class="py">subscription</span><span class="p">:</span> <span class="n">Subscription</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">attachView</span><span class="p">(</span><span class="n">view</span><span class="p">:</span> <span class="n">SearchView</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">attachView</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+
+    <span class="n">subscription</span> <span class="p">=</span> <span class="n">view</span><span class="p">.</span><span class="n">getSearchIntent</span><span class="p">()</span> <span class="c1">// intent()
+</span><span class="c1"></span>          <span class="p">.</span><span class="n">startWith</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span>  <span class="c1">// model() function, same as before
+</span><span class="c1"></span>          <span class="p">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="n">queryString</span> <span class="p">-&gt;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">queryString</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span>
+              <span class="n">Observable</span><span class="p">.</span><span class="n">just</span><span class="p">(</span> <span class="n">SearchModel</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="n">emptyList</span><span class="p">))</span> <span class="c1">// returns Observable&lt;SearchModel&gt;
+</span><span class="c1"></span>            <span class="k">else</span>
+              <span class="n">githubBackend</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">queryString</span><span class="p">)</span> <span class="c1">// Retrofit; here: Observable&lt;GithubResponse&gt;
+</span><span class="c1"></span>                            <span class="p">.</span><span class="n">map</span> <span class="p">{</span>
+                                <span class="n">response</span> <span class="p">-&gt;</span>
+                                <span class="n">SearchModel</span><span class="p">(</span><span class="n">queryString</span><span class="p">,</span> <span class="n">response</span><span class="p">.</span><span class="n">items</span><span class="p">)</span>
+                            <span class="p">}</span>   <span class="c1">// here: Observable&lt;SearchModel&gt;
+</span><span class="c1"></span>          <span class="p">}</span> <span class="c1">// end flatMap; here: Observable&lt;SearchModel&gt;
+</span><span class="c1"></span>          <span class="p">.</span><span class="n">observeOn</span><span class="p">(</span><span class="n">AndroidSchedulers</span><span class="p">.</span><span class="n">mainThread</span><span class="p">())</span>
+          <span class="p">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">view</span><span class="p">.</span><span class="n">showData</span><span class="p">(),</span> <span class="n">view</span><span class="p">.</span><span class="n">showError</span><span class="p">())</span>
+  <span class="p">}</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">detachView</span><span class="p">(</span><span class="n">retainInstance</span><span class="p">:</span> <span class="n">Boolean</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">detachView</span><span class="p">(</span><span class="n">retainInstance</span><span class="p">)</span>
+    <span class="n">subscription</span><span class="p">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Alright, so now the Presenter uses the View&rsquo;s <strong>serachIntent()</strong> method and connects it to the model. Are we done? No, the presenter contains the &ldquo;business logic&rdquo; code (model() function). So there is one separation of concern still missing. We will refactor that in a minute. Let&rsquo;s continue with this little statement: <strong>.subscribe(view.showData(), view.showError())</strong>. Basically this is our <strong>view()</strong> function. In MVP the Presenter tells the view what to display (&ldquo;renders&rdquo; the View). So what are this two methods? This methods are part of the <strong>SearchView</strong> interface that I have omitted before:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">interface</span> <span class="nc">SearchView</span> <span class="p">:</span> <span class="n">MvpView</span> <span class="p">{</span>
+  <span class="k">fun</span> <span class="nf">searchIntent</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="c1">// intent() function
+</span><span class="c1"></span>  <span class="k">fun</span> <span class="nf">showData</span><span class="p">():</span> <span class="p">(</span><span class="n">SearchModel</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span> <span class="c1">// RxJava Action1
+</span><span class="c1"></span>  <span class="k">fun</span> <span class="nf">showError</span><span class="p">():</span> <span class="p">(</span><span class="n">Throwable</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span>  <span class="c1">// RxJava Action1
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SearchActivity</span> <span class="p">:</span> <span class="n">SearchView</span><span class="p">,</span> <span class="n">MvpActivity</span><span class="p">&lt;</span><span class="n">SearchView</span><span class="p">,</span> <span class="n">SearchPresenter</span><span class="p">&gt;()</span> <span class="p">{</span>
+
+  <span class="p">...</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">showData</span><span class="p">():</span> <span class="p">(</span><span class="n">SearchModel</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span> <span class="p">=</span> <span class="p">{</span>
+     <span class="n">adapter</span><span class="p">.</span><span class="n">items</span> <span class="p">=</span> <span class="n">it</span><span class="p">.</span><span class="n">results</span>
+     <span class="n">adapter</span><span class="p">.</span><span class="n">notifyDataSetChanged</span><span class="p">()</span>
+   <span class="p">}</span>
+
+   <span class="k">override</span> <span class="k">fun</span> <span class="nf">showError</span><span class="p">():</span> <span class="p">(</span><span class="n">Throwable</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span> <span class="p">=</span> <span class="p">{</span>
+     <span class="n">loadingView</span><span class="p">.</span><span class="n">visibility</span> <span class="p">=</span> <span class="n">View</span><span class="p">.</span><span class="n">GONE</span>
+     <span class="n">Toast</span><span class="p">.</span><span class="n">makeText</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">&#34;An Error has occurred&#34;</span><span class="p">,</span> <span class="n">Toast</span><span class="p">.</span><span class="n">LENGTH_SHORT</span><span class="p">).</span><span class="n">show</span><span class="p">()</span>
+     <span class="n">it</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">()</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>So what we now have and what we didn&rsquo;t had before doing the refactoring is a entirely decoupled View. All the View has to provide is an <strong>Observable<!-- raw HTML omitted --></strong> as <strong>intent()</strong> function. Today the output of <strong>searchIntent()</strong> comes from an <strong>EditText</strong> widget and use <strong>debounce()</strong> operator. Tomorrow it could be something entirely different (i.e. a dropdown menu with a list of strings to chose from) and you don&rsquo;t have to touch (and therefore can&rsquo;t break) anything else of your existing source code except the View (<strong>SearchActivity</strong>). The same is valid for the way how the view is &ldquo;rendered&rdquo; / displayed. All that view related code lives in <strong>SearchActivity</strong>. Today it uses a <strong>RecyclerView</strong> to display the &ldquo;model&rdquo;, but tomorrow it could be another custom UI widget or a ListView. I guess you get the point.</p>
+<p>Back to our Presenter&rsquo;s source code: as already said, currently the <strong>Presenter</strong> contains all the business logic. One of the main pitfalls with that is that presenter is not testable (how to mock parts of our business logic) and we can&rsquo;t reuse that business logic for other Presenter because it&rsquo;s hard coded. Let&rsquo;s refactor that code. First we introduce a <strong>SearchEngine</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SearchEngine</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">githubBackend</span><span class="p">:</span> <span class="n">GithubBackend</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="k">fun</span> <span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">SearchModel</span><span class="p">&gt;</span> <span class="p">=</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">query</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">Observable</span><span class="p">.</span><span class="n">just</span><span class="p">(</span><span class="n">SearchModel</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="n">emptyList</span><span class="p">()))</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">githubBackend</span><span class="p">.</span><span class="n">getRepositories</span><span class="p">(</span><span class="n">query</span><span class="p">).</span><span class="n">map</span> <span class="p">{</span> <span class="n">SearchModel</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">it</span><span class="p">.</span><span class="n">items</span><span class="p">)</span> <span class="p">}</span>
+      <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p><strong>SearchEngine</strong> gets a <strong>GithubBackend</strong> and offers a <strong>search(String) : Observable<!-- raw HTML omitted --></strong> for the outside. SearchEngine is our business logic, just functional by providing a <strong>search()</strong> function with one input (search string) and an output (<strong>Observable<!-- raw HTML omitted --></strong>). In our <strong>model()</strong> function then we call search engine&rsquo;s function, who is responsible to change the &ldquo;model&rdquo;. The model is basically the search result (initial state is empty list as search result). However, we don&rsquo;t want to hardcode that again in our Presenter.</p>
+<blockquote>
+<p>What if instead of objects we injection functions?</p>
+</blockquote>
+<p>So we use dependency injection (Dagger) to provide and inject a <strong>modelFunc()</strong> to other components, in this case to the <strong>SearchPresenter</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@Module</span>
+<span class="k">class</span> <span class="nc">ApplicationModule</span> <span class="p">{</span>
+
+  <span class="n">@Provides</span> <span class="n">@Singleton</span>
+  <span class="k">fun</span> <span class="nf">providesSearchEngine</span><span class="p">():</span> <span class="n">SearchEngine</span> <span class="p">{</span>
+    <span class="k">val</span> <span class="py">retrofit</span> <span class="p">=</span> <span class="n">Retrofit</span><span class="p">.</span><span class="n">Builder</span><span class="p">()</span>
+          <span class="p">.</span><span class="n">baseUrl</span><span class="p">(</span><span class="s">&#34;https://api.github.com&#34;</span><span class="p">)</span>
+          <span class="p">.</span><span class="n">addConverterFactory</span><span class="p">(</span><span class="n">MoshiConverterFactory</span><span class="p">.</span><span class="n">create</span><span class="p">())</span>
+          <span class="p">.</span><span class="n">addCallAdapterFactory</span><span class="p">(</span><span class="n">RxJavaCallAdapterFactory</span><span class="p">.</span><span class="n">create</span><span class="p">())</span>
+          <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">SearchEngine</span><span class="p">(</span><span class="n">retrofit</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">GithubBackend</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">))</span>
+  <span class="p">}</span>
+
+  <span class="n">@Provides</span> <span class="n">@Singleton</span>
+  <span class="k">fun</span> <span class="nf">providesModelFunc</span><span class="p">(</span>
+      <span class="n">searchEngine</span><span class="p">:</span> <span class="n">SearchEngine</span><span class="p">):</span> <span class="n">Function1</span><span class="p">&lt;</span><span class="n">Observable</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;,</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">SearchModel</span><span class="p">&gt;&gt;</span> <span class="p">=</span>
+      <span class="p">{</span> <span class="n">stringObservable</span> <span class="p">-&gt;</span>
+        <span class="n">stringObservable</span><span class="p">.</span><span class="n">startWith</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">).</span><span class="n">flatMap</span> <span class="p">{</span> <span class="n">queryString</span> <span class="p">-&gt;</span> <span class="n">searchEngine</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">queryString</span><span class="p">)</span> <span class="p">}</span>
+      <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>The important bit here is <strong>providesModelFunc()</strong> which offers a Lambda <strong>Observable<!-- raw HTML omitted --> -&gt; Observable<!-- raw HTML omitted --></strong>. Since lambdas are just anonymous functions (kind of) we take this lambda and inject it into <strong>SearchPresenter</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SearchPresenter</span> <span class="n">@Inject</span> <span class="k">constructor</span><span class="p">(</span>
+                      <span class="k">val</span> <span class="py">modelFunc</span><span class="p">:</span> <span class="p">(</span><span class="n">Observable</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;)</span> <span class="p">-&gt;</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">SearchModel</span><span class="p">&gt;</span>
+                    <span class="p">)</span> <span class="p">:</span> <span class="n">MvpBasePresenter</span><span class="p">&lt;</span><span class="n">SearchView</span><span class="p">&gt;()</span> <span class="p">{</span>
+
+  <span class="k">lateinit</span> <span class="k">var</span> <span class="py">subscription</span><span class="p">:</span> <span class="n">Subscription</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">attachView</span><span class="p">(</span><span class="n">view</span><span class="p">:</span> <span class="n">SearchView</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">attachView</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+
+    <span class="n">subscription</span> <span class="p">=</span>
+        <span class="n">modelFunc</span><span class="p">(</span>  <span class="c1">// model()
+</span><span class="c1"></span>              <span class="n">view</span><span class="p">.</span><span class="n">searchIntent</span><span class="p">()</span>  <span class="c1">// intent()
+</span><span class="c1"></span>            <span class="p">)</span>
+            <span class="p">.</span><span class="n">observeOn</span><span class="p">(</span><span class="n">AndroidSchedulers</span><span class="p">.</span><span class="n">mainThread</span><span class="p">())</span>
+            <span class="p">.</span><span class="n">subscribe</span><span class="p">(</span> <span class="c1">// view()
+</span><span class="c1"></span>              <span class="n">view</span><span class="p">.</span><span class="n">showData</span><span class="p">(),</span>
+              <span class="n">view</span><span class="p">.</span><span class="n">showError</span><span class="p">()</span>
+          <span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">detachView</span><span class="p">(</span><span class="n">retainInstance</span><span class="p">:</span> <span class="n">Boolean</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">detachView</span><span class="p">(</span><span class="n">retainInstance</span><span class="p">)</span>
+    <span class="n">subscription</span><span class="p">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>That&rsquo;s it. we still have <strong>view( model( intent() ) )</strong>, but this time the view, presenter and &ldquo;business logic&rdquo; are super slim, decoupled, reusable, testable and maintainable.</p>
+<h2 id="the-problem-with-side-effects">The problem with side effects</h2>
+<p>Are we done now? Almost. We haven&rsquo;t discussed yet who is responsible to display and hide the <strong>ProgressBar</strong> while loading in background data. In MVP it would be the responsibility from <strong>Presenter</strong> to coordinate the view&rsquo;s state &hellip; ah, the View&rsquo;s state &hellip; do you hear the  alarm bells ringing?</p>
+<p>Let&rsquo;s see, how could we do that in MVP? We would simply add a method to the MVP View interface like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">interface</span> <span class="nc">SearchView</span> <span class="p">:</span> <span class="n">MvpView</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="k">fun</span> <span class="nf">showLoading</span><span class="p">():</span> <span class="p">(</span><span class="n">Any</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span>  <span class="c1">// RxJava Action1
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">SearchActivity</span> <span class="p">:</span> <span class="n">SearchView</span><span class="p">,</span> <span class="n">MvpActivity</span><span class="p">&lt;</span><span class="n">SearchView</span><span class="p">,</span> <span class="n">SearchPresenter</span><span class="p">&gt;()</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">showData</span><span class="p">():</span> <span class="p">(</span><span class="n">SearchModel</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span> <span class="p">=</span> <span class="p">{</span>
+     <span class="n">adapter</span><span class="p">.</span><span class="n">items</span> <span class="p">=</span> <span class="n">it</span><span class="p">.</span><span class="n">results</span>
+     <span class="n">adapter</span><span class="p">.</span><span class="n">notifyDataSetChanged</span><span class="p">()</span>
+
+     <span class="n">loadingView</span><span class="p">.</span><span class="n">visibility</span> <span class="p">=</span> <span class="n">View</span><span class="p">.</span><span class="n">GONE</span>
+   <span class="p">}</span>
+
+   <span class="k">override</span> <span class="k">fun</span> <span class="nf">showLoading</span><span class="p">():</span> <span class="p">(</span><span class="n">Any</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span> <span class="p">=</span> <span class="p">{</span>
+     <span class="n">loadingView</span><span class="p">.</span><span class="n">visibility</span> <span class="p">=</span> <span class="n">View</span><span class="p">.</span><span class="n">VISIBLE</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Then the presenter could do something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SearchPresenter</span> <span class="n">@Inject</span> <span class="k">constructor</span><span class="p">(</span>
+                      <span class="k">val</span> <span class="py">modelFunc</span><span class="p">:</span> <span class="p">(</span><span class="n">Observable</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;)</span> <span class="p">-&gt;</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">SearchModel</span><span class="p">&gt;</span>
+                    <span class="p">)</span> <span class="p">:</span> <span class="n">MvpBasePresenter</span><span class="p">&lt;</span><span class="n">SearchView</span><span class="p">&gt;()</span> <span class="p">{</span>
+
+  <span class="k">lateinit</span> <span class="k">var</span> <span class="py">subscription</span><span class="p">:</span> <span class="n">Subscription</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">attachView</span><span class="p">(</span><span class="n">view</span><span class="p">:</span> <span class="n">SearchView</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">attachView</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+
+    <span class="n">subscription</span> <span class="p">=</span>
+        <span class="n">modelFunc</span><span class="p">(</span>  <span class="c1">// model()
+</span><span class="c1"></span>              <span class="n">view</span><span class="p">.</span><span class="n">searchIntent</span><span class="p">()</span>  <span class="c1">// intent()
+</span><span class="c1"></span>              <span class="p">.</span><span class="n">doOnNext</span><span class="p">(</span><span class="n">view</span><span class="p">.</span><span class="n">showLoading</span><span class="p">())</span> <span class="c1">// Show loading
+</span><span class="c1"></span>            <span class="p">)</span>
+            <span class="p">.</span><span class="n">observeOn</span><span class="p">(</span><span class="n">AndroidSchedulers</span><span class="p">.</span><span class="n">mainThread</span><span class="p">())</span>
+            <span class="p">.</span><span class="n">subscribe</span><span class="p">(</span> <span class="c1">// view()
+</span><span class="c1"></span>              <span class="n">view</span><span class="p">.</span><span class="n">showData</span><span class="p">(),</span>
+              <span class="n">view</span><span class="p">.</span><span class="n">showError</span><span class="p">()</span>
+          <span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">detachView</span><span class="p">(</span><span class="n">retainInstance</span><span class="p">:</span> <span class="n">Boolean</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">detachView</span><span class="p">(</span><span class="n">retainInstance</span><span class="p">)</span>
+    <span class="n">subscription</span><span class="p">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>What&rsquo;s wrong with that code? I mean we do that in MVP all the time, right? <strong>The problem is that now our whole system has two states</strong>: The view&rsquo;s state and the state of the model itself. Moreover, the view&rsquo;s state is caused by a side effect. Do you remember the definition of <strong>model()</strong> function? Only the model() function is allowed to change the internal application state (with side effects). But the code shown above contradicts with that principle.</p>
+<p>So how to solve that? From my point of view there are two options:</p>
+<p><strong>The first option</strong> is to create a MVI flow just for <strong>LoadingView</strong> (ProgressBar as View). We talked about MVC&rsquo;s original definition by Reenskaug. Do you remember? Every GUI widget has it&rsquo;s own Controller. But who says that every controller has to have his own model? We could share the Model (or observe just a certain part of a model). Guess what, sharing an Observable is pretty easy in RxJava, because there is an operator for that called <strong>.share()</strong>. So we could have our own MVI / MVP flow with just the <strong>ProgressBar</strong> as View. In general: <strong>we should stop thinking that the whole screen is one huge View with one Controller / Presenter / ViewModel and one underlying Model</strong>.</p>
+<p><strong>The second option</strong> and in my opinion the better option is to have one Model that also propagates his state changes, i.e. before loading data from github the <strong>model()</strong> function would change the model to it&rsquo;s internal state &ldquo;loading&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">data</span> <span class="k">class</span> <span class="nc">SearchModel</span><span class="p">(</span>
+      <span class="k">val</span> <span class="py">isLoading</span><span class="p">:</span> <span class="n">Boolean</span><span class="p">,</span> <span class="c1">// true while loading data, false when done
+</span><span class="c1"></span>      <span class="k">val</span> <span class="py">searchTerm</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+      <span class="k">val</span> <span class="py">results</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">GithubRepo</span><span class="p">&gt;)</span>
+</code></pre></div><p>Now <strong>SearchEngine</strong> would first change the model to <strong>SearchModel (true, &hellip;)</strong> before starting to load the data (and propagate this state change as usual via observable chain which will update the view and finally display the ProgressBar) and then set it to <strong>SearchModel (false, &hellip;)</strong> after having retrieved the new data from github backend.</p>
+<h2 id="screen-orientation-changes">Screen Orientation Changes</h2>
+<p><a href="https://en.wikipedia.org/wiki/Tony_Hoare#Apologies_and_retractions">Sir Tony Hoare</a> introduced null references in ALGOL W back in 1965. Retrospective he call this his <em>&ldquo;Billion Dollar Mistake&rdquo;</em> (NullpointerException). I think android&rsquo;s <em>&ldquo;Billion Dollar Mistake&rdquo;</em> is to destroy the whole Activity on screen orientation changes. Dealing with screen orientation changes that way it is today in android is really painful. Furthermore, it makes software architecture on android much harder then it has to be.</p>
+<p>MVI makes no difference here. On screen orientation changes everything will get lost. So that means that our <strong>Model</strong> which is representative for the state of a MVI powered app will be lost. We could put that in a retaining Fragment somehow and put it back in right place after screen orientation change. But that only solves half of the problem, because whenever the activity gets destroyed we also have to unsubscribe our observable chain otherwise we will run into memory leaks (we use <strong>view.searchIntent()</strong>). So what if we start a async background task and want to ensure that it doesn&rsquo;t get canceled in our <strong>model()</strong> function? Well we could use <strong>.cache()</strong> operator or <strong>Subjects</strong> like <strong>ReplaySubject</strong> or keep a static map as cache for background tasks. In a nutshell, yes there are ways (I would rather call them workarounds) but I&rsquo;m not very happy with those solutions. We also have to take into account that our <strong>model()</strong> function may have to distinguish between initial empty state (<strong>.startWith(&quot;&quot;)</strong>) and state after screen orientation changes and process deaths (do we have to make our model Parcelable to save it persistently in a Bundle?). You see, it&rsquo;s getting out of hand very quickly and introduces more complexity than it has to be.</p>
+<p>TL;DR: There might be &ldquo;workarounds&rdquo; for screen orientation changes, but I can&rsquo;t recommend a clean solution for dealing with screen orientation changes on android.</p>
+<h2 id="summary">Summary</h2>
+<p>Model-View-Intent is a very clean way to deal with application states and UI changes. An unidirectional data flow (cycle), predictable states and immutability are the exciting thing about MVI. Composing functions leads to clean and reusable code. I think we can mix MVI with MVP as we did in this example, because I still think that MVP helps to separate your concerns. Furthermore, I can&rsquo;t highlight enough the importance of a <a href="http://hannesdorfmann.com/android/adapter-commands">Presentation Model</a> and transforming the Model into a Presentation Model is quite easy with RxJava (just add a <strong>.map()</strong>) but improves your code a lot and reduces complexity of your View layer.</p>
+<p>See the thing with MVI is like with any other software architecture: MVI gives you an idea, but there is still space for personal preferences and interpretation. One can add as many layers as needed. For example, the <strong>model()</strong> function could internally be composed by multiple functions (one might call them use cases or interactors, just functional). One could add <strong>Action</strong> data structures to decouple things between <strong>intent()</strong> and <strong>model()</strong> even more. But keep in mind: <strong>don&rsquo;t over-engineering things!</strong> Software architecture is a continuous evolution:</p>
+<blockquote>
+<p>Stay hungry, stay foolish, think outside the box!</p>
+</blockquote>
+<p>The source code for the sample app shown in this blog post can be found on <a href="https://github.com/sockeqwe/Model-View-Intent-Android">Github</a></p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

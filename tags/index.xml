@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Hannes Dorfmann</title>
+    <link>http://127.0.0.1:1313/tags/</link>
+    <description>Recent content in Tags on Hannes Dorfmann</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 06 May 2018 10:00:00 +0100</lastBuildDate>
+    
+	<atom:link href="http://127.0.0.1:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>android</title>
+      <link>http://127.0.0.1:1313/tags/android/</link>
+      <pubDate>Sun, 06 May 2018 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/android/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>design-patterns</title>
+      <link>http://127.0.0.1:1313/tags/design-patterns/</link>
+      <pubDate>Sun, 06 May 2018 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/design-patterns/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>software-architecture</title>
+      <link>http://127.0.0.1:1313/tags/software-architecture/</link>
+      <pubDate>Sun, 06 May 2018 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/software-architecture/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>navigation</title>
+      <link>http://127.0.0.1:1313/tags/navigation/</link>
+      <pubDate>Sat, 05 May 2018 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/navigation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>java</title>
+      <link>http://127.0.0.1:1313/tags/java/</link>
+      <pubDate>Thu, 13 Oct 2016 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>algorithms</title>
+      <link>http://127.0.0.1:1313/tags/algorithms/</link>
+      <pubDate>Sun, 07 Feb 2016 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/algorithms/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>library</title>
+      <link>http://127.0.0.1:1313/tags/library/</link>
+      <pubDate>Mon, 02 Nov 2015 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/library/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ui</title>
+      <link>http://127.0.0.1:1313/tags/ui/</link>
+      <pubDate>Tue, 18 Aug 2015 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/ui/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ux</title>
+      <link>http://127.0.0.1:1313/tags/ux/</link>
+      <pubDate>Tue, 18 Aug 2015 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/ux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>database</title>
+      <link>http://127.0.0.1:1313/tags/database/</link>
+      <pubDate>Wed, 24 Jun 2015 10:00:00 +0100</pubDate>
+      
+      <guid>http://127.0.0.1:1313/tags/database/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

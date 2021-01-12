@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="AdapterCommands is a util that generates animations for RecyclerView dataset changes">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>AdapterCommands</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Feb 07, 2016</li>
+        </ul>
+        <article class="content">
+          
+          <p>Last week I was honored to be guest at Artem Zinnatullin&rsquo;s podcast <a href="https://github.com/artem-zinnatullin/TheContext-Podcast">The Context</a> where we talked about software architecture on android. In this episode I have highlighted how important a presentation model in MVP is by giving an example how to deal with RecyclerView Adapters dataset changes. Afterwards people asked me how exactly do I apply animated dataset changes and why a presentation model is helpful in this case.</p>
+<p>Before we dive into the presentation model part, here are the good news: I have put all those things together and bundled it into a library called <a href="https://github.com/sockeqwe/AdapterCommands">AdapterCommands</a>.</p>
+<p>So what is this library all about? Well, <strong>RecyclerView</strong> has this nice component called <strong>ItemAnimator</strong> which is responsible to animate items of RecyclerView. <strong>There is already build in support for animations when using adapter.setHasStableId(true)</strong>. However, if you don&rsquo;t have stable id&rsquo;s then calling <strong>notifyDatasetChanged()</strong> will not run any animation. For example, let&rsquo;s say we are displaying a list of items in a RecyclerView. When adding a new item we can call <strong>adapter.notifyItemInserted(position)</strong> rather than just <strong>adapter.notifyDatasetChanged()</strong> to specify what exactly has been changed (we have inserted an item). Now <strong>ItemAnimator</strong> kicks in and animates the item in.</p>
+<p><strong>AdapterCommands</strong> basically implements the <a href="https://en.wikipedia.org/wiki/Command_pattern">command pattern</a> in which a <strong>Command</strong> object is used to encapsulate all information needed to perform an action. So instead of calling <strong>adapter.notifyItemInserted(position)</strong> directly this library provides a <strong>ItemInsertedCommand</strong> which looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ItemInsertedCommand</span> <span class="kd">implements</span> <span class="n">AdapterCommand</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">position</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">ItemInsertedCommand</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">position</span> <span class="o">=</span> <span class="n">position</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute</span><span class="o">(</span><span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">&lt;?&gt;</span> <span class="n">adapter</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">adapter</span><span class="o">.</span><span class="na">notifyItemInserted</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>As you see this class implements the interface <code>AdapterCommand</code> which has a <code>execute(adapter)</code> method. This library offers such commands for all this actions like <code>ItemRemovedCommand</code>, <code>ItemChangedCommand</code>, <code>ItemRemovedCommand</code> and so on. This library also provides a class <code>AdapterCommandProcessor</code> that takes a <code>List&lt;AdapterCommand&gt;</code> and executes each command:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AdapterCommandProcessor</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">&lt;?&gt;</span> <span class="n">adapter</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">AdapterCommandProcessor</span><span class="o">(</span><span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">&lt;?&gt;</span> <span class="n">adapter</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">adapter</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">AdapterCommand</span><span class="o">&gt;</span> <span class="n">commands</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+      <span class="n">commands</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">execute</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>I know, it&rsquo;s not that impressive at first glance. So what is the advantage of this pattern?
+Quite often an app displays a list of items in a RecyclerView and the underlying dataset gets changed, for instance in combination with <code>SwipeRefreshLayout</code> the user can reload an updated list of items (i.e. load items from backend). What do we do with the new list? Just call <code>adapter.notifyDatasetChanged()</code> to inform that the new list of items should be displayed? But what about the <code>ItemAnimator</code>? The <code>AdapterCommands</code> library offers <code>DiffCommandsCalculator</code> class. This class calculates the difference of the old list and the new list and returns a <code>List&lt;AdapterCommand&gt;</code> that then can be executed by an <code>AdapterCommandProcessor</code>. Let&rsquo;s have a look at the demo:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/z05IK8ejERM" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>As you see in the demo video above, whenever we click on the add or remove button item changes are animated. The implementation looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainActivity</span> <span class="kd">extends</span> <span class="n">AppCompatActivity</span>
+    <span class="kd">implements</span> <span class="n">SwipeRefreshLayout</span><span class="o">.</span><span class="na">OnRefreshListener</span> <span class="o">{</span>
+
+  <span class="nd">@Bind</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">recyclerView</span><span class="o">)</span> <span class="n">RecyclerView</span> <span class="n">recyclerView</span><span class="o">;</span>
+
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;();</span>
+  <span class="n">Random</span> <span class="n">random</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">();</span>
+  <span class="n">ItemAdapter</span> <span class="n">adapter</span><span class="o">;</span> <span class="c1">// RecyclerView adapter
+</span><span class="c1"></span>  <span class="n">AdapterCommandProcessor</span> <span class="n">commandProcessor</span><span class="o">;</span>
+  <span class="n">DiffCommandsCalculator</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">commandsCalculator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DiffCommandsCalculator</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;();</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+    <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_main</span><span class="o">);</span>
+    <span class="n">ButterKnife</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+    <span class="n">refreshLayout</span><span class="o">.</span><span class="na">setOnRefreshListener</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+    <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ItemAdapter</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">items</span><span class="o">);</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span>
+    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setLayoutManager</span><span class="o">(</span><span class="k">new</span> <span class="n">GridLayoutManager</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">4</span><span class="o">));</span>
+
+    <span class="n">commandProcessor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AdapterCommandProcessor</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@OnClick</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">add</span><span class="o">)</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addClicked</span><span class="o">()</span> <span class="o">{</span>
+
+    <span class="kt">int</span> <span class="n">addCount</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="n">3</span><span class="o">)</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">addCount</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+      <span class="kt">int</span> <span class="n">position</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="n">items</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+      <span class="n">Item</span> <span class="n">item</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Item</span><span class="o">(</span><span class="n">id</span><span class="o">(),</span> <span class="n">randomColor</span><span class="o">());</span>
+      <span class="n">items</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">position</span><span class="o">,</span> <span class="n">item</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="n">updateAdapter</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@OnClick</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">remove</span><span class="o">)</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">removeClicked</span><span class="o">()</span> <span class="o">{</span>
+
+    <span class="kt">int</span> <span class="n">removeCount</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="n">3</span><span class="o">)</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">removeCount</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+      <span class="kt">int</span> <span class="n">position</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="n">items</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+      <span class="n">Item</span> <span class="n">item</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="n">updateAdapter</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">updateAdapter</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// calculate the difference to previous items
+</span><span class="c1"></span>    <span class="n">List</span><span class="o">&lt;</span><span class="n">AdapterCommand</span><span class="o">&gt;</span> <span class="n">commands</span> <span class="o">=</span> <span class="n">commandsCalculator</span><span class="o">.</span><span class="na">diff</span><span class="o">(</span><span class="n">items</span><span class="o">);</span>
+    <span class="n">commandProcessor</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="n">commands</span><span class="o">);</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><h2 id="presentation-model">Presentation Model</h2>
+<p>I guess you get the point, but how is this related to the presentation model and MVP? In MVP the Presenter generates (optional) a <code>PresentationModel</code> which is yet another data model optimized for the view containing all the information the view needs to know so that the view can simply take this presentation model and can display it directly without having to calculate things. More information can be found <a href="https://github.com/sockeqwe/mosby/issues/85">here</a>.</p>
+<p>So lets assume we are building an app for a newspaper by applying MVP, Retrofit to load a list of NewsItems and use RxJava to connect the dots. Instead of passing a <code>List&lt;NewsItem&gt;</code> directly from Presenter to View we introduce a <code>NewsItemsPresentationModel</code> that looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">NewsItemsPresentationModel</span> <span class="o">{</span>
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">NewsItem</span><span class="o">&gt;</span> <span class="n">newsItems</span><span class="o">;</span>
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">AdapterCommand</span><span class="o">&gt;</span> <span class="n">adapterComamnds</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><p>With RxJava it&rsquo;s quite easy to transform the <code>List&lt;NewsItem&gt;</code> to a <code>NewsItemsPresentationModel</code> by defining a <code>Func1</code> like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">PresentationModelTransformer</span> <span class="kd">extends</span> <span class="n">Func1</span><span class="o">&lt;</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">NewsItem</span><span class="o">&gt;,</span> <span class="n">NewsItemsPresentationModel</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">DiffCommandsCalculator</span><span class="o">&lt;</span><span class="n">NewsItem</span><span class="o">&gt;</span> <span class="n">diffCalculator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DiffCommandsCalculator</span><span class="o">&lt;&gt;();</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">NewsItemsPresentationModel</span> <span class="nf">call</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">NewsItem</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">){</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">AdapterCommand</span><span class="o">&gt;</span> <span class="n">commands</span> <span class="o">=</span> <span class="n">diffCalculator</span><span class="o">.</span><span class="na">diff</span><span class="o">(</span><span class="n">items</span><span class="o">);</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">PresentationModelTransformer</span><span class="o">(</span><span class="n">items</span><span class="o">,</span> <span class="n">commands</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>The Presenter looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">NewsItemsPresenter</span> <span class="kd">extends</span> <span class="n">MvpBasePresenter</span><span class="o">&lt;</span><span class="n">NewsItemView</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">BackendApi</span> <span class="n">backendApi</span><span class="o">;</span> <span class="c1">// Retrofit service to load news items
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="n">PresentationModelTransformer</span> <span class="n">pmTransformer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PresentationModelTransformer</span><span class="o">()</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">loadItems</span><span class="o">(){</span>
+    <span class="n">view</span><span class="o">.</span><span class="na">showLoading</span><span class="o">();</span>
+    <span class="n">backendApi</span><span class="o">.</span><span class="na">getNewsItems</span><span class="o">()</span>
+              <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">pmTransformer</span><span class="o">)</span> <span class="c1">// Creates NewsItemsPresentationModel
+</span><span class="c1"></span>              <span class="o">.</span><span class="na">subscribeOn</span><span class="o">(</span><span class="n">Schedulers</span><span class="o">.</span><span class="na">io</span><span class="o">())</span>
+              <span class="o">.</span><span class="na">observeOn</span><span class="o">(</span><span class="n">AndroidSchedulers</span><span class="o">.</span><span class="na">mainThread</span><span class="o">())</span>
+              <span class="o">.</span><span class="na">subscribe</span><span class="o">(</span><span class="k">new</span> <span class="n">Subscriber</span><span class="o">()</span> <span class="o">{</span>
+                  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onNext</span><span class="o">(</span><span class="n">NewsItemsPresentationModel</span> <span class="n">pm</span><span class="o">){</span>
+                      <span class="n">view</span><span class="o">.</span><span class="na">setNewsItems</span><span class="o">(</span><span class="n">pm</span><span class="o">);</span>
+                      <span class="n">view</span><span class="o">.</span><span class="na">showContent</span><span class="o">();</span>
+                  <span class="o">}</span>
+                  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onError</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">){</span>
+                    <span class="n">view</span><span class="o">.</span><span class="na">showError</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+                  <span class="o">}</span>
+              <span class="o">});</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>As you see with RxJava we can use <code>map()</code> operator to transform the model into a presentation model. Another nice thing to note is that this transformation and the calculation of the difference runs on the background thread (Schedulers.io()).</p>
+<p>The View is now very stupid simple and doesn&rsquo;t contain such complex calculations like where to insert new items from the list and so on. The View gets the <code>NewsItemsPresentationModel</code> from presenter and has everything the View needs to display the new list (with animations):</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">NewsItemsActivity</span> <span class="kd">extends</span> <span class="n">Activity</span> <span class="kd">implements</span> <span class="n">NewsItemView</span><span class="o">,</span> <span class="n">OnRefreshListener</span> <span class="o">{</span>
+
+  <span class="nd">@Bind</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">recyclerView</span><span class="o">)</span> <span class="n">RecyclerView</span> <span class="n">recyclerView</span><span class="o">;</span>  
+   <span class="n">NewsItemsPresenter</span> <span class="n">presenter</span><span class="o">;</span>
+   <span class="n">AdapterCommandProcessor</span> <span class="n">commandProcessor</span><span class="o">;</span>
+
+   <span class="nd">@Override</span>
+   <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">b</span><span class="o">){</span>
+     <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+     <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_newsitems</span><span class="o">);</span>
+
+     <span class="n">presenter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NewsItemsPresenter</span><span class="o">();</span>
+     <span class="n">Adapter</span> <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NewsItemsAdapter</span><span class="o">();</span>
+     <span class="n">commandProcessor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AdapterCommandProcessor</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span>
+
+     <span class="n">recyclerView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span>
+     <span class="n">presenter</span><span class="o">.</span><span class="na">loadItems</span><span class="o">();</span>
+   <span class="o">}</span>
+
+   <span class="nd">@Override</span>
+   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRefresh</span><span class="o">(){</span>
+     <span class="n">presenter</span><span class="o">.</span><span class="na">loadItems</span><span class="o">();</span>
+   <span class="o">}</span>
+
+   <span class="nd">@Override</span>
+   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setNewsItems</span><span class="o">(</span><span class="n">NewsItemsPresentationModel</span> <span class="n">pm</span><span class="o">)</span> <span class="o">{</span>
+     <span class="n">adapter</span><span class="o">.</span><span class="na">setItems</span><span class="o">(</span><span class="n">pm</span><span class="o">.</span><span class="na">newsItems</span><span class="o">);</span>
+     <span class="n">commandProcessor</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="n">pm</span><span class="o">.</span><span class="na">commands</span><span class="o">);</span>
+   <span class="o">}</span>
+
+   <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div><p>Hopefully, you see now that the View is pretty dumb, decoupled, easier to maintain and to test.</p>
+<h2 id="behind-the-scenes">Behind the scenes</h2>
+<p>You might think that you don&rsquo;t need a third party library to do that. Indeed, this is true for simple use cases where you know that lists are chronological ordered and items from the new list will be always added on top (or at the end) of the old list. In that case you simply would write <code>diff = newList - oldList</code> and then call <code>adapter.notifyItemRangeInserted(0, diff.size())</code>, right? Also in this use case you could use this library simply to not write command classes and command processor again by yourself. But what if you implement such a newspaper app as described above and a news item&rsquo;s title that already was in the old list has been changed compared to the new list, so that <code>adapter.notifyItemChanged(position)</code> must be called? Or what if lists are not always sorted the same way? What if an item has been removed?</p>
+<p>In that case <code>DiffCommandsCalculator</code> is the drop in solution. But how does it actually works?
+Let&rsquo;s compare two lists:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java">  <span class="n">oldList</span>     <span class="n">newList</span>
+    <span class="n">A</span>           <span class="n">A</span>
+    <span class="n">B</span>           <span class="n">B</span>
+    <span class="n">C</span>           <span class="n">B2</span>
+    <span class="n">D</span>           <span class="n">C</span>
+    <span class="n">E</span>           <span class="n">F</span>
+    <span class="n">F</span>           <span class="n">G</span>
+    <span class="n">G</span>           <span class="n">E</span>
+                <span class="n">H</span>
+</code></pre></div><p>We have inserted <code>B2</code>, removed <code>D</code> and moved <code>E</code> and inserted <code>H</code> at the end of the list. Let&rsquo;s compute the difference:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="o">&gt;</span> <span class="n">B2</span>   <span class="n">2</span>
+ <span class="o">&lt;</span> <span class="n">D</span>   <span class="n">3</span>
+ <span class="o">&lt;</span> <span class="n">E</span>   <span class="n">4</span>  
+ <span class="o">&gt;</span> <span class="n">E</span>   <span class="n">6</span>  
+ <span class="o">&gt;</span> <span class="n">H</span>   <span class="n">7</span>
+</code></pre></div><p>The first column indicates whether it was an insertion <code>&gt;</code> or a deletion <code>&lt;</code>. The second column is the affected item and the last column is the index of the list item (beginning by zero). This schema seems familiar, doesn&rsquo;t it? You see something like this almost everyday if you use <strong>git</strong> and <strong>diff</strong> (command line tool, GUIs also available) to detect and resolve merge conflicts. <code>DiffCommandsCalculator</code> implements the same algorithm as <strong>diff</strong>. This kind of problem is called <a href="https://en.wikipedia.org/wiki/Longest_common_subsequence_problem">longest common subsequence problem</a>. On arbitrary number of input data solving this problem is <a href="https://en.wikipedia.org/wiki/NP-hardness">NP-hard</a>. Fortunately, we have fixed size of list and items count. Therefore, we can implement an algorithm that uses the concept of <a href="https://en.wikipedia.org/wiki/Dynamic_programming">dynamic programming</a> that solves this problem in polynomial time <strong>O(n*m)</strong> (where n is the number of elements in oldList and m the number of elements in newList). That sounds really theoretically, right? Actually, it is easier to implement than you might think. I found <a href="https://www.youtube.com/watch?v=P-mMvhfJhu8">this youtube video</a> helpful.</p>
+<h2 id="summary">Summary</h2>
+<p>This little library called <strong>AdapterCommands</strong> is available on maven central and the source code can be found on <a href="https://github.com/sockeqwe/AdapterCommands">Github</a>. This library is the little brother of <a href="https://github.com/sockeqwe/AdapterDelegates">AdapterDelegates</a> (favor composition over inheritance) and helps you to animate dataset changes (if you don&rsquo;t have stable ids) in your RecyclerView by implementing the <strong>command pattern</strong>. The main difference between this library and <code>adapter.setHasStableId(true)</code> is that the later one relies on unique and stable ids for each item in the dataset, whereas AdapterCommands uses java&rsquo;s <code>equals()</code> method for each item to determine dataset changes. Moreover, this works quite nice with <strong>MVP</strong> and <strong>PresentationModel</strong> as shown here in this blog post. <strong>Keep in mind that the runtime of comparing each element of oldList with newList is <strong>O(n*m)</strong> and therefore you should consider run <code>DiffCommandsCalculator</code> on a background thread</strong> if you have many items in your dataset. RxJava offers a nice threading model and plays very nice into MVP and presentation model as shown above and is therefore my recommendation of how to connect all the things together.</p>
+<p><em>N.B. In Artem Zinnatullin&rsquo;s podcast &ldquo;The Context&rdquo; I have said that I don&rsquo;t do a lot of functional UI testing, because I don&rsquo;t see the need to do so. My argument was that I implement my apps according MVP and my Views are pretty dumb, so there can&rsquo;t go much wrong in View layer. Using <strong>AdapterCommands</strong> emphasizes this thesis because <strong>I do test my Presenters and PresentationModel</strong>. Furthermore, since the <strong>AdapterCommands</strong> library itself is already tested I can relay on that and have one less test to write in my app. <strong>However, that doesn&rsquo;t mean that you should not write functional UI Tests!</strong> I would write functional UI Tests (i.e. with Espresso) if compiling and executing this tests wouldn&rsquo;t take minutes. It wouldn&rsquo;t hurt to test the view layer too, even if the View is dumb and there can&rsquo;t go much wrong. I believe in TDD. However, when a test takes more than 10 seconds to execute, the whole TDD workflow and productivity gets destroyed. Hence I ensure that from Presenter downwards everything is tested and that the dumb View gets an optimized presentation model so that there can&rsquo;t go much wrong.</em></p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

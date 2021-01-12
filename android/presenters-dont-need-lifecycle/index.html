@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Presenter in Android don&#39;t need lifecycle events. MVP. Instead use some kind of observable lifecycle events">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Presenters don&#39;t need lifecycle events</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Mar 24, 2016</li>
+        </ul>
+        <article class="content">
+          
+          <p>I have been asked several times why Presenters in <a href="https://github.com/sockeqwe/mosby">Mosby</a> (MVP library) don&rsquo;t have lifecycle callback methods like onCreate(Bundle), onResume() etc. Also the awesome guys over at SoundCloud have published a library called <a href="https://github.com/soundcloud/lightcycle">LightCycle</a> that helps break logic out of Activity or Fragments into smaller containers bound to the parents Activity&rsquo;s or Fragment&rsquo;s lifecycle. While this library is great and helpful they also mention in their <a href="https://github.com/soundcloud/lightcycle/blob/master/examples/real-world/src/main/java/com/soundcloud/lightcycle/sample/real_world/HeaderPresenter.java">examples</a> that this library can be used in MVP to bring lifecycle to Presenters. I, personally, think that Presenters don&rsquo;t need lifecycle callback methods and in this blog post I will discuss why.</p>
+<p>Alright, before we get started, think of the definition and the rule of a <strong>Presenter</strong> in MVP. Here is my definition:</p>
+<blockquote>
+<p>The Presenter is responsible to coordinate the view, transform Model into &ldquo;PresentationModel&rdquo; so that the View can display data more convenient and to be the bridge to the &ldquo;business logic&rdquo; to retrieve data that should be displayed in the View. MVP is all about separation of concerns.</p>
+</blockquote>
+<p>Given that &ldquo;definition&rdquo; of a Presenter I don&rsquo;t see a reason why the Presenter needs lifecycle callbacks like <strong>onCreate()</strong>, <strong>onPause()</strong> and <strong>onResume()</strong>. All the Presenter needs to know is whether or not a View is attached to the Presenter (because of androids screen orientation dilemma). It should be that simple. Actually, this is one of the arguments why some developers are advocating against fragments (complex lifecycle) and prefer &ldquo;custom views&rdquo; (i.e. extending from FrameLayout) because custom view&rsquo;s only have two lifecycle events: ViewGroup.onAttachedToWindow() and ViewGroup.onDetachedFromWindow() (btw. that&rsquo;s the reason why <a href="https://github.com/sockeqwe/mosby/blob/master/mvp-common/src/main/java/com/hannesdorfmann/mosby/mvp/MvpPresenter.java">Mosby Presenters</a> only have <strong>attachView()</strong> and <strong>detachView()</strong> methods if you want to count them as &ldquo;lifecycle events&rdquo;).</p>
+<p>Furthermore, lifecycle managing is already a complex topic. If you start to move lifecycle logic in your Presenter then you basically have just moved that spaghetti code from Activity to Presenter. Clearly the intention of <a href="https://github.com/soundcloud/lightcycle">LightCycle</a> is to solve exactly this problem: LightCycle helps you to split or delegate the spaghetti code logic you usually write in your Activity&rsquo;s or Fragment&rsquo;s lifecycle methods into multiple smaller components that are following the <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">single responsibility principle</a>. However, according to LightCycle <a href="https://github.com/soundcloud/lightcycle/blob/master/examples/real-world/src/main/java/com/soundcloud/lightcycle/sample/real_world/HeaderPresenter.java">examples</a> they promote (indirectly) to build Presenters with lifecycle methods. Don&rsquo;t get me wrong: The idea of LightCycle is great and achieving that via annotation processing is pretty smart, but lifecycle management is not the Presenters responsibility and therefore the Presenter doesn&rsquo;t need lifecycle callback methods. This blog post is not advocating against LightCycle (it&rsquo;s awesome!). This blog post is advocating against lifecycle in Presenters in general!</p>
+<p>With that said, you might understand my point of view, but you also have faced scenarios where from your point of view the Presenter indeed needs lifecycle callback methods. Okay, let&rsquo;s talk about it!</p>
+<p>For example let&rsquo;s assume we want to build an app that displays the user&rsquo;s current GPS position on a map in our app. As the screen turns off we should stop retrieving GPS position updates to safe battery life. So how would we implement this with MVP? We would have an <strong>TrackingActivity</strong> as View (<strong>TrackingView</strong>) displaying a map with the user&rsquo;s current GPS position. We also need a <strong>GpsTracker</strong> class as business logic&rdquo; (model in MVP) which is responsible to detect the current GPS position and notify observers (listeners) about position changes. The <strong>TrackingPresenter</strong> is such an observer. He is registered as listener to <strong>GpsTracker</strong> and will update the View when GPS position has been changed.</p>
+<p>So far so good. As already said, to not drain the battery too much we want to stop GPS tracking when the display is off, in other words stop GPS Tracking in <strong>Activity.onPause()</strong> and resume when <strong>Activity.onResume()</strong>. Read this sentence carefully again. Do you get it? It&rsquo;s not the Presenter who needs onPause() and onResume() lifecycle events. Rather the &ldquo;business logic&rdquo;, the <strong>GpsTracker</strong>, needs these lifecycle events.</p>
+<p>But how do we implement that? Should we simply forward <strong>Activity.onPause()</strong> to <strong>Presenter.onPause()</strong> which then calls <strong>GpsTracker.stop()</strong>? So we do need a Presenter with lifecycle methods otherwise we couldn&rsquo;t forward the pause events the way down to <strong>GpsTracker.stop()</strong>, right?
+I think there is a better way. As already said, is not the responsibility of the Presenter to handle lifecycle events. Actually, there is already a component that is responsible for lifecycle events: the Activity (or Fragment). So instead of forwarding Activity.onPause() and Activity.onResume() to the presenter, just do something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">TrackingActivity</span> <span class="kd">extends</span> <span class="n">MvpActivity</span> <span class="kd">implements</span> <span class="n">TrackingView</span> <span class="o">{</span>
+     <span class="kd">private</span> <span class="n">GpsTracker</span> <span class="n">tracker</span><span class="o">;</span>
+
+     <span class="kd">public</span> <span class="nf">onCreate</span><span class="o">(){</span>
+            <span class="n">tracker</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GpsTracker</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="c1">// might need a context
+</span><span class="c1"></span>            <span class="o">...</span>
+     <span class="o">}</span>
+
+     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onPause</span><span class="o">(){</span>
+         <span class="n">tracker</span><span class="o">.</span><span class="na">stop</span><span class="o">();</span>
+     <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onResume</span><span class="o">(){</span>
+         <span class="n">tracker</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+     <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">createPresenter</span><span class="o">(){</span> <span class="c1">// Called by Mosby
+</span><span class="c1"></span>          <span class="k">return</span> <span class="k">new</span> <span class="n">TrackingPresenter</span><span class="o">(</span><span class="n">tracker</span><span class="o">);</span>
+     <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>As you see, the trick is that the <strong>GpsTracker</strong> is &ldquo;bound&rdquo; to the Activity&rsquo;s lifecycle directly in the component that is responsible for managing lifecycle: the Activity! Then we pass the GpsTracker to the Presenter as constructor parameter.
+Furthermore, now <strong>TrackingPresenter</strong> fulfills the single responsibility from my previous definition: It&rsquo;s only responsible to update the View.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">TrackingPresenter</span> <span class="kd">extends</span> <span class="n">MvpBasePresenter</span><span class="o">&lt;</span><span class="n">TrackingView</span><span class="o">&gt;</span>
+                        <span class="kd">implements</span> <span class="n">GpsUpdateListener</span><span class="o">{</span>
+
+  <span class="n">GpsTracker</span> <span class="n">tracker</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">TrackingPresenter</span><span class="o">(</span><span class="n">GpsTracker</span> <span class="n">tracker</span><span class="o">){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">tracker</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">;</span>
+    <span class="n">tracker</span><span class="o">.</span><span class="na">setGpsUpdateListener</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+  <span class="o">}</span>
+
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onGpsLocationUpdated</span><span class="o">(</span><span class="n">GpsPosition</span> <span class="n">position</span><span class="o">){</span>
+    <span class="n">view</span><span class="o">.</span><span class="na">showCurrentPosition</span><span class="o">(</span><span class="n">position</span><span class="o">.</span><span class="na">getLat</span><span class="o">(),</span> <span class="n">position</span><span class="o">.</span><span class="na">getLng</span><span class="o">());</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>That&rsquo;s it. <strong>Single responsibility for all your components!</strong></p>
+<p>Of course we can spice up the code shown above with dependency injection and with LightCycle:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">TrackingActivity</span> <span class="kd">extends</span> <span class="n">MvpActivity</span> <span class="kd">implements</span> <span class="n">TrackingView</span> <span class="o">{</span>
+
+    <span class="nd">@Inject</span> <span class="nd">@LightCycle</span> <span class="n">GpsTracker</span> <span class="n">tracker</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">TrackingPresenter</span> <span class="nf">createPresenter</span><span class="o">(){</span>
+          <span class="k">return</span> <span class="n">getObjectGraph</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">TrackingPresenter</span><span class="o">.</span><span class="na">class</span><span class="o">);</span> <span class="c1">// Dagger 1
+</span><span class="c1"></span>          <span class="c1">// or
+</span><span class="c1"></span>          <span class="k">return</span> <span class="n">getComponent</span><span class="o">().</span><span class="na">trackingPresenter</span><span class="o">();</span> <span class="c1">// Dagger 2
+</span><span class="c1"></span>     <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Are you looking for more examples? Another user of Mosby (MVP library) has asked me a similar question on github for a music player app he is working on. I gave a similar  <a href="https://github.com/sockeqwe/mosby/issues/124">answer</a>.</p>
+<p>Of course this is only my personal opinion and there are exceptions and you may really need lifecycle events in your Presenters, but I think in 99% your business logic needs lifecycle events and not your Presenters. Usually (I would say 95% of the apps out there) don&rsquo;t have lifecycle aware business logic. And if an app really has such lifecycle aware business logic, then 99% of the time the Presenter doesn&rsquo;t have to be lifecycle aware, but rather the business logic.</p>
+<p>So the moral of the story is: You should avoid lifecycle aware components as much as possible. Doesn&rsquo;t matter if business logic (Model) or Presenter. It&rsquo;s my general advise. Lifecycle only introduces undesired complexity. But if you really really really need components that are lifecycle aware, then most likely the business logic (Model) should be lifecycle aware and not the Presenter.</p>
+<p>Last but not least I want to say that the intention of this blog post is not to discredit SoundCloud&rsquo;s LigthCycle! I just wanted to say that from my point of view the LightCycle <a href="https://github.com/soundcloud/lightcycle/blob/master/examples/real-world/src/main/java/com/soundcloud/lightcycle/sample/real_world/HeaderPresenter.java">examples</a> (having Presenters with lifecycle callback methods in general) are not my cup of tea. I think this is mainly caused by the fact that my definition of a Presenter (i.e. I also don&rsquo;t want to have android SDK dependencies like <strong>Bundle</strong> in my Presenters) is entirely different from SoundClouds definition of a Presenter.</p>
+<h3 id="update-03252016">Update (03/25/2016)</h3>
+<p>As some people pointed out correctly (see also <a href="https://www.reddit.com/r/androiddev/comments/4bs4lz/presenters_dont_need_lifecycle_events_hannes/">reddit</a> ) the code snipped shown above causes that the <strong>TrackingView</strong> (TrackingActivity) has knowledge of <strong>GpsTracker</strong> which definitely feels dangerous. What I wanted to demonstrate is that there is already a component responsible for lifecycle management in your app and it&rsquo;s not the Presenter. I didn&rsquo;t say that <strong>GpsTracker</strong> should be used or manipulated from <strong>TrackingView</strong> directly. That is still the job of the <strong>TrackingPresenter</strong>. However, yes, <strong>TrackingActivity</strong>  has a reference to <strong>GpsTracker</strong> and could be misused. The real problem is that <strong>Activity</strong> is <strong>View</strong> and <strong>lifecycle manager</strong> at the same time. I see two solutions for that problem:</p>
+<ul>
+<li><strong>Separate View and lifecycle responsibility:</strong> How do we do that? Well we have to move either View responsibility or lifecycle management out of Activity. Obviously we can&rsquo;t remove the lifecycle management from Activity easily, but we can introduce an additional layer which then is really just a <strong>TrackingView</strong>:</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">TrackingActivity</span> <span class="kd">extends</span> <span class="n">MvpActivity</span><span class="o">&lt;</span><span class="n">TrackignView</span><span class="o">,</span> <span class="n">TrackingPresenter</span><span class="o">&gt;</span> <span class="o">{</span>
+
+   <span class="nd">@Inject</span> <span class="nd">@LightCycle</span> <span class="n">GpsTracker</span> <span class="n">tracker</span><span class="o">;</span>
+   <span class="n">TrackingView</span> <span class="n">view</span><span class="o">;</span>
+
+   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">n</span><span class="o">){</span>
+     <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+     <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_tracking</span><span class="o">);</span>
+     <span class="n">view</span> <span class="o">=</span> <span class="o">(</span><span class="n">TrackingView</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">tracking_view</span><span class="o">);</span>
+   <span class="o">}</span>
+
+   <span class="nd">@Override</span> <span class="c1">// called by Mosby, same as before
+</span><span class="c1"></span>   <span class="kd">public</span> <span class="n">TrackingPresenter</span> <span class="nf">createPresenter</span><span class="o">(){</span> <span class="o">...</span> <span class="o">}</span>
+
+   <span class="nd">@Override</span> <span class="c1">// called by Mosby to connect view with presenter
+</span><span class="c1"></span>   <span class="kd">public</span> <span class="n">TrackingView</span> <span class="nf">getMvpView</span><span class="o">(){</span>
+     <span class="k">return</span> <span class="n">view</span><span class="o">;</span>
+   <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>The thing here is we introduce an extra View layer. This can be something like <strong>TrackingLayout extends FrameLayout implements TrackingView</strong> so you can use it directly in xml layout or you could build some kind of &ldquo;wrapper class&rdquo; that gets the root layout from Activity and internally manages UI widgets or whatever works best for you. This approach might be the cleanest solution because now we have truly single responsibility even in the Activity (lifecycle only). But this solution comes with a price: an additional layer. I don&rsquo;t know about you but for me adding yet another layer is the beginning of over-engineering. And there are still some dependencies an activity has to offer to the view layer like what if you need a Bundle in View (do you really want to work with BaseSavedState)? What if the view needs a reference to the Window to set some flags like hide navigation bar, immersive mode or shared element transitions. Maybe we could use dependency injection like Dagger to solve that kind of problem? Yes, but soon or later you will be caught by dependency injection library so that we can&rsquo;t do anything without dagger anymore, which sucks. So even if in theory introducing a dedicated &ldquo;view&rdquo; layer seems to be a good idea it&rsquo;s not my recommended solution.</p>
+<ul>
+<li><strong>Hide GpsTracker from View:</strong> This seems a like a work around, but from my experience this is the simpler and a more practical solution. What was the original problem? The problem was that <strong>TrackingActivity</strong> has a reference to <strong>GpsTracker</strong> and therefore one could access and misuse <strong>GpsTracker</strong>. How to solve this problem? Introducing an additional layer seems to me like getting the fire brigade to extinguish a candle. Why not simply &ldquo;hide&rdquo; <strong>GpsTracker</strong> from <strong>TrackingActivity</strong> like this:</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">LifecycleController</span>  <span class="kd">extends</span> <span class="n">DefaultActivityLightCycle</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="n">GpsTracker</span> <span class="n">tracker</span><span class="o">;</span>
+
+  <span class="nd">@Inject</span>
+  <span class="kd">public</span> <span class="nf">LifecycleController</span><span class="o">(</span><span class="n">GpsTracker</span> <span class="n">tracker</span><span class="o">){</span> <span class="o">...</span> <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onPause</span><span class="o">(){</span>
+    <span class="n">tracker</span><span class="o">.</span><span class="na">stop</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onResume</span><span class="o">(){</span>
+    <span class="n">tracker</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>and then we treat the Activity as <strong>TrackingView</strong> as we already did before:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">TrackingActivity</span> <span class="kd">extends</span> <span class="n">MvpActivity</span> <span class="kd">implements</span> <span class="n">TrackingView</span> <span class="o">{</span>
+
+    <span class="nd">@Inject</span> <span class="nd">@LightCycle</span> <span class="n">LifecycleController</span> <span class="n">lifecycleController</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">createPresenter</span><span class="o">(){</span> <span class="c1">// Called by Mosby
+</span><span class="c1"></span>          <span class="k">return</span> <span class="k">new</span> <span class="n">TrackingPresenter</span><span class="o">(</span><span class="n">tracker</span><span class="o">);</span>
+     <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>By doing so <strong>TrackingActivity</strong> no longer has a reference to <strong>GpsTracker</strong> that can be misused without the burden of an additional layer.</p>
+<p>Please note, that in this blog post we are talking about business logic components like <strong>GpsTracker</strong> that are lifecycle aware. Obviously, I don&rsquo;t want you to do that for all your business logic components even if they are not lifecycle aware at all. That is nonsense. The &ldquo;traditional&rdquo; MVP approach is quite good. I was just advocating against making Presenter lifecycle aware when the business logic is the component that is lifecycle aware.</p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="SQLBrite DAO">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>SQLBrite DAO</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Jun 24, 2015</li>
+        </ul>
+        <article class="content">
+          
+          <p>Earlier this year, one day before Valentine&rsquo;s Day to be precise, I had the glorious idea <em>(ironie)</em> to surprise my lovely girlfriend with a special android app on Valentine&rsquo;s Day. Who said computer science can&rsquo;t be romantic?</p>
+<p>The idea was simple: I wanted to build an android app that imitates and looks like <a href="https://play.google.com/store/apps/details?id=com.tinder">Tinder</a> but instead of displaying real people nearby, I faked everything so that only my profile gets displayed so she only can choose me. Nearly everything was hard coded except the messaging part. To save time and effort I didn&rsquo;t want to build my own backend to store messages and provide a REST api. Instead I decided to use GCM to send and deliver chat messages form my girlfriend&rsquo;s phone to my phone and vice versa. That required to store the received chat messages on a local SQLite database on the users device. Therefore a database library was needed.</p>
+<h2 id="database">Database</h2>
+<p>To cut a long story short - I didn&rsquo;t managed to implement that fake Tinder app in time. One of the reasons was that I hadn&rsquo;t found a good and simple database abstraction layer library. I could pick just a popular one to get the job done, but that wasn&rsquo;t what I wanted to do. Moreover, I was looking for a library that matched the following criteria:</p>
+<ul>
+<li><strong>Native SQL:</strong> I don&rsquo;t like ORM libraries because usually they require to learn their own query language and declarative table schemas. To build efficient queries I have to learn how to use that ORM library (I look at you Hibernate!). If I change ORM library one day, I have to learn how to write efficient queries again for the new ORM library. Moreover, ORM libraries has their own implementations how to save and resolve relations. Sometimes, you have to adjust your model (pojo) classes to make efficient queries possible just because of an ORM implementation detail. I&rsquo;m very familiar with SQL which is universal useable (obviously also outside of the android world). I already know how to build efficient queries in SQL. Therefore, I want to write my queries in pure native SQL. Finally, I came to the conclusion that hiding SQL is not the best idea.</li>
+<li><strong>Based on RxJava:</strong> Many developers are excited about Rx programming, because Rx programming offers functional alike operators like <strong>flatMap()</strong> etc. Many of them don&rsquo;t understand that by using RxJava they are observing data. Therefore, they don&rsquo;t understand Rx programming at all. It is not only about transforming data. Rx implements the observer pattern. You are subscribing to an observable to get updates. That may be a one time consumable data stream like a http response, but the real power of the observer pattern and RxJava can be seen and used by making a data source observable that can emit more than once items, like a database does: Whenever the data in your database has been changed, all subscribers can be informed about the change by emitting items (so that <strong>onNext()</strong> gets called again).</li>
+<li><strong>Immutability:</strong> Almost every ORM based library misses that point. I&rsquo;m not going to explain the advantages and disadvantages of immutability. I recommend to read <a href="http://www.amazon.com/exec/obidos/ASIN/0321356683/ref=nosim/javapractices-20">Effective Java</a> by Joshua Bloch or have a look at <a href="http://www.javapractices.com/topic/TopicAction.do?Id=29">javapracties.com</a> which sums up the most important things.</li>
+</ul>
+<p>I know that this may sounds like an overkill for such a simple app like the fake Tinder app is. It just stores chat messages into a database. Whenever I build an app, I want to ensure that it&rsquo;s build the best way and even more important, with every new app (even with such a little app like the fake Tinder app) I improve my skills and learn new things.</p>
+<h2 id="sqlbrite">SQLBrite</h2>
+<p>Don&rsquo;t finishing the app in time also had its advantages: A few days after Valentine&rsquo;s Day the guys over at square (who else?) open sourced <a href="https://github.com/square/sqlbrite">SQLBrite</a> which seems to be the database layer I am dreaming of: It&rsquo;s a lightweight wrapper around <strong>SQLiteOpenHelper</strong> and <strong>ContentResolver</strong>, it doesn&rsquo;t hide SQLite or SQL API, supports transactions and multithreading and last but not least it introduces reactive stream semantics to queries. Especially, the latter one is worth mentioning: Whenever a row of a sql database table gets updated, inserted or removed SQLBrite triggers a notification to inform queries, which are subscribed for table dataset changes. So I decided to use SQLBrite in the fake Tinder app.</p>
+<p>In this fake Tinder app you can open <strong>ChatActivity</strong> which displays a <strong>List&lt;ChatMessage&gt;</strong> queried from the local SQLite database. As already mentioned before I use GCM to send and receive chat messages. Whenever the app receives a GCM Push notification containing a chat message, the app stores the <strong>ChatMessage</strong> into the local database. The big advantage of using SQLBrite is that by inserting a new <strong>ChatMessage</strong> into the local database <strong>ChatActivity</strong> gets updated automatically because as long as <strong>ChatActivity</strong> is not destroyed the original query executed in <strong>ChatActivity.onCreate()</strong> to retrieve <strong>List&lt;ChatMessage&gt;</strong> is still subscribed (query is  Rx Subscriber) to the underlying database table (database table is Rx Observable). But the really cool thing is that you get that update mechanism for free. You don&rsquo;t have to add a single line of code. SQLBrite and RxJava &ldquo;magically&rdquo; do that. No <strong>EventBus</strong> to start a re-query manually, pure reactive programming power. So whenever the app receives a GCM push notification containing a <strong>ChatMessage</strong> it stores this <strong>ChatMessage</strong> into the local SQLite database. If <strong>ChatActivity</strong> is open while receiving the GCM push notification SQLBrite will automatically deliver the database changes to <strong>ChatActivity</strong>. It&rsquo;s that easy to keep <strong>ChatActivity</strong> up to date. This Activity don&rsquo;t even have a pull-to-refresh mechanism like a <strong>SwipeRefreshLayout</strong> because updates are pushed from SQLBrite automatically. Therefore, there is no reason to implement a pull mechanism.</p>
+<h2 id="sqlbrite-dao">SQLBrite Dao</h2>
+<p>SQLBrite is still in it&rsquo;s early days (Version 0.1.0 while writing this blog post). As already said the main focus of SQLBrite is set on providing a wrapper arround <strong>SQLite</strong>. No ORM and no type-safe query mechanism are provided. So by using SQLBrite you have to work with <strong>Cursor</strong> and <strong>ContentValues</strong>. That was a little bit annoying while developing the fake Tinder app. Therefore, I decided to write an <a href="hannesdorfmann.com/annotation-processing/annotationprocessing101">annotation processor</a> for &ldquo;very simple&rdquo; object mapping and <a href="https://en.wikipedia.org/wiki/Data_access_object">DAO</a> (Data Access Object) on top of SQLBrite. SQLBrite Dao can be found on <a href="https://github.com/sockeqwe/sqlbrite-dao">Github</a>.</p>
+<h3 id="object-mapping">Object mapping</h3>
+<p>Please note that this is not an ORM. The only thing it does is take a <strong>Cursor</strong> and read the column into the model class pojo. Only primitives are allowed, no relations like 1:n (1 <strong>Chat</strong> has many <strong>ChatMessages</strong>) can&rsquo;t be modeled and resolved. It&rsquo;s more like deserializing data than object mapping. You have to annotate your model class with <strong>@ObjectMappable</strong> and the desired fields with <strong>@Column</strong> with the table column name (String) as parameter:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@ObjectMappable</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChatMessage</span> <span class="o">{</span>
+
+  <span class="c1">//
+</span><span class="c1"></span>  <span class="c1">// Define Table name and column names as constants
+</span><span class="c1"></span>  <span class="c1">//
+</span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TABLE_NAME</span> <span class="o">=</span> <span class="s">&#34;ChatMessage&#34;</span><span class="o">;</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">COL_ID</span> <span class="o">=</span> <span class="s">&#34;id&#34;</span><span class="o">;</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">COL_SENDER_NAME</span> <span class="o">=</span> <span class="s">&#34;sender&#34;</span><span class="o">;</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">COL_MESSAGE</span> <span class="o">=</span> <span class="s">&#34;lastname&#34;</span><span class="o">;</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">COL_TIMESTAMP</span> <span class="o">=</span> <span class="s">&#34;received&#34;</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">COL_CHAT_ID</span> <span class="o">=</span> <span class="s">&#34;chat_id&#34;</span>
+
+  <span class="c1">//
+</span><span class="c1"></span>  <span class="c1">// Fields mapped to database columns
+</span><span class="c1"></span>  <span class="c1">//
+</span><span class="c1"></span>  <span class="nd">@Column</span><span class="o">(</span><span class="n">COL_ID</span><span class="o">)</span>
+  <span class="n">String</span> <span class="n">id</span><span class="o">;</span>
+
+  <span class="nd">@Column</span><span class="o">(</span><span class="n">COL_SENDER_NAME</span><span class="o">)</span>
+  <span class="n">String</span> <span class="n">sender</span><span class="o">;</span>
+
+  <span class="nd">@Column</span><span class="o">(</span><span class="n">COL_MESSAGE</span><span class="o">)</span>
+  <span class="n">String</span> <span class="n">message</span><span class="o">;</span>
+
+  <span class="nd">@Column</span><span class="o">(</span><span class="n">COL_TIMESTAMP</span><span class="o">)</span>
+  <span class="kt">long</span> <span class="n">timestamp</span><span class="o">;</span>
+
+  <span class="nd">@Column</span><span class="o">(</span><span class="n">COL_CHAT_ID</span><span class="o">)</span>
+  <span class="n">String</span> <span class="n">chatId</span><span class="o">;</span>
+
+
+  <span class="kd">public</span> <span class="nf">ChatMessage</span><span class="o">()</span> <span class="o">{</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getId</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getSender</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">sender</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getMessage</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">message</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getTimestamp</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">timestamp</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getChatId</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">chatId</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>An annotation processor (not reflections) then generates <strong>ChatMessageMapper</strong> class. That generated class (original <strong>@ObjectMappable</strong> annotated class name + &ldquo;Mapper&rdquo; suffix) looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ChatMessageMapper</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="nf">ChatMessageMapper</span><span class="o">()</span> <span class="o">{</span>
+  <span class="o">}</span>
+  <span class="c1">// A RxJava Func1 that maps a row from Cursor to c ChatMessage
+</span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Func1</span><span class="o">&lt;</span><span class="n">Cursor</span><span class="o">,</span> <span class="n">ChatMessage</span><span class="o">&gt;</span> <span class="n">MAPPER</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Func1</span><span class="o">&lt;&gt;()</span> <span class="o">{</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+
+
+  <span class="cm">/**
+</span><span class="cm">   * Get a type-safe ContentValues Builder
+</span><span class="cm">   * @return The ContentValues Builder
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">ContentValuesBuilder</span> <span class="nf">contentValues</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>As you see a <strong>Func1&lt;Cursor, ChatMessage&gt; MAPPER</strong> will be generated. You will see in a minute how this <strong>MAPPER</strong> is used to create ChatMessage** instances from a **Cursor**. You may have also noticed that there is a **ContentValuesBuilder** that can be used as type-safe builder for **ContentValues** like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">ContentValues</span> <span class="n">cv</span> <span class="o">=</span> <span class="n">ChatMessageMapper</span><span class="o">.</span><span class="na">contentValues</span><span class="o">()</span>
+                        <span class="o">.</span><span class="na">id</span><span class="o">(</span><span class="s">&#34;1&#34;</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">sender</span><span class="o">(</span><span class="s">&#34;Hannes&#34;</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">message</span><span class="o">(</span><span class="s">&#34;Will you be my Valentine?&#34;</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">timestamp</span><span class="o">(</span><span class="n">1108389600</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">chatId</span><span class="o">(</span><span class="s">&#34;chat1&#34;</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</code></pre></div><p><strong>ChatMessageMapper</strong> is just a generated helper class that makes working with <strong>Cursor</strong> or <strong>ContentValues</strong> more convenient.</p>
+<h3 id="dao">DAO</h3>
+<p>Create your own <strong>D</strong>ata <strong>A</strong>ccess <strong>O</strong>bject  (DAO) where you define methods to manipulate or query your database table. <strong>Dao</strong> provides SQL grammar so you don&rsquo;t have to deal that much with String concatenation and can use IDE&rsquo;s auto completion to build your sql statements. Usually a DAO represents a database table as following:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChatMessageDao</span> <span class="kd">extends</span> <span class="n">Dao</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">createTable</span><span class="o">(</span><span class="n">SQLiteDatabase</span> <span class="n">database</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="n">CREATE_TABLE</span><span class="o">(</span><span class="n">ChatMessage</span><span class="o">.</span><span class="na">TABLE_NAME</span><span class="o">,</span>
+        <span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_ID</span> <span class="o">+</span> <span class="s">&#34; TEXT PRIMARY KEY NOT NULL&#34;</span><span class="o">,</span>
+        <span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_SENDER_NAME</span> <span class="o">+</span> <span class="s">&#34; TEXT&#34;</span><span class="o">,</span>
+        <span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_MESSAGE</span> <span class="o">+</span> <span class="s">&#34; TEXT&#34;</span><span class="o">,</span>
+        <span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_TIMESTAMP</span> <span class="o">+</span> <span class="s">&#34; INTEGER&#34;</span><span class="o">,</span>
+        <span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_CHAT_ID</span><span class="o">+</span><span class="s">&#34; TEXT&#34;</span>
+      <span class="o">)</span>
+      <span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="n">database</span><span class="o">);</span>
+
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onUpgrade</span><span class="o">(</span><span class="n">SQLiteDatabase</span> <span class="n">db</span><span class="o">,</span> <span class="kt">int</span> <span class="n">oldVersion</span><span class="o">,</span> <span class="kt">int</span> <span class="n">newVersion</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">oldVersion</span> <span class="o">==</span> <span class="n">1</span> <span class="o">&amp;&amp;</span> <span class="n">newVersion</span> <span class="o">==</span> <span class="n">2</span><span class="o">){</span>
+      <span class="n">ALTER_TABLE</span><span class="o">(</span><span class="n">ChatMessage</span><span class="o">.</span><span class="na">TABLE_NAME</span><span class="o">)</span>
+          <span class="o">.</span><span class="na">ADD_COLUMN</span><span class="o">(</span><span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_FOO</span> <span class="o">+</span><span class="s">&#34; TEXT&#34;</span><span class="o">)</span>
+          <span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+
+  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ChatMessage</span><span class="o">&gt;&gt;</span> <span class="nf">getMessages</span><span class="o">(</span><span class="n">String</span> <span class="n">chatId</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">query</span><span class="o">(</span>
+          <span class="n">SELECT</span><span class="o">(</span>
+            <span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_ID</span><span class="o">,</span>
+            <span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_SENDER_NAME</span><span class="o">,</span>
+            <span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_MESSAGE</span><span class="o">,</span>
+            <span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_TIMESTAMP</span>
+            <span class="o">)</span>
+          <span class="o">.</span><span class="na">FROM</span><span class="o">(</span><span class="n">ChatMessage</span><span class="o">.</span><span class="na">TABLE_NAME</span><span class="o">)</span>
+          <span class="o">.</span><span class="na">WHERE</span><span class="o">(</span><span class="n">ChatMessage</span><span class="o">.</span><span class="na">COL_CHAT_ID</span> <span class="o">+</span> <span class="s">&#34; = ? &#34;</span><span class="o">)</span>
+        <span class="o">)</span>
+        <span class="o">.</span><span class="na">args</span><span class="o">(</span><span class="n">chatId</span><span class="o">)</span> <span class="c1">// Argument that replaces &#34;?&#34; in WHERE
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">run</span><span class="o">()</span> <span class="c1">// Executes query, return Rx Observable
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">mapToList</span><span class="o">(</span><span class="n">ChatMessage</span><span class="o">.</span><span class="na">MAPPER</span><span class="o">);</span> <span class="c1">// The generated Rx Func1
+</span><span class="c1"></span>      <span class="o">}</span>
+
+
+  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="nf">addMessage</span><span class="o">(</span><span class="n">String</span> <span class="n">id</span><span class="o">,</span> <span class="n">String</span> <span class="n">sender</span><span class="o">,</span> <span class="n">String</span> <span class="n">msg</span><span class="o">,</span> <span class="kt">long</span> <span class="n">ts</span><span class="o">,</span> <span class="n">String</span> <span class="n">chatId</span> <span class="o">)</span> <span class="o">{</span>
+    <span class="n">ContentValues</span> <span class="n">values</span> <span class="o">=</span> <span class="n">ChatMessageMapper</span><span class="o">.</span><span class="na">contentValues</span><span class="o">()</span>
+                         <span class="o">.</span><span class="na">id</span><span class="o">(</span><span class="n">id</span><span class="o">)</span>
+                         <span class="o">.</span><span class="na">sender</span><span class="o">(</span><span class="n">sender</span><span class="o">)</span>
+                         <span class="o">.</span><span class="na">message</span><span class="o">(</span><span class="n">msg</span><span class="o">)</span>
+                         <span class="o">.</span><span class="na">timestamp</span><span class="o">(</span><span class="n">ts</span><span class="o">)</span>
+                         <span class="o">.</span><span class="na">chatId</span><span class="o">(</span><span class="n">chatId</span><span class="o">)</span>
+                         <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="k">return</span> <span class="n">insert</span><span class="o">(</span><span class="n">ChatMessage</span><span class="o">.</span><span class="na">TABLE_NAME</span><span class="o">,</span> <span class="n">values</span><span class="o">);</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>As you see we use <strong>mapToList()</strong> (RxJava operator provided by SQLBrite) and the <strong>MAPPER</strong> generated by the annotation processor to &ldquo;map&rdquo; a cursor to a List of ChatMessages.</p>
+<p>To register your <strong>Dao</strong> classes to <strong>SQLBrite</strong> you have to create a <strong>DaoManager</strong>. While a <strong>Dao</strong> represents a table of a database <strong>DaoManager</strong> represents the whole database file. <strong>DaoManager</strong> internally creates a <strong>SQLiteOpenHelper</strong> and instantiates a <strong>SqlBrite</strong> instance. All DAO&rsquo;s registered to the same <strong>DaoManager</strong> share the same <strong>SqlBrite</strong> instance.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">ChatDao</span> <span class="n">chatDao</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ChatDao</span><span class="o">();</span>
+<span class="n">DaoManager</span><span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="n">context</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">databaseName</span><span class="o">(</span><span class="s">&#34;Chat.db&#34;</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">version</span><span class="o">(</span><span class="n">1</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">chatDao</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">logging</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</code></pre></div><p>Please note that adding DAO&rsquo;s dynamically (later) at runtime is not possible. You have to instantiate a <strong>DaoManager</strong> and pass all your DAO&rsquo;s in the constructor as seen above. DaoManager calls <strong>Dao.createTable()</strong> and <strong>Dao.onUpgrade()</strong> once the internal <strong>SQLiteOpenHelper</strong> has been opened.</p>
+<h2 id="summary">Summary</h2>
+<p>SQLBrite Dao provides an additional layer on top of SQLBrite:</p>
+<ul>
+<li>A <strong>DaoManager</strong> is representing the whole database file and basically is a <strong>SQLiteOpenHelper</strong> and manages <strong>SqlBrite</strong> instance for you.</li>
+<li>A <strong>Dao</strong> is representing a table of a database. You define a public API for other software components of your App like <strong>getMessages()</strong> or <strong>addMessage()</strong> to query and manipulate the data of the underlying table.</li>
+</ul>
+<p>I have build this &ldquo;DAO&rdquo; and &ldquo;ObjectMapper&rdquo; to make things easier while working with SQLBrite by providing a little bit more high level APIs around SQLBrite. As already said SQLBrite is still under development and I think (and hope) that some of this things like &ldquo;simple&rdquo; object mapping or SQL grammar will be part of <strong>SQLBrite 1.0</strong>. So why do I have built this additional library? Working with <strong>Cursor</strong> and  <strong>ContentValues</strong> was annoying and also writing SQL statements by using String concatenation isn&rsquo;t really ahead of time. I really like SQLBrite but until now (end of June 2015) such things are not provided (yet) by SQLBrite. The annotation processor based <strong>ObjectMapper</strong> should definitely be improved to support <a href="https://github.com/google/auto/tree/master/value">AutoValue</a> (I&rsquo;m a big fan of AutoValue) to support real immutability.</p>
+<p>SQLBrite Dao can be found on <a href="https://github.com/sockeqwe/sqlbrite-dao">Github</a></p>
+<p>To finish the story about the fake Tinder app: As already said I haven&rsquo;t made it to implement this app in time, but <strong>SQLBrite Dao</strong> was one of the out-coming artifacts. Actually, this happens quite often to me: I start a new app project and end up writing a library that would be nice to have for this already started app project. Usually, I end up with having build a library and the app itself never gets finished. However, this time I finished the app itself (the fake Tinder app) as well, unfortunately after Valentine&rsquo;s Day. Therefore, I had to go the classic way for Valentine&rsquo;s Day 2015 and I bought my girlfriend red roses and went to romantic dinner with her. I can&rsquo;t wait for Valentine&rsquo;s Day next year when I will install the fake Tinder app over night on her smartphone and wait for &ldquo;having a match&rdquo; on Valentine&rsquo;s Day.</p>
+<p>P.S: Don&rsquo;t worry, my girlfriend is not a computer scientist nor internet addicted (that&rsquo;s why I love her). Actually, she don&rsquo;t even know that I have a blog. As long as you don&rsquo;t tell her directly about the fake Tinder app, it will still be a surprise on Valentine&rsquo;s Day 2016. Keep your lips sealed ;-)</p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Model-View-Intent MVI on Android by using Mosby 3. Restoring State in MVI is easy. SaveStateDelegate. MVI.">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Reactive Apps with Model-View-Intent - Part 6: Restoring State</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>May 02, 2017</li>
+        </ul>
+        <article class="content">
+          
+          <p>In the previous blog posts we have discussed Model-View-Intent (MVI) and the importance of unidirectional data flow. That simplifies state restoration a lot. How and why? We will discuss that in this blog post.</p>
+<p>There are two scenarios we will focus on in this blog post: Restoring state &ldquo;in memory&rdquo;
+(for example during screen orientation change) and restoring a &ldquo;persistent state&rdquo;
+(for example from Bundle previously saved in <code>Activity.onSaveInstanceState()</code>).</p>
+<h2 id="in-memory">In Memory</h2>
+<p>That is the simple case. We just have to keep our RxJava stream that emits new state over time out of
+android components lifecylce (i.e. Activity, Fragment or even ViewGroups). For example Mosby&rsquo;s
+<code>MviBasePresenter</code> establishes such a RxJava stream internally by using
+<code>PublishSubject</code> for View intents and <code>BehaviorSubject</code> to render the state on the view.
+I have already described these implementation details at the end of <a href="http://127.0.0.1:1313/android/mosby3-mvi-2/">Part 2</a>.
+The main idea is that MviBasePresenter is such a component that lives outside View&rsquo;s lifecylce so that a view can be attached and detached to such a Presenter.
+In Mosby the Presenter gets &ldquo;destroyed&rdquo; (garbage collected) when the view is destroyed permanently.
+Again, this is just an implementation detail of Mosby.
+Your MVI implementation might be entirely different.
+The important bit is that such a component like a Presenter lives outside of View&rsquo;s lifecycle because
+then it&rsquo;s easy to deal with View attached and detached events:
+whenever the View gets (re)attached to the Presenter we simply call <code>view.render(previousState)</code>
+(therefore Mosby uses BehaviorSubject internally).
+This is just one solution of how to deal with screen orientation changes. It also works with back stack navigation,
+i.e. Fragments on the back stack: if we come back from back stack we simply call view.render(previousState) again and the view is displaying the correct state.
+Actually, state can still be updated even if no view is attached because Presenter lives outside of that lifecycle and keeps RxJava state stream alive. Imagine receiving a push notification that changes data (part of state) while no view is attached. Again, whenever view gets reattached the latest state (containing updated data from push notification) is hand over to the view to render.</p>
+<h2 id="persistent-state">Persistent State</h2>
+<p>That scenario is also much simpler with a unidirectional data flow pattern like MVI.
+Let&rsquo;s say we want that state of our View (i.e. Activity) not only survives in memory, but also through process death.
+Typically in Android one would use <code>Activity.onSaveInstanceState(Bundle)</code> to save that state.
+In contrast to MVP or MVVM where you not necessarily have a Model that represents state
+(see <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">Part1</a> in MVI your View has a <code>render(state)</code> method which makes it easy to keep track of the latest state.
+So the obvious solution is to make state Parcelable and store it into the bundle and then restore it afterwards like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">MyActivity</span> <span class="kd">extends</span> <span class="n">Activity</span> <span class="kd">implements</span> <span class="n">MyView</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">KEY_STATE</span> <span class="o">=</span> <span class="s">&#34;MyStateKey&#34;</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="n">MyViewState</span> <span class="n">lastState</span><span class="o">;</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">render</span><span class="o">(</span><span class="n">MyState</span> <span class="n">state</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">lastState</span> <span class="o">=</span> <span class="n">state</span><span class="o">;</span>
+    <span class="o">...</span> <span class="c1">// update UI widgets
+</span><span class="c1"></span>  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSaveInstanceState</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">out</span><span class="o">){</span>
+    <span class="n">out</span><span class="o">.</span><span class="na">putParcelable</span><span class="o">(</span><span class="n">KEY_STATE</span><span class="o">,</span> <span class="n">lastState</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">saved</span><span class="o">){</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">saved</span><span class="o">);</span>
+    <span class="n">MyViewState</span> <span class="n">initialState</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">saved</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">){</span>
+      <span class="n">initialState</span> <span class="o">=</span> <span class="n">saved</span><span class="o">.</span><span class="na">getParcelable</span><span class="o">(</span><span class="n">KEY_STATE</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="n">presenter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyPresenter</span><span class="o">(</span> <span class="k">new</span> <span class="n">MyStateReducer</span><span class="o">(</span><span class="n">initialState</span><span class="o">)</span> <span class="o">);</span> <span class="c1">// With dagger: new MyDaggerModule(initialState)
+</span><span class="c1"></span>  <span class="o">}</span>
+  <span class="o">...</span>
+</code></pre></div><p>I think you get the point. Please note that in onCreate() we are not calling
+view.render(initialState) directly but rather we let the initial state sink down to where state management takes place: the state reducer (<a href="http://127.0.0.1:1313/android/mosby3-mvi-3/">see Part 3</a> where we use it with <code>.scan(initialState, reducerFunction)</code>.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>With a unidirectional data flow and a Model that represents State a lot of state related things are much simpler to implement compared to other patterns.
+However, usually I don&rsquo;t persist state into a bundle in my apps for two reasons:
+First, Bundle has a size limit, so you can&rsquo;t put arbitrary large state into a bundle (alternatively you could save state into a file or an object store like Realm).
+Second, we only have discussed how to serialize and deserialize state but that is not necessarily  the same as restoring state.</p>
+<p>For Example: Let&rsquo;s assume we have a LCE (Loading-Content-Error) View that displays a loading indicator while loading data and a list of items once the data (items) is loaded.
+So the state would be like <code>MyViewState.LOADING</code>. Let&rsquo;s assume that loading takes some time and
+that the Activity process gets killed while loading (i.e. because another app has come into foreground like phone app because of an incoming call). If we just serialize  MyViewState.LOADING and deserialize it after Activity has been
+recreated as described above, our state reducer would just call view.render(MyViewState.LOADING) which is correct so far <strong>BUT</strong> we would actually never invoke loading data again
+(i.e. start http request) just by using the deserialized state blindly.</p>
+<p>As you can see, serializing and deserializing state is not the same as state restoration which
+may requires some additional steps that increases complexity (still simpler to implement with MVI than with
+any other architectural pattern I have used so far).
+Also deserialized state containing some data might be outdated when View gets recreated so that you
+might have to refresh (load data) anyway. In most of the apps I have worked on I found it
+much simpler and more user friendly to keep state in memory only and after process death start with
+a empty initial state as if the app would start the first time.
+Ideally an app has a cache and offline support so that loading data after process death is fast.</p>
+<p>That ultimately leads to a common belief I have had some hard debates about with other android developers: If I use a cache or store, I already have such a component that lives outside of the android component
+lifecycle and I don&rsquo;t have to do all that retaining components stuff and MVI nonsense at all, right?
+Most of the time those android devs are referring to Mike Nakhimovich post <a href="https://hackernoon.com/presenters-are-not-for-persisting-f537a2cc7962">Presenters are not for persisting</a>
+where he introduced <a href="https://github.com/NYTimes/Store">NyTimes Store</a>, a data loading and caching library. Unfortunatley, those developers don&rsquo;t understand that <strong>loading data and caching is NOT state management</strong>.
+For example what if I have to load data from 2 stores or caches?</p>
+<p>Finally, does caching libraries like NyTimes Store help us to deal with process death?
+Obviously not because process death can happen at any time. Deal with it.
+The only thing we can do is to beg android operating system not to kill our apps process because we still have some work to do by using android
+services (which is also such a component that lives outside of other android components lifecycles)
+or don&rsquo;t we need android services anymore these days with RxJava, do we?
+We will talk about android services, RxJava and MVI in the next part. Stay tuned.</p>
+<p>Spoiler alert: I think we do need services.</p>
+
+    
+    <div class="series-box">
+        <h5>This is a post in the 
+        <u>Reactive Apps with Model-View-Intent</u> series.</span></h5>
+        <p>Other posts in this series:</p>
+
+        
+        
+        <ul>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">Reactive Apps with Model-View-Intent - Part 1: Model</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-2/">Reactive Apps with Model-View-Intent - Part 2: View and Intent</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-3/">Reactive Apps with Model-View-Intent - Part 3: State Reducer</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-4/">Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-5/">Reactive Apps with Model-View-Intent - Part 5: Debugging with ease</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-6/">Reactive Apps with Model-View-Intent - Part 6: Restoring State</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a>
+            </li>
+        
+        </ul>
+    </div>
+ 
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Refactoring Plain App by Nick Butcher by applying MVP with Reactive Streams - RxJava">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Refactoring Plaid App - A reactive MVP Approach (Part 1)</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Nov 29, 2015</li>
+        </ul>
+        <article class="content">
+          
+          <p>Nick Butcher has open sourced on <a href="https://github.com/nickbutcher/plaid">github</a> an awesome app called Plaid. The app is pretty cool and has an outstanding UI / UX. Whenever source code of such awesome apps are available developers start to copy code and best practice tips from it. So I did the same and decided to dive into the code of Plaid. As always, you will find some parts of the code that you think could be implemented or be written in another way. So instead of just talking about code I have decided to spend some of my spare time to refactor some parts of Plaid&rsquo;s source code. This blog post is the first part of a series of 3 posts of how I would refactor the Plaid app and to share my thoughts.</p>
+<p><strong>Preface:</strong> I started the refactoring with the strong belief that I can refactor the whole app. Surprisingly (ironic), it turns out that I was a very naive man. I simply have underestimated the complexity of the app and the number of features. I discovered some features only after having spent some hours with Nick Buchter&rsquo;s code, which were not &ldquo;visible&rdquo; to me just by using the app. In short: I realized that I don&rsquo;t have the time to put all my thoughts into action. Hence my &ldquo;refactoring&rdquo; is focused on the apps &ldquo;homepage&rdquo; and the &ldquo;search screen&rdquo;, which I have refactored mostly. Nevertheless, I want discuss (in theory) some more things that could be refactored, but I didn&rsquo;t because of time constraints. My refactored code can be found on <a href="https://github.com/sockeqwe/plaid">github</a> as well.</p>
+<h2 id="first-look">First look</h2>
+<p>The overall user experience and user interface is pretty awesome. I can&rsquo;t describe it better than this tweet:</p>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">If you think Material Design is all about cards and shadows, take a look at Plaid and think again <a href="https://t.co/IYO3QnxkFu">https://t.co/IYO3QnxkFu</a></p>&mdash; Luis G. Valle (@lgvalle) <a href="https://twitter.com/lgvalle/status/661509155455410176?ref_src=twsrc%5Etfw">November 3, 2015</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>It&rsquo;s a joy to use the app. The UI / UX is truly an inspiration for every developer and designer. However, after playing around a little bit more with the app I faced some visual bugs:</p>
+<ul>
+<li>
+<p>Displaying a loading indicator and error message at the same time:
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/zCwESjEpNdk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+</p>
+</li>
+<li>
+<p>In the app you can apply some &ldquo;filters&rdquo; or in other words: You can specify which &ldquo;sources&rdquo; of Dribbble, Designer News and Product Hunt you want to display. If you deselect such sources while loading an http request is currently running you can run into the state where the app displays items, but shouldn&rsquo;t since no sources are selected:
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/nJ3VUjpW0N0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+</p>
+</li>
+<li>
+<p>Also the app doesn&rsquo;t handle screen orientation changes properly. It simply rebuilds the entire screen so that after each orientation change you see the loading indicator again, and re-execute the http calls:
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/tuIDrtvL0lg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+</p>
+</li>
+</ul>
+<p>Typically such &ldquo;issues&rdquo; are a first indicator for spaghetti code and a moderate software architecture. So let&rsquo;s take a look under the hood and check out the source code and the components for displaying a list of items: The <a href="https://github.com/nickbutcher/plaid/blob/master/app/src/main/java/io/plaidapp/ui/HomeActivity.java">HomeActivity</a> (about 750 lines of code) handles the visibility of UI elements like displaying the <strong>RecylcerView</strong> or the <strong>ProgressBar</strong>. This activity also decides when to display the Source-Filters-Drawer (on the right side). Furthermore, in it&rsquo;s <strong>onActivityResults()</strong> it does a lot of things inclusive posting new post to designers news. Last but not least it also loads the data for the selected filters by using a <a href="https://github.com/nickbutcher/plaid/blob/master/app/src/main/java/io/plaidapp/data/DataManager.java">DataManager</a>. You see, the <strong>HomeActivity</strong> has many responsibilities, probably too many. The <strong>DataManager</strong> basically uses a combination of <strong>Retrofit</strong> and <strong>AsyncTasks</strong> to execute http calls to load the data. The tricky thing here is pagination. Whenever the end of the <strong>RecyclerView</strong> has been reached, more (older) items are loaded. <strong>DataManager</strong> uses internally a HashMap to track the current page each source (backend endpoint like &ldquo;Dribbble Popular&rdquo; or &ldquo;Dribbble Recent&rdquo; or &ldquo;Designer News Popular&rdquo;) is currently displaying. The items are displayed in a RecyclerView by using <a href="https://github.com/nickbutcher/plaid/blob/master/app/src/main/java/io/plaidapp/ui/FeedAdapter.java">FeedAdapter</a>. The <a href="https://github.com/nickbutcher/plaid/blob/master/app/src/main/java/io/plaidapp/ui/SearchActivity.java">SearchActivity</a> is working quite similar as <strong>HomeActivity</strong>: It uses a <strong>DataManager</strong> and a <strong>FeedAdapter</strong> as well.</p>
+<h2 id="the-architecture">The architecture</h2>
+<p>From my point of view there is no clear architecture in the current implementation. <strong>HomeActivity</strong> is some kind of god object that manages many things. Another &ldquo;issue&rdquo; is that <strong>HomeActivity</strong> changes the UI state by calling the same (internal) methods from different other methods and different events, i.e. the method <strong>checkEmptyState()</strong> get&rsquo;s called from 4 different point&rsquo;s in <strong>HomeActivity</strong> source code.</p>
+<p>We will refactor that by applying a Model-View-Presenter with a passive view. The passive view will only be display that things that the presenter tells to do. I&rsquo;m a fan of MVP with a passive view. People ask me from time to time why I recommend to use passive view and not supervising controller or other MVP derivations. Well, if you use MVP without passive view, you basically are splitting the spaghetti code formerly sitting in the view to half presenter and half view.</p>
+<h3 id="homeactivity-in-mvp">HomeActivity in MVP</h3>
+<p>So with MVP + passive view we split the responsibilities into two classes: <strong>HomeActivity implements HomeView</strong> is now considered as View (passive view) and implements this interface:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">interface</span> <span class="nc">HomeView</span> <span class="p">:</span> <span class="n">MvpView</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">showLoading</span><span class="p">()</span>
+    <span class="k">fun</span> <span class="nf">showContent</span><span class="p">()</span>
+    <span class="k">fun</span> <span class="nf">showError</span><span class="p">()</span>
+    <span class="k">fun</span> <span class="nf">showLoadingMore</span><span class="p">(</span><span class="n">showing</span><span class="p">:</span> <span class="n">Boolean</span><span class="p">)</span>
+    <span class="k">fun</span> <span class="nf">showLoadingMoreError</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="n">Throwable</span><span class="p">)</span>
+    <span class="k">fun</span> <span class="nf">addOlderItems</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;)</span>
+<span class="p">}</span>
+</code></pre></div><p>From now on the job of <strong>HomeActivity</strong> is to manage the UI elements (visibility, coordinate animations, etc.) but only after the presenter told to do so. So the state of the View is managed by the <strong>HomePresenter</strong>. The <strong>HomePresenter</strong> looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">HomePresenter</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">itemsLoader</span><span class="p">:</span> <span class="n">ItemsLoader</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;)</span> <span class="p">:</span> <span class="n">RxPresenter</span><span class="p">&lt;</span><span class="n">HomeView</span><span class="p">,</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;()</span> <span class="p">{</span>
+
+    <span class="k">fun</span> <span class="nf">loadItems</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="n">view</span><span class="o">?.</span><span class="n">showLoading</span><span class="p">()</span>
+        <span class="n">subscribe</span><span class="p">(</span>
+                <span class="n">itemsLoader</span><span class="p">.</span><span class="n">firstPage</span><span class="p">(),</span>
+                <span class="p">{</span> <span class="c1">// onError
+</span><span class="c1"></span>                    <span class="n">view</span><span class="o">?.</span><span class="n">showError</span><span class="p">()</span>
+                <span class="p">},</span>
+                <span class="p">{</span> <span class="c1">// onNext
+</span><span class="c1"></span>                    <span class="n">view</span><span class="o">?.</span><span class="n">addOlderItems</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+                    <span class="n">view</span><span class="o">?.</span><span class="n">showContent</span><span class="p">()</span>
+                <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">loadMore</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="n">view</span><span class="o">?.</span><span class="n">showLoadingMore</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+        <span class="n">subscribe</span><span class="p">(</span>
+                <span class="n">itemsLoader</span><span class="p">.</span><span class="n">olderPages</span><span class="p">(),</span>
+                <span class="p">{</span> <span class="c1">// onError
+</span><span class="c1"></span>                    <span class="n">view</span><span class="o">?.</span><span class="n">showLoadingMoreError</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+                <span class="p">},</span>
+                <span class="p">{</span> <span class="c1">// onNext
+</span><span class="c1"></span>                    <span class="n">view</span><span class="p">.</span><span class="n">addOlderItems</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+                    <span class="n">view</span><span class="p">.</span><span class="n">showLoadingMore</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
+                <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>If you haven&rsquo;t noticed yet: We use <a href="https://kotlinlang.org/">kotlin</a> as programming language, mainly because I like the language and to have the chance to see how development with kotlin works in a &ldquo;real world&rdquo; application. Thanks to the kotlin&rsquo;s interoperability I can easily reuse Nick Butcher&rsquo;s java source code, mainly for UI / View things.</p>
+<p>For implementing MVP we use <a href="http://hannesdorfmann.com/mosby/">Mosby</a>, a MVP library, which also allows us to keep the presenters during screen orientation changes. So we don&rsquo;t have to restart with loading data and we don&rsquo;t see the <strong>ProgressBar</strong> after screen orientation changes. Mosby allows us to keep the views state as before the orientation change.</p>
+<p>Last but not least I have decided to use <a href="https://github.com/ReactiveX/RxJava">RxJava</a> for my &ldquo;Model&rdquo; (hence the <strong>subscribe()</strong> method in the presenter). So the <strong>ItemsLoader</strong> is my refactored and reactive version Nick Butcher&rsquo;s <strong>DataManager</strong>. I will explain the <strong>ItemsLoader</strong> in a minute.</p>
+<h2 id="searchactivity-in-mvp">SearchActivity in MVP</h2>
+<p>As already said, running a search is very similar to <strong>HomeActivity</strong>. It displays a list (grid) of items and adds pagination to load more items when the end of the <strong>RecyclerView</strong> has been reached. So applying MVP to <strong>SearchActivity</strong> is pretty the same as shown before:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">public</span> <span class="k">interface</span> <span class="nc">SearchView</span> <span class="n">extends</span> <span class="n">MvpView</span> <span class="p">{</span>
+  <span class="n">void</span> <span class="n">showLoading</span><span class="p">();</span>
+  <span class="n">void</span> <span class="n">showContent</span><span class="p">();</span>
+  <span class="n">void</span> <span class="n">showError</span><span class="p">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="p">);</span>
+  <span class="n">void</span> <span class="n">showLoadingMore</span><span class="p">(</span><span class="n">boolean</span> <span class="n">showing</span><span class="p">);</span>
+  <span class="n">void</span> <span class="n">showLoadingMoreError</span><span class="p">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="p">);</span>
+  <span class="n">void</span> <span class="n">addOlderItems</span><span class="p">(</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;</span> <span class="n">items</span><span class="p">);</span>
+  <span class="n">void</span> <span class="n">showSearchNotStarted</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">SearchPresenter</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">itemsLoaderFactory</span><span class="p">:</span> <span class="n">SearchItemsLoaderFactory</span><span class="p">)</span> <span class="p">:</span> <span class="n">RxPresenter</span><span class="p">&lt;</span><span class="n">SearchView</span><span class="p">,</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;()</span> <span class="p">{</span>
+
+    <span class="k">private</span> <span class="k">var</span> <span class="py">itemsLoader</span><span class="p">:</span> <span class="n">ItemsLoader</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;?</span> <span class="p">=</span> <span class="k">null</span>
+
+    <span class="k">fun</span> <span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="c1">// Create items loader for the given query string
+</span><span class="c1"></span>        <span class="n">itemsLoader</span> <span class="p">=</span> <span class="n">itemsLoaderFactory</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">view</span><span class="o">?.</span><span class="n">showLoading</span><span class="p">()</span>
+
+        <span class="n">subscribe</span><span class="p">(</span><span class="n">itemsLoader</span><span class="o">!!</span><span class="p">.</span><span class="n">firstPage</span><span class="p">(),</span> <span class="p">{</span> <span class="c1">// Error handling
+</span><span class="c1"></span>            <span class="n">view</span><span class="o">?.</span><span class="n">showError</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+        <span class="p">},</span> <span class="p">{</span> <span class="c1">// onNext
+</span><span class="c1"></span>            <span class="n">view</span><span class="o">?.</span><span class="n">addOlderItems</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="n">view</span><span class="o">?.</span><span class="n">showContent</span><span class="p">()</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">searchMore</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="n">view</span><span class="o">?.</span><span class="n">showLoadingMore</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+        <span class="n">subscribe</span><span class="p">(</span><span class="n">itemsLoader</span><span class="o">!!</span><span class="p">.</span><span class="n">olderPages</span><span class="p">(),</span> <span class="p">{</span> <span class="c1">// Error handling
+</span><span class="c1"></span>            <span class="n">view</span><span class="o">?.</span><span class="n">showLoadingMore</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
+            <span class="n">view</span><span class="o">?.</span><span class="n">showLoadingMoreError</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+        <span class="p">},</span> <span class="p">{</span> <span class="c1">// onNext
+</span><span class="c1"></span>            <span class="n">view</span><span class="o">?.</span><span class="n">addOlderItems</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+        <span class="p">},</span> <span class="p">{</span> <span class="c1">// onComplete
+</span><span class="c1"></span>            <span class="n">view</span><span class="o">?.</span><span class="n">showLoadingMore</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
+        <span class="p">})</span>
+
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">clearSearch</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// Unsubscribe any previous search subscriptions
+</span><span class="c1"></span>        <span class="n">unsubscribe</span><span class="p">()</span>
+
+        <span class="n">view</span><span class="p">.</span><span class="n">showSearchNotStarted</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>The only different compared to <strong>HomePresenter</strong> is that <strong>SearchPresenter</strong> takes a <strong>SearchItemsLoaderFactory</strong> as constructor parameter and creates a <strong>ItemsLoader</strong> dynamically for each search query. We will see how this works in a minute.</p>
+<h2 id="itemsloader-and-pagination">ItemsLoader and Pagination</h2>
+<p>So far we have covered View and Presenter. Now lets discuss how we could refactor the &ldquo;Model&rdquo; or  use case / interactor if you want to compare it with uncle Bob&rsquo;s clean architecture.</p>
+<p>Before we start: There is a class called <strong>PlaidItem</strong> (holds properties like title and image url). This class is the base class to represent a single item:</p>
+<ul>
+<li><strong>Shot extends PlaidItem</strong> for an item loaded from Dribbble</li>
+<li><strong>Story extends PlaidItem</strong> for an item loaded from Designer News</li>
+<li><strong>Post extends PlaidItem</strong> for an item loaded from Product Hunt</li>
+</ul>
+<p>So now let&rsquo;s discuss how we rewrite <strong>DataManager</strong> more efficiently by using RxJava. I don&rsquo;t use RxJava because I think it&rsquo;s cool and all the cool kids have to use RxJava nowadays. You will (hopefully) see the benefits of using RxJava afterwards (especially in the second part of this blog post series).</p>
+<p>The hard part of loading items is that we support pagination and loading items from different backends. So let&rsquo;s build the <strong>ItemsLoader</strong> from &ldquo;bottom-up&rdquo;. At the &ldquo;bottom&rdquo; we will find a Retrofit interface for executing the http call. Right now in Plaid you can search <strong>DesignerNews</strong> and <strong>Dribbble</strong>. The pagination problem: Dribbble loads 100 items and requires such a call <strong>loadItems(0, 100)</strong> and the next page will be <strong>loadItems(100, 200)</strong> while DesignerNews increments his page by 1  <strong>loadItems(0, 1)</strong> and next page will be <strong>loadItems(1, 2)</strong>. We need a common API for both. Since we use kotlin we can pass &ldquo;method references&rdquo; (function poitners) or lambdas. So what we need is a component that takes such a function, executes this function and returns an <strong>Observable</strong> where we get the result of the actual http call. So basically we need something like this: <strong>backendMethodToCall: (Int, Int) -&gt; Observable&lt;T&gt;</strong>, where the first int parameter is the page offset, the second int parameter the limit (how many items should be loaded per page) and <strong>T</strong> is the generic type of the result (in fact we are always loading <strong>List&lt;PlaidItem&gt;</strong>).</p>
+<p>We call that component <strong>RouteCaller</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="k">private</span> <span class="k">val</span> <span class="py">startPage</span><span class="p">:</span> <span class="n">Int</span> <span class="p">=</span> <span class="m">0</span><span class="p">,</span>
+                     <span class="k">private</span> <span class="k">val</span> <span class="py">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span>
+                     <span class="k">private</span> <span class="k">val</span> <span class="py">backendMethodToCall</span><span class="p">:</span> <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;)</span> <span class="p">{</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * Offset for loading more
+</span><span class="cm">     */</span>
+    <span class="k">private</span> <span class="k">val</span> <span class="py">olderPageOffset</span> <span class="p">=</span> <span class="n">AtomicInteger</span><span class="p">(</span><span class="n">startPage</span><span class="p">)</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * A queue that is used to retry &#34;older&#34;
+</span><span class="cm">     * pages if they have failed before continue with even more older
+</span><span class="cm">     */</span>
+    <span class="k">private</span> <span class="k">val</span> <span class="py">olderFailedButRetryLater</span><span class="p">:</span> <span class="n">Queue</span><span class="p">&lt;</span><span class="n">Int</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">LinkedBlockingQueue</span><span class="p">&lt;</span><span class="n">Int</span><span class="p">&gt;()</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * Get an observable to load older data from backend.
+</span><span class="cm">     */</span>
+    <span class="k">fun</span> <span class="nf">getOlderWithRetry</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">{</span>
+
+        <span class="k">val</span> <span class="py">pageOffset</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span>
+        <span class="n">olderFailedButRetryLater</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">olderPageOffset</span><span class="p">.</span><span class="n">addAndGet</span><span class="p">(</span><span class="n">itemsPerPage</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">olderFailedButRetryLater</span><span class="p">.</span><span class="n">poll</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">backendMethodToCall</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">doOnError</span> <span class="p">{</span>
+                    <span class="n">olderFailedButRetryLater</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">)</span>
+                <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * Get an observable to load the newest data from backend.
+</span><span class="cm">     * This method should be invoked on pull to refresh
+</span><span class="cm">     */</span>
+    <span class="k">fun</span> <span class="nf">getFirst</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">backendMethodToCall</span><span class="p">(</span><span class="n">startPage</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p><strong>RouteCaller</strong> takes such a method <strong>(Int, Int) -&gt; Observable&lt;T&gt;</strong> as constructor parameter and will call this method internally with the correct parameters:</p>
+<ul>
+<li><strong>getFirst()</strong> loads the first page</li>
+<li><strong>getOlderWithRetry()</strong>: This method is responsible to load older items. We keep track of the current page in the field <strong>olderPageOffset</strong> and we will increment this one when we start loading more items (or in other words: load an older page). Additionally, we use <strong>.doOnError()</strong> to retry to load the failed page when loading the next page.</li>
+</ul>
+<p>So the responsibility of <strong>RouteCaller</strong> is to fill out the parameters (page offset and page limit) needed for the real http backend endpoint call. So what we have is something like this:</p>
+<p><img src="/images/plaid/routing1.png" alt="RouteCaller"></p>
+<p>For executing a search we have two backends to query <strong>DesignerNewsService</strong> and <strong>DribbleService</strong>. That means that we have two <strong>RouteCallers</strong> (one for each backend search method to invoke):</p>
+<p><img src="/images/plaid/routing2.png" alt="RouteCaller"></p>
+<p>The next question is: How do we instantiate a <strong>RouteCaller</strong>? We define a <strong>RouteCallerFactory</strong> for each backend, which basically offers a method <strong>getAllBackendCallers()</strong> where we get an Observable <strong>List&lt;RouteCaller&gt;</strong> we should execute to load items.</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">interface</span> <span class="nc">RouteCallerFactory</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">{</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * Get all available backend route callers
+</span><span class="cm">     */</span>
+    <span class="k">fun</span> <span class="nf">getAllBackendCallers</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;&gt;</span>
+<span class="p">}</span>
+</code></pre></div><p>For executing a search we have <strong>DesignerNewsSearchCallerFactory</strong> and <strong>DribbbleSearchCallerFactory</strong>: The <strong>DesignerNewsSearchCallerFactory</strong> looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">DesignerNewsSearchCallerFactory</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">searchQuery</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="k">private</span> <span class="k">val</span> <span class="py">backend</span><span class="p">:</span> <span class="n">DesignerNewsService</span><span class="p">)</span> <span class="p">:</span> <span class="n">RouteCallerFactory</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+
+    <span class="k">val</span> <span class="py">extractPlaidItemsFromStory</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">story</span><span class="p">:</span> <span class="n">StoriesResponse</span><span class="p">):</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">story</span><span class="p">.</span><span class="n">stories</span>
+    <span class="p">}</span>
+
+    <span class="c1">// The method to execute from RouteCaller
+</span><span class="c1"></span>    <span class="k">val</span> <span class="py">searchCall</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">pageOffset</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">itemsPerPage</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">backend</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">searchQuery</span><span class="p">,</span> <span class="n">pageOffset</span><span class="p">).</span><span class="n">map</span><span class="p">(</span><span class="n">extractPlaidItemsFromStory</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Create a list with one single RouteCaller() with &#34;searchCall&#34; as method reference
+</span><span class="c1"></span>    <span class="k">private</span> <span class="k">val</span> <span class="py">callers</span> <span class="p">=</span> <span class="n">arrayListOf</span><span class="p">(</span><span class="n">RouteCaller</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="n">searchCall</span><span class="p">))</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getAllBackendCallers</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">PlaidItem</span><span class="p">&gt;&gt;&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">Observable</span><span class="p">.</span><span class="n">just</span><span class="p">(</span><span class="n">callers</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>At first glance <strong>DesignerNewsSearchCallerFactory</strong> looks a little bit strange if you are new to kotlin because we don&rsquo;t use lambdas but instead we create a property <strong>searchCall</strong> which actually is a function <strong>(Int, Int) -&gt;  Observable&lt;List&lt;PlaidItem&gt;&gt;</strong>.</p>
+<p>The reason why we do this is testability: Recently I have watched the fireside chat of Android Dev Summit 2015 where the guys from the Android Team has been asked when they will add Java 8 support. Then Reto Meier, from the Android Team, answered that many developers are mainly interessted in lambdas and asked the audience if they could raise the hand if they want lambdas for android development: Almost the whole audience has raised the hand. I think that there is a general misunderstanding with lambdas: the real power of programming language that offer lambdas are not lambdas itself, is higher order functions and the ability to passing method references. Lambdas are just kind of anonymous functions. Actually, lambdas are not testable, because they are hardcoded. For example if I would have implemented something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">RouteCaller</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="p">{</span> <span class="n">pageOffset</span><span class="p">,</span> <span class="n">limit</span> <span class="p">-&gt;</span> <span class="n">backend</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">searchQuery</span><span class="p">,</span> <span class="n">pageOffset</span><span class="p">)</span> <span class="p">})</span>
+</code></pre></div><p>How do we write a unit test for that lambda? It&rsquo;s not possible to write a unit test for that lambda since the lambda is &ldquo;hardcoded&rdquo;, whereas if we pass a function reference we can easily unit test a function. In java 8 we can pass a method reference by writing <strong>this::searchCall</strong>. Unfortunately, this syntax is not supported <a href="https://youtrack.jetbrains.com/issue/KT-6947#tab=History">yet</a> in kotlin (right now <strong>::</strong> only supports static methods). Therefore this &ldquo;workaround&rdquo; by defining a function as property. More about my experience with kotlin in the last part of this series of blog post.</p>
+<p>All right, so for executing a Search we have something like this:</p>
+<p><img src="/images/plaid/routing3.png" alt="RouteCallerFactory"></p>
+<p>Please note that for the search <strong>getAllBackendCallers()</strong> returns a list containing just one <strong>RouteCaller</strong>, but the idea is that a <strong>RouteCallerFactory</strong> creates all <strong>RouteCallers</strong> to all available endpoints of a certain backend. As we will see later, the <strong>HomeDribbbleCallerFactory</strong> returns a list of <strong>RouteCallers</strong> for each Dribbble endpoint to load items like popular items, recent, animated etc. So we have something like that:</p>
+<p><img src="/images/plaid/routing4.png" alt="RouteCallerFactory"></p>
+<p>Next we introduce a <strong>Router</strong> which is responsible to combine all <strong>RouteCaller</strong> from different <strong>RouteCallerFactories</strong> to one single Observable list:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">Router</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="k">private</span> <span class="k">val</span> <span class="py">routeFactories</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCallerFactory</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;)</span> <span class="p">{</span>
+
+    <span class="k">fun</span> <span class="nf">getAllRoutes</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">val</span> <span class="py">callers</span> <span class="p">=</span> <span class="n">ArrayList</span><span class="p">&lt;</span><span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;&gt;&gt;()</span>
+
+        <span class="n">routeFactories</span><span class="p">.</span><span class="n">forEach</span> <span class="p">{</span>
+            <span class="n">callers</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">getAllBackendCallers</span><span class="p">())</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">Observable</span><span class="p">.</span><span class="n">combineLatest</span><span class="p">(</span><span class="n">callers</span><span class="p">,</span> <span class="p">{</span> <span class="n">calls</span> <span class="p">-&gt;</span>
+            <span class="k">val</span> <span class="py">items</span> <span class="p">=</span> <span class="n">ArrayList</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;(</span><span class="n">calls</span><span class="p">.</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">calls</span><span class="p">.</span><span class="n">forEach</span> <span class="p">{</span>
+                <span class="n">items</span><span class="p">.</span><span class="n">addAll</span><span class="p">(</span><span class="n">it</span> <span class="k">as</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;)</span>
+            <span class="p">}</span>
+
+            <span class="n">items</span> <span class="c1">// return items
+</span><span class="c1"></span>        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>As you see the <strong>Router</strong> takes a list of <strong>RouteCallerFactory</strong>, in other words: a <strong>Router</strong> can be configured via constructor. So to complete the &ldquo;routing picture&rdquo;:</p>
+<p><img src="/images/plaid/routing5.png" alt="Router"></p>
+<p>Ok, so far we have covered the &ldquo;routing part&rdquo;. So at the end the <strong>Router</strong> offers an <strong>Observable&lt;List&lt;RouteCaller&lt;T&gt;&gt;&gt;</strong>. But when do we finally load items to display them in the <strong>RecyclerView</strong>. This is the responsibility of <strong>ItemsLoader</strong>. As the name already suggests this component loads items:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">ItemsLoader</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="k">protected</span> <span class="k">val</span> <span class="py">router</span><span class="p">:</span> <span class="n">Router</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;)</span> <span class="p">{</span>
+
+    <span class="k">fun</span> <span class="nf">firstPage</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">FirstPage</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">router</span><span class="p">.</span><span class="n">getAllRoutes</span><span class="p">()).</span><span class="n">asObservable</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">olderPages</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">OlderPage</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">router</span><span class="p">.</span><span class="n">getAllRoutes</span><span class="p">()).</span><span class="n">asObservable</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>The <strong>ItemsLoader</strong> takes a <strong>Router</strong> as constructor parameter and offers two methods:</p>
+<ul>
+<li><strong>firstPage()</strong>: Returns an Observable representing the first page.</li>
+<li><strong>olderPages()</strong>: Returns an Observable to load older pages.</li>
+</ul>
+<p>A <strong>Page</strong> represents a page of items displayed in the RecyclerView. If we scroll to the end of the RecyclerView we load the next page containing older items. Let&rsquo;s have a look at the <strong>FirstPage extends Page</strong> and <strong>OlderPage extends Page</strong> classes:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Page</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="k">val</span> <span class="py">routeCalls</span><span class="p">:</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;&gt;)</span> <span class="p">{</span>
+
+    <span class="k">private</span> <span class="k">var</span> <span class="py">failed</span> <span class="p">=</span> <span class="n">AtomicInteger</span><span class="p">()</span>
+    <span class="k">private</span> <span class="k">var</span> <span class="py">backendCallsCount</span><span class="p">:</span> <span class="n">Int</span> <span class="p">=</span> <span class="m">0</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * Return an observable for this page
+</span><span class="cm">     */</span>
+    <span class="k">fun</span> <span class="nf">asObservable</span><span class="p">():</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">?&gt;</span> <span class="p">{</span>
+
+        <span class="k">return</span> <span class="n">routeCalls</span><span class="p">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="n">routeCalls</span> <span class="p">-&gt;</span>
+
+            <span class="n">backendCallsCount</span> <span class="p">=</span> <span class="n">routeCalls</span><span class="p">.</span><span class="n">size</span>
+            <span class="k">val</span> <span class="py">observables</span> <span class="p">=</span> <span class="n">arrayListOf</span><span class="p">&lt;</span><span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;()</span>
+            <span class="n">routeCalls</span><span class="p">.</span><span class="n">forEach</span> <span class="p">{</span> <span class="n">call</span> <span class="p">-&gt;</span>
+                    <span class="k">val</span> <span class="py">observable</span> <span class="p">=</span> <span class="n">getRouteCall</span><span class="p">(</span><span class="n">call</span><span class="p">).</span><span class="n">onErrorResumeNext</span> <span class="p">{</span> <span class="n">error</span> <span class="p">-&gt;</span>
+                      <span class="c1">// Suppress errors as long as not all fail
+</span><span class="c1"></span>                        <span class="n">error</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">()</span>
+                        <span class="k">val</span> <span class="py">fails</span> <span class="p">=</span> <span class="n">failed</span><span class="p">.</span><span class="n">incrementAndGet</span><span class="p">()</span>
+
+                        <span class="k">if</span> <span class="p">(</span><span class="n">fails</span> <span class="p">==</span> <span class="n">backendCallsCount</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="n">Observable</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="c1">// All failed so emmit error
+</span><span class="c1"></span>                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="n">Observable</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="c1">// Not all failed, so ignore this error and emit nothing
+</span><span class="c1"></span>                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="n">observables</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">observable</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="c1">// return the created Observable
+</span><span class="c1"></span>                <span class="n">Observable</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">observables</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">getRouteCall</span><span class="p">(</span><span class="n">caller</span><span class="p">:</span> <span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+<span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">FirstPage</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">routeCalls</span><span class="p">:</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;&gt;)</span> <span class="p">:</span> <span class="n">Page</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">routeCalls</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getRouteCall</span><span class="p">(</span><span class="n">caller</span><span class="p">:</span> <span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">caller</span><span class="p">.</span><span class="n">getFirst</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">OlderPage</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">routeCalls</span><span class="p">:</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;&gt;)</span> <span class="p">:</span> <span class="n">Page</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">routeCalls</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getRouteCall</span><span class="p">(</span><span class="n">caller</span><span class="p">:</span> <span class="n">RouteCaller</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;):</span> <span class="n">Observable</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">caller</span><span class="p">.</span><span class="n">getOlderWithRetry</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p><strong>Page</strong> is responsible for finally executing the http call by invoking <strong>RouteCaller&rsquo;s</strong> method. We also don&rsquo;t want that one entire page fails just because one backend call has fails. Therefore we use <strong>onErrorResumeNext()</strong> to &ldquo;intercept&rdquo; errors and only return an error if all http calls have failed.</p>
+<p>Then the <strong>Presenter</strong> subscribes to the &ldquo;page&rdquo; observable via <strong>ItemsLoader</strong>.</p>
+<h2 id="dependency-injection">Dependency Injection</h2>
+<p>You might have already noticed that almost all components described so far takes other components as constructor parameter. This is by design. Now, we use Dagger (I used Dagger1) to compose such element as needed:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Module</span><span class="o">(</span>
+    <span class="n">injects</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="n">HomePresenter</span><span class="o">.</span><span class="na">class</span>
+    <span class="o">},</span>
+    <span class="n">addsTo</span> <span class="o">=</span> <span class="n">ApplicationModule</span><span class="o">.</span><span class="na">class</span> <span class="c1">// contains Retrofit interfaces
+</span><span class="c1"></span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HomeModule</span> <span class="o">{</span>
+
+  <span class="nd">@Provides</span> <span class="nd">@Singleton</span> <span class="n">HomePresenter</span> <span class="nf">provideSearchPresenter</span><span class="o">(</span><span class="n">SourceDao</span> <span class="n">sourceDao</span><span class="o">,</span>
+      <span class="n">DribbbleService</span> <span class="n">dribbbleBackend</span><span class="o">,</span>
+      <span class="n">DesignerNewsService</span> <span class="n">designerNewsBackend</span><span class="o">,</span>
+      <span class="n">ProductHuntService</span> <span class="n">productHuntBackend</span> <span class="o">)</span> <span class="o">{</span>
+
+    <span class="c1">// Create the router
+</span><span class="c1"></span>    <span class="n">List</span><span class="o">&lt;</span><span class="n">RouteCallerFactory</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">PlaidItem</span><span class="o">&gt;&gt;&gt;</span> <span class="n">routeCallerFactories</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">3</span><span class="o">);</span>
+    <span class="n">routeCallerFactories</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">HomeDribbbleCallerFactory</span><span class="o">(</span><span class="n">dribbbleBackend</span><span class="o">,</span> <span class="n">sourceDao</span><span class="o">));</span>
+    <span class="n">routeCallerFactories</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">HomeDesingerNewsCallerFactory</span><span class="o">(</span><span class="n">designerNewsBackend</span><span class="o">,</span> <span class="n">sourceDao</span><span class="o">));</span>
+    <span class="n">routeCallerFactories</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">HomeProductHuntCallerFactory</span><span class="o">(</span><span class="n">productHuntBackend</span><span class="o">,</span> <span class="n">sourceDao</span><span class="o">));</span>
+
+    <span class="n">Router</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">PlaidItem</span><span class="o">&gt;&gt;</span> <span class="n">router</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Router</span><span class="o">&lt;&gt;(</span><span class="n">routeCallerFactories</span><span class="o">);</span>
+
+    <span class="n">ItemsLoader</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">PlaidItem</span><span class="o">&gt;&gt;</span> <span class="n">itemsLoader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ItemsLoader</span><span class="o">&lt;&gt;(</span><span class="n">router</span><span class="o">);</span>
+
+    <span class="k">return</span> <span class="k">new</span> <span class="n">HomePresenterImpl</span><span class="o">(</span><span class="n">itemsLoader</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>As you see, we can use Dagger to configure our <strong>Router</strong> and <strong>ItemsLoader</strong>. For the <strong>SearchPresenter</strong> we configure an <strong>ItemsLoader</strong> and <strong>Router</strong> in <strong>SearchModule</strong>. The advantage is that if we one day  would like to add another &ldquo;source&rdquo;, like reddit, to display items from reddit, the only thing we have to do is to define a <strong>RedditService</strong> (Retrofit), a <strong>RedditCallerFactoy</strong> and add this CallerFactory to the Router. We can do that in the concrete dagger module without having to touch another already existing component&rsquo;s source code (<a href="https://en.wikipedia.org/wiki/Open/closed_principle">Open-Closed principle</a>). In other words: we have built a &ldquo;plugin system&rdquo; configureable through dependency injection.</p>
+<p>You might have noticed the <strong>SourceDao</strong> class in the code shown above. We will talk about that in the second part of this blog series when we are going &ldquo;truly reactive&rdquo;.</p>
+<h2 id="conclusion-of-part-1">Conclusion of Part 1</h2>
+<p>This is the first part of a series of blog post. In this first part we have built the fundament by applying Model-View-Presenter and have refactored the way how the app loads data from the backend endpoints. The main idea is to cut this huge and complex task down into several smaller and reusable components like <strong>ItemsLoader</strong>, <strong>Page</strong>, <strong>Router</strong> and <strong>RouteCaller</strong> which follows more the SOLID principle as Nick Butcher&rsquo;s <strong>DataManager</strong> implementation.</p>
+<p>As always, there are better ways to implement such an app. Especially, the <strong>ItemsLoader</strong> can be done entirely different. My first intention was to create an unlimited Observable for load older pages by using RxJava&rsquo;s <strong>switchOnNext()</strong> or <strong>merge</strong> operators as <a href="https://gist.github.com/mttkay/24881a0ce986f6ec4b4d">described</a> by Matthias Käppler, but I came to the conclusion that some things regarding UI and error handling are slightly easier to implement if I can split the single observable into two observables (one for first page, one for older page).</p>
+<p>As always, feedback and suggestions are very welcome!</p>
+<p>In the <a href="http://127.0.0.1:1313/android/plaid-refactored-2/">next (second) part</a> of this series of blog posts about refactoring the Plaid app we will go &ldquo;truly reactive&rdquo; by using the real power of RxJava. Stay tuned.</p>
+
+    
+    <div class="series-box">
+        <h5>This is a post in the 
+        <u>Refactoring Plaid App</u> series.</span></h5>
+        <p>Other posts in this series:</p>
+
+        
+        
+        <ul>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/plaid-refactored-1/">Refactoring Plaid App - A reactive MVP Approach (Part 1)</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/plaid-refactored-2/">Refactoring Plaid App - A reactive MVP Approach (Part 2)</a>
+            </li>
+        
+        </ul>
+    </div>
+ 
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

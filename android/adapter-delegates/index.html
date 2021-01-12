@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="AdapterDelegates, a library to build RecyclerView Adapter easily on Android by following the principle of favor composition over inheritance and delegation.">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Joe&#39;s great adapter hell escape</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Jul 28, 2015</li>
+        </ul>
+        <article class="content">
+          
+          <p>Let me tell you a story about Joe Somebody an android developer at MyLittleZoo Inc. and how he walked through the hell while trying to create reusable RecyclerView Adapters with different view types and how he finally managed to implement reusable Adapters painlessly.</p>
+<p>Once upon a time Joe Somebody, an android developer, was working for a young startup called MyLittleZoo Inc. This startup was selling stuff for pets online. Joe&rsquo;s job was to build and maintain a native android app which basically offers the same functionality as the online shop (website). So 90% of the android app he had to develop just displays a list of items in a <strong>RecyclerView</strong>. The first version 1.0 should just display a list of <code>Accessories</code>. Joe implemented an <code>AccessoiresAdapter</code> which displays a list of accessories, but special offers for accessories are displayed by using <code>item_accessory_offer.xml</code> while the <code>item_accessory.xml</code> is used to display any normal accessories item. So the Adapter has two view types. A view type allows you to inflate different xml layouts for different items in the adapter. Internally a view type is just a unique id, an integer. So Joe&rsquo;s <code>AccessoiresAdapter</code> implementation looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AccessoiresAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span> <span class="o">{</span>
+
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">VIEW_TYPE_ACCESSORY</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">VIEW_TYPE_ACCESSORY_SPECIAL_OFFER</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Accessory</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemViewType</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+     <span class="n">Accessory</span> <span class="n">accessory</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">postion</span><span class="o">);</span>
+     <span class="k">if</span> <span class="o">(</span><span class="n">accessory</span><span class="o">.</span><span class="na">hasSpecialOffer</span><span class="o">()){</span>
+       <span class="k">return</span> <span class="n">VIEW_TYPE_ACCESSORY_SPECIAL_OFFER</span><span class="o">;</span>
+     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+       <span class="k">return</span> <span class="n">VIEW_TYPE_ACCESSORY</span><span class="o">;</span>
+     <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">VIEW_TYPE_ACCESSORY_SPECIAL_OFFER</span> <span class="o">==</span> <span class="n">viewType</span><span class="o">){</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">SpecialOfferAccessoryViewHolder</span><span class="o">(</span><span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">item_accessory_offer</span><span class="o">,</span> <span class="n">parent</span><span class="o">));</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">AccessoryViewHolder</span> <span class="o">(</span><span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">item_accessory</span><span class="o">)):</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="o">...</span>
+
+<span class="o">}</span>
+</code></pre></div><p>So far so good, MyLittelZoo android app 1.0 was published on Play Store. Everything was cool.</p>
+<p>Then MyLittelZoo grew, so did the app. Joe had to implement a new starting Activity where different items could be displayed: <code>NewsTeaser</code> should now be displayed together with <code>Accessories</code>. Since <code>HomeAdapter</code> should display <code>Accessories</code> as well he decided to reuse <code>AccessoriesAdapter</code> by inheriting from that one:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HomeAdapter</span> <span class="kd">extends</span> <span class="n">AccessoriesAdapter</span> <span class="o">{</span>
+
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">VIEW_TYP_NEWS_TEASER</span> <span class="o">=</span> <span class="n">2</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemViewType</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+     <span class="k">if</span> <span class="o">(</span><span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">)</span> <span class="k">instanceof</span> <span class="n">NewsTeaser</span><span class="o">){</span>
+       <span class="k">return</span> <span class="n">VIEW_TYP_NEWS_TEASER</span><span class="o">;</span>
+     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+       <span class="c1">// accessories and special offers
+</span><span class="c1"></span>       <span class="k">return</span> <span class="kd">super</span><span class="o">.</span><span class="na">getItemViewType</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+     <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">VIEW_TYP_NEWS_TEASER</span> <span class="o">==</span> <span class="n">viewType</span><span class="o">){</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">NewsTeaserItem</span><span class="o">(</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">item_news_teaser</span><span class="o">,</span> <span class="n">parent</span><span class="o">));</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="c1">// accessories and special offers
+</span><span class="c1"></span>      <span class="k">return</span> <span class="kd">super</span><span class="o">.</span><span class="na">onCreateViewHolder</span><span class="o">(</span><span class="n">parent</span><span class="o">,</span> <span class="n">viewType</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div><p>Also a new Activity just displaying some short tips about pet food should be implemented. Hence Joe implemented <code>PetFoodTipAdapter</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PetFoodTipAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span> <span class="o">{</span>
+
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">VIEW_TYP_FOOD_TIP</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemViewType</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+     <span class="k">return</span> <span class="n">VIEW_TYP_FOOD_TIP</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">PetFoodViewHolder</span><span class="o">(</span><span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">item_pet_food</span><span class="o">,</span> <span class="n">parent</span><span class="o">))</span>
+  <span class="o">}</span>
+
+  <span class="o">...</span>
+
+<span class="o">}</span>
+</code></pre></div><p>His project manager was happy since he was able to deliver in time. MyLittelZoo 2.0 was released on Play Store successfully.</p>
+<p>A few weeks later product manager came to Joe and told him that business hadn&rsquo;t developed as expected. To earn money the company decided to sign a contract with a big advertisement company. The advertisement company could display banners in MyLittleZoo android app. In other words: they sold their soul to the devil. Joe&rsquo;s job was to include advertisement banner in the app by using a provided advertisement sdk. The clock ticked, the company needed money (revenue from advertisement). The app update had to be published as soon as possible. Since advertisement banner should be displayed along with other items in a RecyclerView Joe decided to create a new base adapter class called <code>AdvertismentAdapter</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AdvertismentAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span> <span class="o">{</span>
+
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">VIEW_TYP_ADVERTISEMENT</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemViewType</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+     <span class="k">return</span> <span class="n">VIEW_TYP_ADVERTISEMENT</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">AdvertismentViewHolder</span><span class="o">(</span><span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">item_advertisment</span><span class="o">,</span> <span class="n">parent</span><span class="o">))</span>
+  <span class="o">}</span>
+
+  <span class="o">...</span>
+
+<span class="o">}</span>
+</code></pre></div><p>From then on, every other Adapter extends from <code>AdvertisementAdapter</code>:</p>
+<ul>
+<li>AccessoiresAdapter extends AdvertisementAdapter</li>
+<li>HomeAdapter extends AccessoiresAdapter extends AdvertisementAdapter</li>
+<li>PetFoodTipAdapter extends AdvertisementAdapter</li>
+</ul>
+<p>Version 3.0 was published on Play Store with advertisement banner everywhere. Once more product manager was happy with Joe&rsquo;s work.</p>
+<p>A half year later again the product manager knocked on Joe&rsquo;s door to tell him that things had changed. Surprisingly it turned out that the user of MyLittleZoo android app didn&rsquo;t liked the blinking advertisement banner introduced in version 3.0 and the app got huge negative reviews on play store. User sessions dropped dramatically and company didn&rsquo;t earn money anymore. But MyLittleZoo couldn&rsquo;t simply remove advertisement from the app since they have signed a valid longterm contract with the devil, ehm I mean the advertisement company of course.</p>
+<p>Then the smart marketing guy at MyLittleZoo had the brilliant idea to launch a second app with just displaying <code>NewsTeaser</code> and <code>PetFoodTip</code> in a RecyclerView. No advertisement, no offers. The plan was to regain the confidence of the users. Furthermore, product manager told Joe that the app had to be published within next two days because at the upcoming weekend was a big pet fair where the app should be presented. Joe thought it was doable. He already had the xml layouts for <code>NewsTeaser</code> and <code>PetFoodTip</code> and the adapter were already implemented. So all Joe had to do is to move that into an android library to share them between original MyLittleZoo app and the new advertisement free app.</p>
+<p>Joe was about to start moving things into the library when he realized the mess he was facing: Do you remember the inheritance hierarchy of the adapters?</p>
+<ol>
+<li>Every Adapter extends from <code>AdvertisementAdapter</code>. But no advertisement should be displayed in the new app. Moreover, the provided advertisement sdk to display banners is really buggy, causes memory leaks and crashes quite often. Even if no advertisement banner was displayed the advertisement sdk did a lot of crap in the background. Therefore, including the advertisement sdk in the new app was not acceptable.</li>
+<li>There is no adapter that he can reuse that can display <code>NewsTeaser</code> (part of <code>HomeAdapter</code>) and <code>PetFoodTip</code> (part of <code>PetFoodTipAdapter</code>). What should Joe do? He could create a new Adapter called <code>NewsTipAdapter</code> that  extends from <code>HomeAdapter</code> and then he would had to add the <code>PetFoodTip</code> as new view type. But that would mean that he would had two Adapters to maintain for the same view type <code>PetFoodTip</code>.</li>
+</ol>
+<p><!-- raw HTML omitted --></p>
+<h2 id="welcome-to-the-adapter-hell-joe">Welcome to the adapter hell Joe!</h2>
+<p>Oh boy, Joe was depressed. Then panic followed depression. How should he fix that? How should he fix that without having to fix it again a month later when a new feature (a new view type) must be implemented?</p>
+<p>So Joe started to write down his requirements on a whiteboard. But not a single good idea came out. He was so sad, he thought back to the days when he was a little child. How easy was life during childhood. The only thing he had to worry those days was to clean up his room after he had finished to play Lego. Lego? Wait, wait, wait! Joe had a brilliant idea: What he really needs is to built adapter like building a Lego house: Take an empty fundament and then stick together that Lego pieces you really need. If you need a window in your Lego house, take a window piece. If you need a roof slope take the corresponding Lego piece. If your Lego house needs a backyard, take a Lego flower.</p>
+<p>Damn, and then he gets the overall picture:</p>
+<blockquote>
+<p>Favor composition over inheritance</p>
+</blockquote>
+<p>So many times he had agreed on &ldquo;Favor composition over inheritance&rdquo; while discussing with other developers. Until now it was just a good slogan but he never really have build something according this principle. So an empty Adapter is the fundament. ViewTypes are the reusable components (Lego pieces).</p>
+<p>So Joe started to define the reusable Lego pieces like <code>NewsTeaserAdapterDelegate</code> and <code>PetFoodTipAdapterDelegate</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewsTeaserAdapterDelegate</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">NewsTeaserAdapterDelegate</span><span class="o">(</span><span class="kt">int</span> <span class="n">viewType</span><span class="o">){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">viewType</span> <span class="o">=</span> <span class="n">viewType</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getViewType</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">viewType</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isForViewType</span><span class="o">(</span><span class="n">List</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span>  <span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">)</span> <span class="k">instanceof</span> <span class="n">NewsTeaser</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">NewsTeaserViewHolder</span><span class="o">(</span><span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">item_news_teaser</span><span class="o">,</span> <span class="n">parent</span><span class="o">,</span> <span class="kc">false</span><span class="o">));</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="n">List</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">NewsTeaser</span> <span class="n">teaser</span> <span class="o">=</span> <span class="o">(</span><span class="n">NewsTeaser</span><span class="o">)</span> <span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+      <span class="n">NewsTeaserViewHolder</span> <span class="n">vh</span> <span class="o">=</span> <span class="o">(</span><span class="n">NewsTeaserViewHolder</span><span class="o">)</span> <span class="n">vh</span><span class="o">;</span>
+
+      <span class="n">vh</span><span class="o">.</span><span class="na">title</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">teaser</span><span class="o">.</span><span class="na">getTitle</span><span class="o">());</span>
+      <span class="n">vh</span><span class="o">.</span><span class="na">text</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">teaser</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PetFoodTipAdapterDelegate</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">PetFoodTipAdapterDelegate</span><span class="o">(</span><span class="kt">int</span> <span class="n">viewType</span><span class="o">){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">viewType</span> <span class="o">=</span> <span class="n">viewType</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getViewType</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="n">viewType</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isForViewType</span><span class="o">(</span><span class="n">List</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span>  <span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">)</span> <span class="k">instanceof</span> <span class="n">PetFoodTip</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">PetFoodTipViewHolder</span><span class="o">(</span><span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">item_pet_food</span><span class="o">,</span> <span class="n">parent</span><span class="o">,</span> <span class="kc">false</span><span class="o">));</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="n">List</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">PetFoodTip</span> <span class="n">tip</span> <span class="o">=</span> <span class="o">(</span><span class="n">PetFoodTip</span><span class="o">)</span> <span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+      <span class="n">PetFoodTipViewHolder</span> <span class="n">vh</span> <span class="o">=</span> <span class="o">(</span><span class="n">PetFoodTipViewHolder</span><span class="o">)</span> <span class="n">vh</span><span class="o">;</span>
+
+      <span class="n">vh</span><span class="o">.</span><span class="na">image</span><span class="o">.</span><span class="na">setImageRes</span><span class="o">(</span><span class="n">tip</span><span class="o">.</span><span class="na">getImage</span><span class="o">());</span>
+      <span class="n">vh</span><span class="o">.</span><span class="na">text</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">tip</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>And then he took the fundament, an empty adapter, and put the Lego pieces on top of it to create the <code>NewsTipAdapter</code> which will be used in the new app:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewsTipAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">{</span>
+
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">VIEW_TYP_NEWS_TEASER</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">VIEW_TYP_FOOD_TIP</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+
+  <span class="n">NewsTeaserAdapterDelegate</span> <span class="n">newsTeaserDelegate</span><span class="o">;</span>
+  <span class="n">PetFoodTipAdapterDelegate</span> <span class="n">foodTipDelegate</span><span class="o">;</span>
+
+  <span class="n">List</span> <span class="n">items</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">NewsTipAdapter</span><span class="o">(){</span>
+    <span class="n">newsTeaserDelegate</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NewsTeaserAdapterDelegate</span><span class="o">(</span><span class="n">VIEW_TYP_NEWS_TEASER</span><span class="o">);</span>
+    <span class="n">foodTipDelegate</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PetFoodTipAdapterDelegate</span><span class="o">(</span><span class="n">VIEW_TYP_FOOD_TIP</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemViewType</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+     <span class="k">if</span> <span class="o">(</span><span class="n">newsTeaserDelegate</span><span class="o">.</span><span class="na">isForViewType</span><span class="o">(</span><span class="n">items</span><span class="o">,</span> <span class="n">position</span><span class="o">)){</span>
+       <span class="k">return</span> <span class="n">newsTeaserDelegate</span><span class="o">.</span><span class="na">getViewType</span><span class="o">();</span>
+     <span class="o">}</span>
+     <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">foodTipDelegate</span><span class="o">.</span><span class="na">isForViewType</span><span class="o">(</span><span class="n">items</span><span class="o">,</span> <span class="n">position</span><span class="o">)){</span>
+       <span class="k">return</span> <span class="n">foodTipDelegate</span><span class="o">.</span><span class="na">getViewType</span><span class="o">();</span>
+     <span class="o">}</span>
+
+     <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;No delegate found&#34;</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">newsTeaserDelegate</span><span class="o">.</span><span class="na">getViewType</span><span class="o">()</span> <span class="o">==</span> <span class="n">viewType</span><span class="o">){</span>
+      <span class="k">return</span> <span class="n">newsTeaserDelegate</span><span class="o">.</span><span class="na">onCreateViewHolder</span><span class="o">(</span><span class="n">parent</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">foodTipDelegate</span><span class="o">.</span><span class="na">getViewType</span><span class="o">()</span> <span class="o">==</span> <span class="n">viewType</span><span class="o">){</span>
+      <span class="k">return</span> <span class="n">foodTipDelegate</span><span class="o">.</span><span class="na">onCreateViewHolder</span><span class="o">(</span><span class="n">parent</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;No delegate found&#34;</span><span class="o">);</span>
+  <span class="o">}</span>
+
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="n">VH</span> <span class="n">holder</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">){</span>
+    <span class="kt">int</span> <span class="n">viewType</span> <span class="o">=</span> <span class="n">holder</span><span class="o">.</span><span class="na">getViewType</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">newsTeaserDelegate</span><span class="o">.</span><span class="na">getViewType</span><span class="o">()</span> <span class="o">==</span> <span class="n">viewType</span><span class="o">){</span>
+      <span class="n">newsTeaserDelegate</span><span class="o">.</span><span class="na">onBindViewHolder</span><span class="o">(</span><span class="n">items</span><span class="o">,</span> <span class="n">position</span><span class="o">,</span> <span class="n">holder</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">foodTipDelegate</span><span class="o">.</span><span class="na">getViewType</span> <span class="o">==</span> <span class="n">viewType</span><span class="o">){</span>
+      <span class="n">foodTipDelegate</span><span class="o">.</span><span class="na">onBindViewHolder</span><span class="o">(</span><span class="n">items</span><span class="o">,</span> <span class="n">position</span><span class="o">,</span> <span class="n">holder</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>I guess you get the point. Instead of inheriting Joe had defined a delegate for each view type. Each delegate was responsible for creating and binding a view holder. As you have noticed in the code snipped above, there is a lot of boilerplate code to write. Joe found a smart plugin solution for that:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="cm">/**
+</span><span class="cm"> * @param &lt;T&gt; the type of adapters data source i.e. List&lt;Accessory&gt;
+</span><span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AdapterDelegate</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Called to determine whether this AdapterDelegate is the responsible for the given data
+</span><span class="cm">   * element.
+</span><span class="cm">   *
+</span><span class="cm">   * @param items The data source of the Adapter
+</span><span class="cm">   * @param position The position in the datasource
+</span><span class="cm">   * @return true, if this item is responsible,  otherwise false
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isForViewType</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">T</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">);</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Creates the  {@link RecyclerView.ViewHolder} for the given data source item
+</span><span class="cm">   *
+</span><span class="cm">   * @param parent The ViewGroup parent of the given datasource
+</span><span class="cm">   * @return The new instantiated {@link RecyclerView.ViewHolder}
+</span><span class="cm">   */</span>
+  <span class="nd">@NonNull</span> <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">);</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Called to bind the {@link RecyclerView.ViewHolder} to the item of the datas source set
+</span><span class="cm">   *
+</span><span class="cm">   * @param items The data source
+</span><span class="cm">   * @param position The position in the datasource
+</span><span class="cm">   * @param holder The {@link RecyclerView.ViewHolder} to bind
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">T</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="nd">@NonNull</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AdapterDelegatesManager</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="n">AdapterDelegatesManager</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">addDelegate</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">AdapterDelegate</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">delegate</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemViewType</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">T</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">T</span> <span class="n">items</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="nd">@NonNull</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">viewHolder</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>The idea is to register <code>AdapterDelegates</code> to an <code>AdapterDelegatesManager</code>. The <code>AdapterDelegatesManager</code> internally has the logic to determine the right <code>AdapterDelegate</code> for the given view type and to call the corresponding delegate methods. So applying that to <code>NewsTipAdapter</code> the code looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewsTipAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">{</span>
+
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">VIEW_TYP_NEWS_TEASER</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">VIEW_TYP_FOOD_TIP</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+
+  <span class="n">List</span> <span class="n">items</span><span class="o">;</span>
+
+  <span class="n">AdapterDelegatesManager</span> <span class="n">delegates</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AdapterDelegatesManager</span><span class="o">();</span>
+
+  <span class="kd">public</span> <span class="nf">NewsTipAdapter</span><span class="o">(){</span>
+    <span class="n">delegates</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">NewsTeaserAdapterDelegate</span><span class="o">());</span> <span class="c1">// Assigns internally ViewType integer
+</span><span class="c1"></span>    <span class="n">delegates</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">PetFoodTipAdapterDelegate</span><span class="o">());</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemViewType</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+     <span class="k">return</span> <span class="n">delegates</span><span class="o">.</span><span class="na">getItemViewType</span><span class="o">(</span><span class="n">items</span><span class="o">,</span> <span class="n">position</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">delegates</span><span class="o">.</span><span class="na">onCreateViewHolder</span><span class="o">(</span><span class="n">parent</span><span class="o">,</span> <span class="n">viewType</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="n">VH</span> <span class="n">holder</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">){</span>
+      <span class="n">delegates</span><span class="o">.</span><span class="na">onBindViewHolder</span><span class="o">(</span><span class="n">items</span><span class="o">,</span> <span class="n">position</span><span class="o">,</span> <span class="n">holder</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>I guess you can imagine how other adapters of MyLittleZoo app looks now. There is an <code>AdvertisementAdapterDelegate</code>, <code>NewsTeaserAdapterDelegate</code>, <code>PetFoodTipAdapterDelegate</code> and <code>AccessoryAdapterDelegate</code>. From now on adapters can be composed with that view types (AdapterDelegates) that are really needed. Another advantage is that you also have moved out the functionality of inflating layout, creating view holder and binding view holder from one huge  adapter class (spaghetti code? god object anti pattern?) into separated, modular and reusable AdapterDelegates. Have you noticed how slim adapters code looks now and that you have a separation of concerns that makes things more extendable and more decoupled? Another nice side effect is that more team members can work in parallel together on the same &ldquo;adapter&rdquo; without fearing complex merge conflicts because not everybody is touching the huge adapter file but rather team members can work on dedicated AdapterDelegate files simultaneously.</p>
+<p>Joe was happy, the product manager was happy and the users of the app were happy. Everybody was happy.
+Actually, Joe was so happy that he had decided to put <code>AdapterDelegates</code> in an own library and open source it. All&rsquo;s well that ends well.</p>
+<p><a href="https://github.com/sockeqwe/AdapterDelegates">You can find AdapterDelegates on Github</a> and is available in maven central.</p>
+<p>P.S. The <code>AdapterDelegates</code> library also provides a base class <code>ListDelegationAdapter</code> that already puts together <code>RecyclerView.Adapter</code> methods with <code>AdapterDelegatesManager</code> methods so that you can reduce the amount of writing boilerplate code even more:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewsTipAdapter</span> <span class="kd">extends</span> <span class="n">ListDelegationAdapter</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="nf">NewsTipAdapter</span><span class="o">(){</span>
+    <span class="c1">// delegatesManager is a field defined in super class
+</span><span class="c1"></span>    <span class="c1">// ViewType integer is assigned internally by delegatesManager
+</span><span class="c1"></span>    <span class="n">delegatesManager</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">NewsTeaserAdapterDelegate</span><span class="o">());</span>
+    <span class="n">delegatesManager</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">PetFoodTipAdapterDelegate</span><span class="o">());</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>Check out the library on <a href="https://github.com/sockeqwe/AdapterDelegates">Github</a> for more details.</p>
+<p><strong>Disclaimer:</strong> Joe is not a real person nor is MyLittleZoo Inc. a real company. Both are creatures of my imagination. Please note also that the code snippets shown in this blog post may not compile. It&rsquo;s kind of java alike pseudo code to give you an idea of how real code could look like.</p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>

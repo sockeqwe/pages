@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Model-View-Intent MVI on Android by using Mosby 3. Focusing on state reducer on Android with MVI">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+        </li>
+        
+        
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Reactive Apps with Model-View-Intent - Part 3: State Reducer</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Jan 19, 2017</li>
+        </ul>
+        <article class="content">
+          
+          <p>In the <a href="http://127.0.0.1:1313/android/mosby3-mvi-2/">previous part</a> we have discussed how to implement a simple screen with the <strong>M</strong>odel-<strong>V</strong>iew-<strong>I</strong>ntent pattern with an unidirectional data flow. In this blog post we are going to build a more complex screen with MVI with the help of a state reducer.</p>
+<p>If you haven&rsquo;t read <a href="http://127.0.0.1:1313/android/mosby3-mvi-2/">part 2</a> yet, you should read that before continue with this blog post, because there is described how we connect the View via Presenter with the business logic and how data flows unidirectional.</p>
+<p>Now let&rsquo;s build a more complex screen like this:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/WWeRn0tMoXM" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>As you see in the video above this screen displays a list of items (products) grouped by category. The app only displays 3 items for each category  and the user can click on a &ldquo;load more button&rdquo; to load all items of that category (http request). Additionally, the user can do pull-to-refresh and once the user has scrolled down to the end of the list more categories are loaded (pagination). Of course all this actions can be executed simultaneously and each of them could also fail (i.e. no internet connection).</p>
+<p>Let&rsquo;s implement this step by step. First, let&rsquo;s define the View interface.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">HomeView</span> <span class="o">{</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The intent to load the first page
+</span><span class="cm">   *
+</span><span class="cm">   * @return The value of the emitted item (boolean) can be ignored. true or false has no different meaning.
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;</span> <span class="nf">loadFirstPageIntent</span><span class="o">();</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The intent to load the next page (pagination)
+</span><span class="cm">   *
+</span><span class="cm">   * @return The value of the emitted item (boolean) can be ignored. true or false has no different meaning.
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;</span> <span class="nf">loadNextPageIntent</span><span class="o">();</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The intent to react on pull-to-refresh
+</span><span class="cm">   *
+</span><span class="cm">   * @return The value of the emitted item (boolean) can be ignored. true or false has no different meaning.
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;</span> <span class="nf">pullToRefreshIntent</span><span class="o">();</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * The intent to load more items from a given category
+</span><span class="cm">   *
+</span><span class="cm">   * @return Observable with the name of the category
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">loadAllProductsFromCategoryIntent</span><span class="o">();</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Renders the viewState
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">render</span><span class="o">(</span><span class="n">HomeViewState</span> <span class="n">viewState</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>The concrete View implementation is pretty straight forward and therefore I won&rsquo;t show the code here (can be found <a href="https://github.com/sockeqwe/mosby/blob/master/sample-mvi/src/main/java/com/hannesdorfmann/mosby3/sample/mvi/view/home/HomeFragment.java">on github</a>). Next let&rsquo;s focus on the Model. As already said in previous posts the Model should reflect the State. So let&rsquo;s introduce a Model called <strong>HomeViewState</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">HomeViewState</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">loadingFirstPage</span><span class="o">;</span> <span class="c1">// Show the loading indicator instead of recyclerView
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">firstPageError</span><span class="o">;</span> <span class="c1">// Show an error view if != null
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">FeedItem</span><span class="o">&gt;</span> <span class="n">data</span><span class="o">;</span>   <span class="c1">// The items displayed in the recyclerview
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">loadingNextPage</span><span class="o">;</span> <span class="c1">// Shows the loading indicator for pagination
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">nextPageError</span><span class="o">;</span> <span class="c1">// if != null, shows error toast that pagination failed
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">loadingPullToRefresh</span><span class="o">;</span> <span class="c1">// Shows the pull-to-refresh indicator
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">pullToRefreshError</span><span class="o">;</span> <span class="c1">// if != null, shows error toast that pull-to-refresh failed
+</span><span class="c1"></span>
+   <span class="c1">// ... constructor ...
+</span><span class="c1"></span>   <span class="c1">// ... getters  ...
+</span><span class="c1"></span><span class="o">}</span>
+</code></pre></div><p>Note that <strong>FeedItem</strong> is just a interface every item has to implement that is displayable by the RecyclerView. For example <strong>Product implements FeedItem</strong>.
+Also the category title displayed in the recycler <strong>SectionHeader implements FeedItem</strong>.
+The UI element that indicates that more items of that category can be loaded is a FeedItem and holds internally it&rsquo;s own little State to indicate whether or not we are loading more Items of a certain category:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AdditionalItemsLoadable</span> <span class="kd">implements</span> <span class="n">FeedItem</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">moreItemsAvailableCount</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">categoryName</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">loading</span><span class="o">;</span> <span class="c1">// if true then loading items is in progress
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">loadingError</span><span class="o">;</span> <span class="c1">// indicates an error has occurred while loading
+</span><span class="c1"></span>
+   <span class="c1">// ... constructor ...
+</span><span class="c1"></span>   <span class="c1">// ... getters  ...
+</span></code></pre></div><p>And last but not least there is a business logic component <strong>HomeFeedLoader</strong> responsible to load <strong>FeedItems</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HomeFeedLoader</span> <span class="o">{</span>
+
+  <span class="c1">// Typically triggered by pull-to-refresh
+</span><span class="c1"></span>  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">FeedItem</span><span class="o">&gt;&gt;</span> <span class="nf">loadNewestPage</span><span class="o">()</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+
+  <span class="c1">//Loads the first page
+</span><span class="c1"></span>  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">FeedItem</span><span class="o">&gt;&gt;</span> <span class="nf">loadFirstPage</span><span class="o">()</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+
+  <span class="c1">// loads the next page (pagination)
+</span><span class="c1"></span>  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">FeedItem</span><span class="o">&gt;&gt;</span> <span class="nf">loadNextPage</span><span class="o">()</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+
+  <span class="c1">// loads additional products of a certain category
+</span><span class="c1"></span>  <span class="kd">public</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;&gt;</span> <span class="nf">loadProductsOfCategory</span><span class="o">(</span><span class="n">String</span> <span class="n">categoryName</span><span class="o">)</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Now let&rsquo;s connect the dots step by step in our Presenter. Please note that some code shown here as part of the Presenter should rather be moved into an Interactor in a real world application (which I didn&rsquo;t for the sake of better readability).
+First, lets start with loading the initial data:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">HomePresenter</span> <span class="kd">extends</span> <span class="n">MviBasePresenter</span><span class="o">&lt;</span><span class="n">HomeView</span><span class="o">,</span> <span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">HomeFeedLoader</span> <span class="n">feedLoader</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">bindIntents</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">//
+</span><span class="c1"></span>    <span class="c1">// In a real app some code here should rather be moved into an Interactor
+</span><span class="c1"></span>    <span class="c1">//
+</span><span class="c1"></span>    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="n">loadFirstPage</span> <span class="o">=</span> <span class="n">intent</span><span class="o">(</span><span class="n">HomeView</span><span class="o">::</span><span class="n">loadFirstPageIntent</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">ignored</span> <span class="o">-&gt;</span> <span class="n">feedLoader</span><span class="o">.</span><span class="na">loadFirstPage</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">items</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">HomeViewState</span><span class="o">(</span><span class="n">items</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">)</span> <span class="o">)</span>
+            <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="k">new</span> <span class="n">HomeViewState</span><span class="o">(</span><span class="n">emptyList</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">null</span><span class="o">)</span> <span class="o">)</span>
+            <span class="o">.</span><span class="na">onErrorReturn</span><span class="o">(</span><span class="n">error</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">HomeViewState</span><span class="o">(</span><span class="n">emptyList</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="n">error</span><span class="o">))</span>
+
+    <span class="n">subscribeViewState</span><span class="o">(</span><span class="n">loadFirstPage</span><span class="o">,</span> <span class="n">HomeView</span><span class="o">::</span><span class="n">render</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>So far so good, no big difference to how we have implemented the &ldquo;search screen&rdquo; as described in <a href="http://hannesdorfmann.com/android/mosby3-mvi-2">part 2</a>. Now let&rsquo;s try to add support for pull-to-refresh.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">HomePresenter</span> <span class="kd">extends</span> <span class="n">MviBasePresenter</span><span class="o">&lt;</span><span class="n">HomeView</span><span class="o">,</span> <span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">HomeFeedLoader</span> <span class="n">feedLoader</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">bindIntents</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">//
+</span><span class="c1"></span>    <span class="c1">// In a real app some code here should rather be moved into an Interactor
+</span><span class="c1"></span>    <span class="c1">//
+</span><span class="c1"></span>    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="n">loadFirstPage</span> <span class="o">=</span> <span class="o">...</span> <span class="o">;</span>
+
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="n">pullToRefresh</span> <span class="o">=</span> <span class="n">intent</span><span class="o">(</span><span class="n">HomeView</span><span class="o">::</span><span class="n">pullToRefreshIntent</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">ignored</span> <span class="o">-&gt;</span> <span class="n">feedLoader</span><span class="o">.</span><span class="na">loadNewestPage</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">map</span><span class="o">(</span> <span class="n">items</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">HomeViewState</span><span class="o">(...))</span>
+            <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="k">new</span> <span class="n">HomeViewState</span><span class="o">(...))</span>
+            <span class="o">.</span><span class="na">onErrorReturn</span><span class="o">(</span><span class="n">error</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">HomeViewState</span><span class="o">(...)));</span>
+
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="n">allIntents</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">loadFirstPage</span><span class="o">,</span> <span class="n">pullToRefresh</span><span class="o">);</span>
+
+    <span class="n">subscribeViewState</span><span class="o">(</span><span class="n">allIntents</span><span class="o">,</span> <span class="n">HomeView</span><span class="o">::</span><span class="n">render</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Use Observable.merge() to merge together multiple intents.</p>
+<p>But wait: <strong>feedLoader.loadNewestPage()</strong> only returns &ldquo;newer&rdquo; items but what about the previous items we have already loaded?
+In &ldquo;traditional&rdquo; MVP one would call something like <strong>view.addNewItems(newItems)</strong> but we have already discussed in <a href="http://hannesdorfmann.com/android/mosby3-mvi-1">part 1</a> why this is a bad idea (&ldquo;The State Problem&rdquo;).
+The problem we are facing now is that pull-to-refresh depends on the previous HomeViewState since we want to &ldquo;merge&rdquo; the previous items with the items returned from pull-to-refresh.</p>
+<p><strong>Ladies and Gentlemen please give a warm welcome to the STATE REDUCER</strong></p>
+<p><img src="/images/mvi-mosby3/standingovation3.gif" alt="MVI"></p>
+<p>State Reducer is a concept from functional programming that takes the previous state as input and computes a new state from the previous state like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">State</span> <span class="nf">reduce</span><span class="o">(</span> <span class="n">State</span> <span class="n">previous</span><span class="o">,</span> <span class="n">Foo</span> <span class="n">foo</span> <span class="o">){</span>
+  <span class="n">State</span> <span class="n">newState</span><span class="o">;</span>
+  <span class="c1">// ... compute the new State by taking previous state and foo into account ...
+</span><span class="c1"></span>  <span class="k">return</span> <span class="n">newState</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><p>The idea is that such a reduce() function combines the previous state with foo to compute a new state. Foo typically represents the changes we want to apply to the previous state.
+In our case we want to &ldquo;reduce&rdquo; the previous HomeViewState (originally computed from loadFirstPageIntent) with the result from pull-to-refresh. Guess what, RxJava has an operator for that called <strong>scan()</strong>. Let&rsquo;s refactor our code a little bit.
+We have to introduce another class representing the partial change (the thing we have called Foo in the previous code snipped) that will be used to compute the new state.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">HomePresenter</span> <span class="kd">extends</span> <span class="n">MviBasePresenter</span><span class="o">&lt;</span><span class="n">HomeView</span><span class="o">,</span> <span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">HomeFeedLoader</span> <span class="n">feedLoader</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">bindIntents</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">//
+</span><span class="c1"></span>    <span class="c1">// In a real app some code here should rather be moved into an Interactor
+</span><span class="c1"></span>    <span class="c1">//
+</span><span class="c1"></span>    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">PartialState</span><span class="o">&gt;</span> <span class="n">loadFirstPage</span> <span class="o">=</span> <span class="n">intent</span><span class="o">(</span><span class="n">HomeView</span><span class="o">::</span><span class="n">loadFirstPageIntent</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">ignored</span> <span class="o">-&gt;</span> <span class="n">feedLoader</span><span class="o">.</span><span class="na">loadFirstPage</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">items</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">FirstPageData</span><span class="o">(</span><span class="n">items</span><span class="o">)</span> <span class="o">)</span>
+            <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">FirstPageLoading</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">)</span>
+            <span class="o">.</span><span class="na">onErrorReturn</span><span class="o">(</span><span class="n">error</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">FirstPageError</span><span class="o">(</span><span class="n">error</span><span class="o">))</span>
+
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">PartialState</span><span class="o">&gt;</span> <span class="n">pullToRefresh</span> <span class="o">=</span> <span class="n">intent</span><span class="o">(</span><span class="n">HomeView</span><span class="o">::</span><span class="n">pullToRefreshIntent</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">ignored</span> <span class="o">-&gt;</span> <span class="n">feedLoader</span><span class="o">.</span><span class="na">loadNewestPage</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">map</span><span class="o">(</span> <span class="n">items</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">PullToRefreshData</span><span class="o">(</span><span class="n">items</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">PullToRefreshLoading</span><span class="o">(</span><span class="kc">true</span><span class="o">)))</span>
+            <span class="o">.</span><span class="na">onErrorReturn</span><span class="o">(</span><span class="n">error</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">PullToRefreshError</span><span class="o">(</span><span class="n">error</span><span class="o">)));</span>
+
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">PartialState</span><span class="o">&gt;</span> <span class="n">allIntents</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">loadFirstPage</span><span class="o">,</span> <span class="n">pullToRefresh</span><span class="o">);</span>
+    <span class="n">HomeViewState</span> <span class="n">initialState</span> <span class="o">=</span> <span class="o">...</span> <span class="o">;</span> <span class="c1">// Show loading first page
+</span><span class="c1"></span>    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="n">stateObservable</span> <span class="o">=</span> <span class="n">allIntents</span><span class="o">.</span><span class="na">scan</span><span class="o">(</span><span class="n">initialState</span><span class="o">,</span> <span class="k">this</span><span class="o">::</span><span class="n">viewStateReducer</span><span class="o">)</span>
+
+    <span class="n">subscribeViewState</span><span class="o">(</span><span class="n">stateObservable</span><span class="o">,</span> <span class="n">HomeView</span><span class="o">::</span><span class="n">render</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="n">HomeViewState</span> <span class="nf">viewStateReducer</span><span class="o">(</span><span class="n">HomeViewState</span> <span class="n">previousState</span><span class="o">,</span> <span class="n">PartialState</span> <span class="n">changes</span><span class="o">){</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>So what we did here is, that each Intent now returns an Observable&lt;PartialState&gt; rather then directly Observable&lt;HomeViewState&gt;.
+Then we merge them all into one observable stream with <strong>Observable.merge()</strong> and finally apply the reducer function (<strong>Observable.scan()</strong>).
+Basically what this means is that, whenever the user starts an intent, this intent will produce <strong>PartialState</strong> objects which then will be &ldquo;reduced&rdquo; to a <strong>HomeViewState</strong> that then eventually will be displayed in the View (HomeView.render(HomeViewState)).
+The only missing part is the state reducer function itself. The HomeViewState class itself hasn&rsquo;t changed (scroll up to see the class definition), but we have added a Builder (Builder pattern) so that we can create new HomeViewState objects in a convenient way.
+So let&rsquo;s implement the state reducer function:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="n">HomeViewState</span> <span class="nf">viewStateReducer</span><span class="o">(</span><span class="n">HomeViewState</span> <span class="n">previousState</span><span class="o">,</span> <span class="n">PartialState</span> <span class="n">changes</span><span class="o">){</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">FirstPageLoading</span><span class="o">)</span>
+        <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">toBuilder</span><span class="o">()</span> <span class="c1">// creates a new copy by taking the internal values of previousState
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">firstPageLoading</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="c1">// show ProgressBar
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">firstPageError</span><span class="o">(</span><span class="kc">null</span><span class="o">)</span> <span class="c1">// don&#39;t show error view
+</span><span class="c1"></span>        <span class="o">.</span><span class="na">build</span><span class="o">()</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">FirstPageError</span><span class="o">)</span>
+     <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+         <span class="o">.</span><span class="na">firstPageLoading</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span> <span class="c1">// hide ProgressBar
+</span><span class="c1"></span>         <span class="o">.</span><span class="na">firstPageError</span><span class="o">(((</span><span class="n">PartialState</span><span class="o">.</span><span class="na">FirstPageError</span><span class="o">)</span> <span class="n">changes</span><span class="o">).</span><span class="na">getError</span><span class="o">())</span> <span class="c1">// Show error view
+</span><span class="c1"></span>         <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+     <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">FirstPageLoaded</span><span class="o">)</span>
+       <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+           <span class="o">.</span><span class="na">firstPageLoading</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">firstPageError</span><span class="o">(</span><span class="kc">null</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">data</span><span class="o">(((</span><span class="n">PartialState</span><span class="o">.</span><span class="na">FirstPageLoaded</span><span class="o">)</span> <span class="n">changes</span><span class="o">).</span><span class="na">getData</span><span class="o">())</span>
+           <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+     <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">PullToRefreshLoading</span><span class="o">)</span>
+      <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">pullToRefreshLoading</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="c1">// Show pull to refresh indicator
+</span><span class="c1"></span>            <span class="o">.</span><span class="na">nextPageError</span><span class="o">(</span><span class="kc">null</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">PullToRefreshError</span><span class="o">)</span>
+      <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+          <span class="o">.</span><span class="na">pullToRefreshLoading</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span> <span class="c1">// Hide pull to refresh indicator
+</span><span class="c1"></span>          <span class="o">.</span><span class="na">pullToRefreshError</span><span class="o">(((</span><span class="n">PartialState</span><span class="o">.</span><span class="na">PullToRefreshError</span><span class="o">)</span> <span class="n">changes</span><span class="o">).</span><span class="na">getError</span><span class="o">())</span>
+          <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">PullToRefreshData</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">List</span><span class="o">&lt;</span><span class="n">FeedItem</span><span class="o">&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+      <span class="n">data</span><span class="o">.</span><span class="na">addAll</span><span class="o">(((</span><span class="n">PullToRefreshData</span><span class="o">)</span> <span class="n">changes</span><span class="o">).</span><span class="na">getData</span><span class="o">());</span> <span class="c1">// insert new data on top of the list
+</span><span class="c1"></span>      <span class="n">data</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">());</span>
+      <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">pullToRefreshLoading</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">pullToRefreshError</span><span class="o">(</span><span class="kc">null</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">data</span><span class="o">(</span><span class="n">data</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+    <span class="o">}</span>
+
+
+   <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Don&#39;t know how to reduce the partial state &#34;</span> <span class="o">+</span> <span class="n">changes</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>I know, all these <strong>instanceof</strong> checks are not super pretty but that is not the point of this blog post. Why does technical bloggers write &ldquo;ugly&rdquo; code like the one shown above? It&rsquo;s because we want to make a point on a certain topic without requiring the reader to have a full mental model of the source code i.e. of our shopping cart app nor prior knowledge of certain design patterns.
+Therefore, I think it is better to avoid design patterns in blog posts which would produce nicer code but may lead to harder readable blog posts.
+The focus of this blog post is set on state reducer. By looking at the state reducer with instanceof checks everybody can understand what the reducer does.
+Should you use instanceof checks in your app?
+No, use design patterns or other solutions like defining PartialState as interface with a method like <strong>public HomeViewState computeNewState(previousState)</strong>.
+In general you may find <a href="https://github.com/pakoito/RxSealedUnions">RxSealedUnions</a> by Paco Estevez useful when building apps with MVI.</p>
+<p>Alright, I think you get the idea how a state reducer works. Let&rsquo;s implement the remaining features as well: Pagination and the ability to load more items of a certain category:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">HomePresenter</span> <span class="kd">extends</span> <span class="n">MviBasePresenter</span><span class="o">&lt;</span><span class="n">HomeView</span><span class="o">,</span> <span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="n">HomeFeedLoader</span> <span class="n">feedLoader</span><span class="o">;</span>
+
+  <span class="nd">@Override</span> <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">bindIntents</span><span class="o">()</span> <span class="o">{</span>
+
+    <span class="c1">//
+</span><span class="c1"></span>    <span class="c1">// In a real app some code here should rather be moved to an Interactor
+</span><span class="c1"></span>    <span class="c1">//
+</span><span class="c1"></span>
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">PartialState</span><span class="o">&gt;</span> <span class="n">loadFirstPage</span> <span class="o">=</span> <span class="o">...</span> <span class="o">;</span>
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">PartialState</span><span class="o">&gt;</span> <span class="n">pullToRefresh</span> <span class="o">=</span> <span class="o">...</span> <span class="o">;</span>
+
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">PartialState</span><span class="o">&gt;</span> <span class="n">nextPage</span> <span class="o">=</span>
+      <span class="n">intent</span><span class="o">(</span><span class="n">HomeView</span><span class="o">::</span><span class="n">loadNextPageIntent</span><span class="o">)</span>
+          <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">ignored</span> <span class="o">-&gt;</span> <span class="n">feedLoader</span><span class="o">.</span><span class="na">loadNextPage</span><span class="o">()</span>
+              <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">items</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">NextPageLoaded</span><span class="o">(</span><span class="n">items</span><span class="o">))</span>
+              <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">NextPageLoading</span><span class="o">())</span>
+              <span class="o">.</span><span class="na">onErrorReturn</span><span class="o">(</span><span class="n">PartialState</span><span class="o">.</span><span class="na">NexPageLoadingError</span><span class="o">::</span><span class="k">new</span><span class="o">));</span>
+
+      <span class="n">Observable</span><span class="o">&lt;</span><span class="n">PartialState</span><span class="o">&gt;</span> <span class="n">loadMoreFromCategory</span> <span class="o">=</span>
+          <span class="n">intent</span><span class="o">(</span><span class="n">HomeView</span><span class="o">::</span><span class="n">loadAllProductsFromCategoryIntent</span><span class="o">)</span>
+              <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">categoryName</span> <span class="o">-&gt;</span> <span class="n">feedLoader</span><span class="o">.</span><span class="na">loadProductsOfCategory</span><span class="o">(</span><span class="n">categoryName</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">map</span><span class="o">(</span> <span class="n">products</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">ProductsOfCategoryLoaded</span><span class="o">(</span><span class="n">categoryName</span><span class="o">,</span> <span class="n">products</span><span class="o">))</span>
+                  <span class="o">.</span><span class="na">startWith</span><span class="o">(</span><span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">ProductsOfCategoryLoading</span><span class="o">(</span><span class="n">categoryName</span><span class="o">))</span>
+                  <span class="o">.</span><span class="na">onErrorReturn</span><span class="o">(</span><span class="n">error</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">ProductsOfCategoryError</span><span class="o">(</span><span class="n">categoryName</span><span class="o">,</span> <span class="n">error</span><span class="o">)));</span>
+
+
+    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">PartialState</span><span class="o">&gt;</span> <span class="n">allIntents</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">loadFirstPage</span><span class="o">,</span> <span class="n">pullToRefresh</span><span class="o">,</span> <span class="n">nextPage</span><span class="o">,</span> <span class="n">loadMoreFromCategory</span><span class="o">);</span>
+    <span class="n">HomeViewState</span> <span class="n">initialState</span> <span class="o">=</span> <span class="o">...</span> <span class="o">;</span> <span class="c1">// Show loading first page
+</span><span class="c1"></span>    <span class="n">Observable</span><span class="o">&lt;</span><span class="n">HomeViewState</span><span class="o">&gt;</span> <span class="n">stateObservable</span> <span class="o">=</span> <span class="n">allIntents</span><span class="o">.</span><span class="na">scan</span><span class="o">(</span><span class="n">initialState</span><span class="o">,</span> <span class="k">this</span><span class="o">::</span><span class="n">viewStateReducer</span><span class="o">)</span>
+
+    <span class="n">subscribeViewState</span><span class="o">(</span><span class="n">stateObservable</span><span class="o">,</span> <span class="n">HomeView</span><span class="o">::</span><span class="n">render</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="n">HomeViewState</span> <span class="nf">viewStateReducer</span><span class="o">(</span><span class="n">HomeViewState</span> <span class="n">previousState</span><span class="o">,</span> <span class="n">PartialState</span> <span class="n">changes</span><span class="o">){</span>
+    <span class="c1">// ... PartialState handling for First Page and pull-to-refresh as shown in previous code snipped ...
+</span><span class="c1"></span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">NextPageLoading</span><span class="o">)</span> <span class="o">{</span>
+       <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">nextPageLoading</span><span class="o">(</span><span class="kc">true</span><span class="o">).</span><span class="na">nextPageError</span><span class="o">(</span><span class="kc">null</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+     <span class="o">}</span>
+
+     <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">NexPageLoadingError</span><span class="o">)</span>
+       <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+           <span class="o">.</span><span class="na">nextPageLoading</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">nextPageError</span><span class="o">(((</span><span class="n">PartialState</span><span class="o">.</span><span class="na">NexPageLoadingError</span><span class="o">)</span> <span class="n">changes</span><span class="o">).</span><span class="na">getError</span><span class="o">())</span>
+           <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+
+     <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">NextPageLoaded</span><span class="o">)</span> <span class="o">{</span>
+       <span class="n">List</span><span class="o">&lt;</span><span class="n">FeedItem</span><span class="o">&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+       <span class="n">data</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">());</span>
+        <span class="c1">// Add new data add the end of the list
+</span><span class="c1"></span>       <span class="n">data</span><span class="o">.</span><span class="na">addAll</span><span class="o">(((</span><span class="n">PartialState</span><span class="o">.</span><span class="na">NextPageLoaded</span><span class="o">)</span> <span class="n">changes</span><span class="o">).</span><span class="na">getData</span><span class="o">());</span>
+
+       <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">nextPageLoading</span><span class="o">(</span><span class="kc">false</span><span class="o">).</span><span class="na">nextPageError</span><span class="o">(</span><span class="kc">null</span><span class="o">).</span><span class="na">data</span><span class="o">(</span><span class="n">data</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+     <span class="o">}</span>
+
+     <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">ProductsOfCategoryLoading</span><span class="o">)</span> <span class="o">{</span>
+         <span class="kt">int</span> <span class="n">indexLoadMoreItem</span> <span class="o">=</span> <span class="n">findAdditionalItems</span><span class="o">(</span><span class="n">categoryName</span><span class="o">,</span> <span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">());</span>
+
+         <span class="n">AdditionalItemsLoadable</span> <span class="n">ail</span> <span class="o">=</span> <span class="o">(</span><span class="n">AdditionalItemsLoadable</span><span class="o">)</span> <span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">indexLoadMoreItem</span><span class="o">);</span>
+
+         <span class="n">AdditionalItemsLoadable</span> <span class="n">itemsThatIndicatesError</span> <span class="o">=</span> <span class="n">ail</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span> <span class="c1">// creates a copy of the ail item
+</span><span class="c1"></span>         <span class="o">.</span><span class="na">loading</span><span class="o">(</span><span class="kc">true</span><span class="o">).</span><span class="na">error</span><span class="o">(</span><span class="kc">null</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+
+         <span class="n">List</span><span class="o">&lt;</span><span class="n">FeedItem</span><span class="o">&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+         <span class="n">data</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">());</span>
+         <span class="n">data</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">indexLoadMoreItem</span><span class="o">,</span> <span class="n">itemsThatIndicatesError</span><span class="o">);</span> <span class="c1">// Will display a loading indicator
+</span><span class="c1"></span>
+         <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">data</span><span class="o">(</span><span class="n">data</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+      <span class="o">}</span>
+
+     <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">ProductsOfCategoryLoadingError</span><span class="o">)</span> <span class="o">{</span>
+       <span class="kt">int</span> <span class="n">indexLoadMoreItem</span> <span class="o">=</span> <span class="n">findAdditionalItems</span><span class="o">(</span><span class="n">categoryName</span><span class="o">,</span> <span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">());</span>
+
+       <span class="n">AdditionalItemsLoadable</span> <span class="n">ail</span> <span class="o">=</span> <span class="o">(</span><span class="n">AdditionalItemsLoadable</span><span class="o">)</span> <span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">indexLoadMoreItem</span><span class="o">);</span>
+
+       <span class="n">AdditionalItemsLoadable</span> <span class="n">itemsThatIndicatesError</span> <span class="o">=</span> <span class="n">ail</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">loading</span><span class="o">(</span><span class="kc">false</span><span class="o">).</span><span class="na">error</span><span class="o">(</span> <span class="o">((</span><span class="n">ProductsOfCategoryLoadingError</span><span class="o">)</span><span class="n">changes</span><span class="o">).</span><span class="na">getError</span><span class="o">()).</span><span class="na">build</span><span class="o">();</span>
+
+       <span class="n">List</span><span class="o">&lt;</span><span class="n">FeedItem</span><span class="o">&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+       <span class="n">data</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">());</span>
+       <span class="n">data</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">indexLoadMoreItem</span><span class="o">,</span> <span class="n">itemsThatIndicatesError</span><span class="o">);</span> <span class="c1">// Will display an error / retry button
+</span><span class="c1"></span>
+       <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">data</span><span class="o">(</span><span class="n">data</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+     <span class="o">}</span>
+
+     <span class="k">if</span> <span class="o">(</span><span class="n">changes</span> <span class="k">instanceof</span> <span class="n">PartialState</span><span class="o">.</span><span class="na">ProductsOfCategoryLoaded</span><span class="o">)</span> <span class="o">{</span>
+       <span class="n">String</span> <span class="n">categoryName</span> <span class="o">=</span> <span class="o">(</span><span class="n">ProductsOfCategoryLoaded</span><span class="o">)</span> <span class="n">changes</span><span class="o">.</span><span class="na">getCategoryName</span><span class="o">();</span>
+       <span class="kt">int</span> <span class="n">indexLoadMoreItem</span> <span class="o">=</span> <span class="n">findAdditionalItems</span><span class="o">(</span><span class="n">categoryName</span><span class="o">,</span> <span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">());</span>
+       <span class="kt">int</span> <span class="n">indexOfSectionHeader</span> <span class="o">=</span> <span class="n">findSectionHeader</span><span class="o">(</span><span class="n">categoryName</span><span class="o">,</span> <span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">());</span>
+
+       <span class="n">List</span><span class="o">&lt;</span><span class="n">FeedItem</span><span class="o">&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+       <span class="n">data</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">previousState</span><span class="o">.</span><span class="na">getData</span><span class="o">());</span>
+       <span class="n">removeItems</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="n">indexOfSectionHeader</span><span class="o">,</span> <span class="n">indexLoadMoreItem</span><span class="o">);</span> <span class="c1">// Removes all items of the given category
+</span><span class="c1"></span>
+       <span class="c1">// Adds all items of the category (includes the items previously removed)
+</span><span class="c1"></span>       <span class="n">data</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">indexOfSectionHeader</span> <span class="o">+</span> <span class="n">1</span><span class="o">,((</span><span class="n">ProductsOfCategoryLoaded</span><span class="o">)</span> <span class="n">changes</span><span class="o">).</span><span class="na">getData</span><span class="o">());</span>
+
+       <span class="k">return</span> <span class="n">previousState</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">data</span><span class="o">(</span><span class="n">data</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+     <span class="o">}</span>
+
+     <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Don&#39;t know how to reduce the partial state &#34;</span> <span class="o">+</span> <span class="n">changes</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Implementing pagination (loading next &ldquo;page&rdquo; of items) is pretty the same as pull-to-refresh except that we are adding the loaded items at the end of the list instead of the top of the list as we do with pull-to-refresh.
+More interesting is how we deal with loading more items of a certain category. Well, for displaying a loading indicator and an error / retry button for a given category we only have to search for the corresponding AdditionalItemsLoadable object in the list of all FeedItems.
+Then we change that item to either show loading indicator or error / retry button.
+If we have loaded all items of a certain category successfully we search for the SectionHeader and AdditionalItemsLoadable and replace all items in between with the newly loaded items. That&rsquo;s it.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>The aim of this blog post was to show you how a state reducer can help us to build complex screens with very little and understandable code.
+Just step back and think how you would have implemented that with &ldquo;traditional&rdquo; MVP or MVVM without a state reducer?
+The key to be able to use a state reducer is obviously that we have a Model class that is reflecting the State. Therefore, it was very important to understand what a Model actually is as described in the <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">first part</a> of this blog post series.
+Also, a state reducer can only be used if we are sure that the State (or Model to be precise) comes from a single source of truth. Therefore, a unidirectional data flow is very important.
+I hope that now it makes more sense why we have spend part 1 and part 2 on these topics and that you now got this &ldquo;aha&rdquo; moment where all the dots connect together.
+If not, no worries, it took quite some time for me too (and a lot of practice and a lot of mistakes and retries).</p>
+<p>You may be wondering why we haven&rsquo;t used a state reducer for the &ldquo;Search Screen&rdquo; (see <a href="http://127.0.0.1:1313/android/mosby3-mvi-2/">part 2</a>).
+State Reducer make mostly sense if we are depending on the previous state somehow. In the &ldquo;Search Screen&rdquo; we are not depending on the previous state.</p>
+<p>Last but not least, I would like to point out, if you haven&rsquo;t noticed that yet (without going to much into details), that all our data is immutable (we always create a new HomeViewState, we never call a setter method on any object).
+Therefore, also mutli-threading is super easy.
+The user can start pull-to-refresh at the same time as loading the next page and load more items of a certain category because the state reducer is able to produce the correct state without depending on any particular order of the http responses.
+Additionally, we have written our code with pure functions, no <a href="https://en.wikipedia.org/wiki/Side_effect_(computer_science)">side-effects</a>. This makes our code super testable, reproducible, simple to reason about and highly parallelizable (mutli-threading).</p>
+<p>Of course state reducer wasn&rsquo;t invented for MVI.
+You find the concept of a state reducer in many other libraries, frameworks and systems across multiple programming languages.
+A state reducer fits perfectly into the philosophy of Model-View-Intent with an unidirectional data flow and a Model representing the State.</p>
+<p>In the next part we are focusing on how to build reusable and reactive UI components with MVI.</p>
+
+    
+    <div class="series-box">
+        <h5>This is a post in the 
+        <u>Reactive Apps with Model-View-Intent</u> series.</span></h5>
+        <p>Other posts in this series:</p>
+
+        
+        
+        <ul>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-1/">Reactive Apps with Model-View-Intent - Part 1: Model</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-2/">Reactive Apps with Model-View-Intent - Part 2: View and Intent</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-3/">Reactive Apps with Model-View-Intent - Part 3: State Reducer</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-4/">Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-5/">Reactive Apps with Model-View-Intent - Part 5: Debugging with ease</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-6/">Reactive Apps with Model-View-Intent - Part 6: Restoring State</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a>
+            </li>
+        
+            <li>
+                <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a>
+            </li>
+        
+        </ul>
+    </div>
+ 
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="post-thumb-sm mr-3">
+      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+    </div>
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Sep 13, 2017</li>
+      </ul>
+      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme by themefisher.com</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "http://127.0.0.1:1313/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+
+<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'Your ID', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+</body>
+</html>
