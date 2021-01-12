@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>database on Hannes Dorfmann</title>
-    <link>http://127.0.0.1:1313/tags/database/</link>
+    <link>https://sockeqwe.github.io/pages/tags/database/</link>
     <description>Recent content in database on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 24 Jun 2015 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="http://127.0.0.1:1313/tags/database/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sockeqwe.github.io/pages/tags/database/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>SQLBrite DAO</title>
-      <link>http://127.0.0.1:1313/android/sqlbrite-dao/</link>
+      <link>https://sockeqwe.github.io/pages/android/sqlbrite-dao/</link>
       <pubDate>Wed, 24 Jun 2015 10:00:00 +0100</pubDate>
       
-      <guid>http://127.0.0.1:1313/android/sqlbrite-dao/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/sqlbrite-dao/</guid>
       <description>Earlier this year, one day before Valentine&amp;rsquo;s Day to be precise, I had the glorious idea (ironie) to surprise my lovely girlfriend with a special android app on Valentine&amp;rsquo;s Day. Who said computer science can&amp;rsquo;t be romantic?
 The idea was simple: I wanted to build an android app that imitates and looks like Tinder but instead of displaying real people nearby, I faked everything so that only my profile gets displayed so she only can choose me.</description>
     </item>

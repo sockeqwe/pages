@@ -11,24 +11,24 @@
 
   <!-- plugins -->
   
-  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.css ">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/plugins/bootstrap/bootstrap.min.css ">
   
-  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/slick/slick.css ">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/plugins/slick/slick.css ">
   
-  <link rel="stylesheet" href="http://127.0.0.1:1313/plugins/themify-icons/themify-icons.css ">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/plugins/themify-icons/themify-icons.css ">
   
 
   <!-- Main Stylesheet -->
   
-  <link rel="stylesheet" href="http://127.0.0.1:1313/css/style.min.css" media="screen">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/css/style.min.css" media="screen">
 
   <!-- Syntax highlightning Stylesheet -->
   
-  <link rel="stylesheet" href="http://127.0.0.1:1313/css/syntax-highlighting.min.css" media="screen">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/css/syntax-highlighting.min.css" media="screen">
 
   <!--Favicon-->
-  <link rel="shortcut icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
-  <link rel="icon" href="http://127.0.0.1:1313/images/favicon.png " type="image/x-icon">
+  <link rel="shortcut icon" href="https://sockeqwe.github.io/pages/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://sockeqwe.github.io/pages/images/favicon.png " type="image/x-icon">
 
 </head><body>
 <!-- preloader start -->
@@ -56,32 +56,32 @@
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313">Home</a>
+          <a class="nav-link text-uppercase text-dark" href="https://sockeqwe.github.io/pages/">Home</a>
         </li>
         
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/about">About</a>
+          <a class="nav-link text-uppercase text-dark" href="https://sockeqwe.github.io/pages/about">About</a>
         </li>
         
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/presentations">Presentations</a>
+          <a class="nav-link text-uppercase text-dark" href="https://sockeqwe.github.io/pages/presentations">Presentations</a>
         </li>
         
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="http://127.0.0.1:1313/contact">Contact</a>
+          <a class="nav-link text-uppercase text-dark" href="https://sockeqwe.github.io/pages/contact">Contact</a>
         </li>
         
         
       </ul>
       
       <!-- search -->
-      <form class="form-inline position-relative ml-lg-4" action="http://127.0.0.1:1313/search">
+      <form class="form-inline position-relative ml-lg-4" action="https://sockeqwe.github.io/pages//search">
         <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
         <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
       </form>
@@ -113,10 +113,10 @@
         </ul>
         <article class="content">
           
-          <p>This is the second part of how we could refactor the <a href="https://github.com/nickbutcher/plaid">Plaid</a> app open sourced by Nick Butcher. In this part we are going to enhance the MVP architecture described in the <a href="http://127.0.0.1:1313/android/plaid-refactored-1/">first part</a> to become truly reactive.</p>
+          <p>This is the second part of how we could refactor the <a href="https://github.com/nickbutcher/plaid">Plaid</a> app open sourced by Nick Butcher. In this part we are going to enhance the MVP architecture described in the <a href="https://sockeqwe.github.io/pages/android/plaid-refactored-1/">first part</a> to become truly reactive.</p>
 <p><strong>Preface:</strong> I started the refactoring with the strong belief that I can refactor the whole app. Surprisingly (ironic), it turns out that I was a very naive man. I simply have underestimated the complexity of the app and the number of features. Therefore, I have started writing this blog post even if not everything described here is implemented (refactored). I just want to give some ideas how this could be implemented. My refactored code can be found on <a href="https://github.com/sockeqwe/plaid">github</a> as well.</p>
 <h2 id="recap-from-first-part">Recap from first part</h2>
-<p>This is the second part of a blog series about refactoring plaid app. In the <a href="http://127.0.0.1:1313/android/plaid-refactored-1/">first part</a> we have applied Model-View-Presenter and have introduced an <strong>ItemsLoader</strong> for loading items from different backend endpoints by invoking <strong>RouteCallers</strong>. Please read the <a href="http://127.0.0.1:1313/android/plaid-refactored-1/">first part</a> for more details.</p>
+<p>This is the second part of a blog series about refactoring plaid app. In the <a href="https://sockeqwe.github.io/pages/android/plaid-refactored-1/">first part</a> we have applied Model-View-Presenter and have introduced an <strong>ItemsLoader</strong> for loading items from different backend endpoints by invoking <strong>RouteCallers</strong>. Please read the <a href="https://sockeqwe.github.io/pages/android/plaid-refactored-1/">first part</a> for more details.</p>
 <p>People also aksed me if there is a need for yet another MVP blog post as there are already many of them availabale. Well, my intention is not write about MVP. Rather I want to discuss how to build a &ldquo;truly reactive&rdquo; app (with MVP on top). Let&rsquo;s continue where we left off.</p>
 <h2 id="source---filter">Source - Filter</h2>
 <p>In the app&rsquo;s home screen you can open a drawer on the right side of the screen (or by clicking on the filter icon in the Toolbar) to enable/disable different backend endpoints we load items from. We call a backend endpoint <strong>Source</strong>. So we have sources like &ldquo;Dribbble Popular&rdquo;, &ldquo;Dribbble Recent&rdquo;, &ldquo;Designer News Popular&rdquo; and so on.</p>
@@ -581,11 +581,11 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
         <ul>
         
             <li>
-                <a href="http://127.0.0.1:1313/android/plaid-refactored-1/">Refactoring Plaid App - A reactive MVP Approach (Part 1)</a>
+                <a href="https://sockeqwe.github.io/pages/android/plaid-refactored-1/">Refactoring Plaid App - A reactive MVP Approach (Part 1)</a>
             </li>
         
             <li>
-                <a href="http://127.0.0.1:1313/android/plaid-refactored-2/">Refactoring Plaid App - A reactive MVP Approach (Part 2)</a>
+                <a href="https://sockeqwe.github.io/pages/android/plaid-refactored-2/">Refactoring Plaid App - A reactive MVP Approach (Part 2)</a>
             </li>
         
         </ul>
@@ -607,37 +607,37 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
   
   <div class="media mb-4">
     <div class="post-thumb-sm mr-3">
-      <a href="http://127.0.0.1:1313/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+      <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="https://sockeqwe.github.io/pages/"></a>
     </div>
     <div class="media-body">
       <ul class="list-inline d-flex justify-content-between mb-2">
         <li class="list-inline-item">May 06, 2018</li>
       </ul>
-      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+      <h6><a class="text-dark" href="https://sockeqwe.github.io/pages/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
     </div>
   </div>
   
   <div class="media mb-4">
     <div class="post-thumb-sm mr-3">
-      <a href="http://127.0.0.1:1313/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+      <a href="https://sockeqwe.github.io/pages/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="https://sockeqwe.github.io/pages/"></a>
     </div>
     <div class="media-body">
       <ul class="list-inline d-flex justify-content-between mb-2">
         <li class="list-inline-item">May 05, 2018</li>
       </ul>
-      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+      <h6><a class="text-dark" href="https://sockeqwe.github.io/pages/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
     </div>
   </div>
   
   <div class="media mb-4">
     <div class="post-thumb-sm mr-3">
-      <a href="http://127.0.0.1:1313/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="http://127.0.0.1:1313"></a>
+      <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="https://sockeqwe.github.io/pages/"></a>
     </div>
     <div class="media-body">
       <ul class="list-inline d-flex justify-content-between mb-2">
         <li class="list-inline-item">Sep 13, 2017</li>
       </ul>
-      <h6><a class="text-dark" href="http://127.0.0.1:1313/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+      <h6><a class="text-dark" href="https://sockeqwe.github.io/pages/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
     </div>
   </div>
   
@@ -662,13 +662,13 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
           
           <ul class="list-inline tag-list">
             <li class="list-inline-item m-1"><a
-                href="/categories/android">Android</a>
+                href="/pages/categories/android">Android</a>
             </li>
             <li class="list-inline-item m-1"><a
-                href="/categories/annotation-processor">Annotation-Processor</a>
+                href="/pages/categories/annotation-processor">Annotation-Processor</a>
             </li>
             <li class="list-inline-item m-1"><a
-                href="/categories/java">Java</a>
+                href="/pages/categories/java">Java</a>
             </li>
           </ul>
 
@@ -678,25 +678,25 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
           
           <ul class="list-inline tag-list">
             <li class="list-inline-item m-1"><a
-                href="/tags/algorithms">algorithms</a></li>
+                href="/pages/tags/algorithms">algorithms</a></li>
             <li class="list-inline-item m-1"><a
-                href="/tags/android">android</a></li>
+                href="/pages/tags/android">android</a></li>
             <li class="list-inline-item m-1"><a
-                href="/tags/database">database</a></li>
+                href="/pages/tags/database">database</a></li>
             <li class="list-inline-item m-1"><a
-                href="/tags/design-patterns">design-patterns</a></li>
+                href="/pages/tags/design-patterns">design-patterns</a></li>
             <li class="list-inline-item m-1"><a
-                href="/tags/java">java</a></li>
+                href="/pages/tags/java">java</a></li>
             <li class="list-inline-item m-1"><a
-                href="/tags/library">library</a></li>
+                href="/pages/tags/library">library</a></li>
             <li class="list-inline-item m-1"><a
-                href="/tags/navigation">navigation</a></li>
+                href="/pages/tags/navigation">navigation</a></li>
             <li class="list-inline-item m-1"><a
-                href="/tags/software-architecture">software-architecture</a></li>
+                href="/pages/tags/software-architecture">software-architecture</a></li>
             <li class="list-inline-item m-1"><a
-                href="/tags/ui">ui</a></li>
+                href="/pages/tags/ui">ui</a></li>
             <li class="list-inline-item m-1"><a
-                href="/tags/ux">ux</a></li>
+                href="/pages/tags/ux">ux</a></li>
           </ul>
         </div>
         <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
@@ -719,34 +719,34 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
 
 
 <script>
-  var indexURL = "http://127.0.0.1:1313/index.json"
+  var indexURL = "https://sockeqwe.github.io/pages/index.json"
 </script>
 
 
 <!-- JS Plugins -->
 
-<script src="http://127.0.0.1:1313/plugins/jQuery/jquery.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/jQuery/jquery.min.js"></script>
 
-<script src="http://127.0.0.1:1313/plugins/bootstrap/bootstrap.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/bootstrap/bootstrap.min.js"></script>
 
-<script src="http://127.0.0.1:1313/plugins/slick/slick.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/slick/slick.min.js"></script>
 
-<script src="http://127.0.0.1:1313/plugins/headroom/headroom.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/headroom/headroom.js"></script>
 
-<script src="http://127.0.0.1:1313/plugins/masonry/masonry.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/masonry/masonry.js"></script>
 
-<script src="http://127.0.0.1:1313/plugins/smooth-scroll/smooth-scroll.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/smooth-scroll/smooth-scroll.js"></script>
 
-<script src="http://127.0.0.1:1313/plugins/search/fuse.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/search/fuse.min.js"></script>
 
-<script src="http://127.0.0.1:1313/plugins/search/mark.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/search/mark.js"></script>
 
-<script src="http://127.0.0.1:1313/plugins/search/search.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/search/search.js"></script>
 
 
 <!-- Main Script -->
 
-<script src="http://127.0.0.1:1313/js/script.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/js/script.min.js"></script>
 
 <!-- google analitycs -->
 

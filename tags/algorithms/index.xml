@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>algorithms on Hannes Dorfmann</title>
-    <link>http://127.0.0.1:1313/tags/algorithms/</link>
+    <link>https://sockeqwe.github.io/pages/tags/algorithms/</link>
     <description>Recent content in algorithms on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 07 Feb 2016 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="http://127.0.0.1:1313/tags/algorithms/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sockeqwe.github.io/pages/tags/algorithms/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>AdapterCommands</title>
-      <link>http://127.0.0.1:1313/android/adapter-commands/</link>
+      <link>https://sockeqwe.github.io/pages/android/adapter-commands/</link>
       <pubDate>Sun, 07 Feb 2016 10:00:00 +0100</pubDate>
       
-      <guid>http://127.0.0.1:1313/android/adapter-commands/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/adapter-commands/</guid>
       <description>Last week I was honored to be guest at Artem Zinnatullin&amp;rsquo;s podcast The Context where we talked about software architecture on android. In this episode I have highlighted how important a presentation model in MVP is by giving an example how to deal with RecyclerView Adapters dataset changes. Afterwards people asked me how exactly do I apply animated dataset changes and why a presentation model is helpful in this case.</description>
     </item>
     

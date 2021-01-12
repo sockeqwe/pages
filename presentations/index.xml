@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Presentations on Hannes Dorfmann</title>
-    <link>http://127.0.0.1:1313/presentations/</link>
+    <link>https://sockeqwe.github.io/pages/presentations/</link>
     <description>Recent content in Presentations on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 02 Jul 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://127.0.0.1:1313/presentations/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sockeqwe.github.io/pages/presentations/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Flowing in the Deep - Event Streams in Kotlin</title>
-      <link>http://127.0.0.1:1313/presentations/2019-07-02-flowing-in-the-deep-copy/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep-copy/</link>
       <pubDate>Tue, 02 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://127.0.0.1:1313/presentations/2019-07-02-flowing-in-the-deep-copy/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep-copy/</guid>
       <description>The Kotlin team introduced a new type called Flow which looks similar to RxJava’s Observable or Flowable. Have you ever wondered what’s the difference between Flow and RxJava? How does Flow work under the hood? How is it connected to Coroutines? How do you write your own operator? What about Kotlin Coroutine Channels?</description>
     </item>
     
     <item>
       <title>Refactoring Plaid App – A reactive MVP approach</title>
-      <link>http://127.0.0.1:1313/presentations/2016-06-16-refactoring-plaid/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2016-06-16-refactoring-plaid/</link>
       <pubDate>Thu, 16 Jun 2016 00:00:00 +0000</pubDate>
       
-      <guid>http://127.0.0.1:1313/presentations/2016-06-16-refactoring-plaid/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2016-06-16-refactoring-plaid/</guid>
       <description>Nick Butcher, developer advocate at Google, has open sourced an android app called Plaid with an outstanding UI, meaningful animations and a lot of others material design goodies.
 However, from the software architecture’s point of view, the architecture of this app more “traditional” so that both, beginners and expert developers, can understand the source code easily.</description>
     </item>
