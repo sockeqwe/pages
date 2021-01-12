@@ -1,6 +1,6 @@
 ---
 title: Annotation Processing 101
-date: 2016-06-02
+date: 2015-06-05
 location: Berlin, Droidcon 2015
 youtube: 43FFfTyDYEg
 speakerdeck: f913a453af1a40278031d1aefae82aa5
