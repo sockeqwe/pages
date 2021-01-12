@@ -18,7 +18,7 @@
   </url>
   
   <url>
-    <loc>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep-copy/</loc>
+    <loc>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep/</loc>
     <lastmod>2019-07-02T00:00:00+00:00</lastmod>
   </url>
   
@@ -28,8 +28,18 @@
   </url>
   
   <url>
+    <loc>https://sockeqwe.github.io/pages/presentations/2019-05-22-testing-by-design/</loc>
+    <lastmod>2019-05-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://sockeqwe.github.io/pages/search/</loc>
     <lastmod>2019-05-14T14:46:10+06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sockeqwe.github.io/pages/presentations/2018-06-26-advanced-mvi-guide/</loc>
+    <lastmod>2018-06-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -85,6 +95,16 @@
   <url>
     <loc>https://sockeqwe.github.io/pages/tags/navigation/</loc>
     <lastmod>2018-05-05T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101-copy/</loc>
+    <lastmod>2018-04-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sockeqwe.github.io/pages/presentations/2018-10-22-reactive-statemanagement-mvi/</loc>
+    <lastmod>2017-10-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -145,6 +165,16 @@
   <url>
     <loc>https://sockeqwe.github.io/pages/presentations/2016-06-16-refactoring-plaid/</loc>
     <lastmod>2016-06-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</loc>
+    <lastmod>2016-06-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sockeqwe.github.io/pages/presentations/2016-06-02-android-architecture-by-example/</loc>
+    <lastmod>2016-06-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>

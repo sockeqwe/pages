@@ -131,46 +131,6 @@
     allowtransparency="true" allowfullscreen="allowfullscreen" mozallowfullscreen="true"
     webkitallowfullscreen="true"></iframe>
 
-
-<script type="text/javascript">
-
-    function defer(method) {
-        if (window.jQuery)
-            method();
-        else
-            setTimeout(function () { defer(method) }, 50);
-    }
-
-
-    function loadSpeakerDeck() {
-
-        var xhr = new XMLHttpRequest();
-        var deckUrl = encodeURIComponent("https://speakerdeck.com/sockeqwe/flowing-in-the-deep-event-streams-in-kotlin")
-        xhr.open('GET', 'https://speakerdeck.com/oembed.json?url='+deckUrl);
-        xhr.setRequestHeader("Accept", "*/*");
-        xhr.send();
-
-        xhr.onload = function(e){
-        alert(xhr.response)
-        }
-
-        
-
-        $.ajax({
-            url: "https://fiddle.jshell.net/favicon.png",
-            beforeSend: function (xhr) {
-                xhr.overrideMimeType("text/plain; charset=x-user-defined");
-            }
-        })
-            .done(function (data) {
-                if (console && console.log) {
-                    console.log("Sample of data:", data.slice(0, 100));
-                }
-            });
-    }
-
-    defer(loadSpeakerDeck);
-</script>
           
 
 

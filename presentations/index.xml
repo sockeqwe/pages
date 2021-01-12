@@ -13,11 +13,50 @@
     
     <item>
       <title>Flowing in the Deep - Event Streams in Kotlin</title>
-      <link>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep-copy/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep/</link>
       <pubDate>Tue, 02 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep-copy/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep/</guid>
       <description>The Kotlin team introduced a new type called Flow which looks similar to RxJava’s Observable or Flowable. Have you ever wondered what’s the difference between Flow and RxJava? How does Flow work under the hood? How is it connected to Coroutines? How do you write your own operator? What about Kotlin Coroutine Channels?</description>
+    </item>
+    
+    <item>
+      <title>Testing By Design</title>
+      <link>https://sockeqwe.github.io/pages/presentations/2019-05-22-testing-by-design/</link>
+      <pubDate>Wed, 22 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://sockeqwe.github.io/pages/presentations/2019-05-22-testing-by-design/</guid>
+      <description>Together with my friend Kostiantyn Tarasenko we talked about testing android apps.
+Building an efficient and maintainable test suite for an app is challenging. Design patterns like MVP or MVVM help decouple responsibilities so that it becomes easier to write testable code. What is the next level though? How can we get more out of our tests?</description>
+    </item>
+    
+    <item>
+      <title>Advanced Model-View-Intent: The Missing Guide</title>
+      <link>https://sockeqwe.github.io/pages/presentations/2018-06-26-advanced-mvi-guide/</link>
+      <pubDate>Tue, 26 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://sockeqwe.github.io/pages/presentations/2018-06-26-advanced-mvi-guide/</guid>
+      <description>Together with my friend Kostiantyn Tarasenko we talked about Model-View-Intent (MVI) and were sharing some tips that worked well for us.
+We also introduced a library to help us build state machines with RxJava called RxRedux</description>
+    </item>
+    
+    <item>
+      <title>Demystifying RxJava by reimplementing it from scratch</title>
+      <link>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101-copy/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101-copy/</guid>
+      <description>There are no slides available because it was actually a live coding session where we reimplemented RxJava&amp;rsquo;s basic of observers, subscriber and operators.</description>
+    </item>
+    
+    <item>
+      <title>Reactive State Management with Model-View-Intent</title>
+      <link>https://sockeqwe.github.io/pages/presentations/2018-10-22-reactive-statemanagement-mvi/</link>
+      <pubDate>Thu, 05 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://sockeqwe.github.io/pages/presentations/2018-10-22-reactive-statemanagement-mvi/</guid>
+      <description>Managing application state is not a simple topic especially on Android with a synchronous and asynchronous source of data, components having different lifecycles, back stack navigation and process death.
+Model-View-Intent (MVI) is an architectural design pattern to separate the View from the Model. In this talk, we will discuss the idea behind MVI and how this pattern compares to other architectural patterns like Flux, Redux, Model-View-Presenter or Model-View-ViewModel.</description>
     </item>
     
     <item>
@@ -28,6 +67,24 @@
       <guid>https://sockeqwe.github.io/pages/presentations/2016-06-16-refactoring-plaid/</guid>
       <description>Nick Butcher, developer advocate at Google, has open sourced an android app called Plaid with an outstanding UI, meaningful animations and a lot of others material design goodies.
 However, from the software architecture’s point of view, the architecture of this app more “traditional” so that both, beginners and expert developers, can understand the source code easily.</description>
+    </item>
+    
+    <item>
+      <title>Android Software Architecutre by Example</title>
+      <link>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</link>
+      <pubDate>Thu, 02 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</guid>
+      <description>Writing Java application can be annoying because the Java programming language requires to write boilerplate code. Writing Android apps makes no difference. Moreover, on Android you have to write a lot of code for doing simple things like setting up a Fragment with arguments, implement the Parcelable interface, define ViewHolder classes for RecyclerViews and so on.</description>
+    </item>
+    
+    <item>
+      <title>Android Software Architecutre by Example</title>
+      <link>https://sockeqwe.github.io/pages/presentations/2016-06-02-android-architecture-by-example/</link>
+      <pubDate>Thu, 02 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://sockeqwe.github.io/pages/presentations/2016-06-02-android-architecture-by-example/</guid>
+      <description>Comparing some architectural design patterns like MVC, MVP, MVVM, Redux, Flux, MVI and how they could be applied on existing open source applications.</description>
     </item>
     
   </channel>
