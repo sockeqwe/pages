@@ -1,5 +1,5 @@
 # default config
-baseurl = "http://localhost:1313"
+baseurl = "http://127.0.0.1:1313"
 languageCode = "en-us"
 title = "Hannes Dorfmann"
 theme = "parsa-hugo"
@@ -72,7 +72,7 @@ layout = "2"
 # Meta data
 description = "This is meta description"
 # Preloader
-preloader = false
+preloader = true
 # search
 search = true
 # about author

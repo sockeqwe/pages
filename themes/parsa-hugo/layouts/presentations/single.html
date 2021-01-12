@@ -31,11 +31,11 @@
             {{ partial "youtube.html" . }}
             
           {{ else }}
-          {{ with .Params.ExternalVideo }}
-          <h3>Video</h3>
-          <a href="{{ . }}">Click here to watch the video of this presentation (external link)</a>
+            {{ with .Params.ExternalVideo }}
+            <h3>Video</h3>
+            <a href="{{ . }}">Click here to watch the video of this presentation (external link)</a>
 
-          {{ end }}
+            {{ end }}
           {{ end }}
           
 
