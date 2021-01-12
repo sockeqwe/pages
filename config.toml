@@ -1,5 +1,5 @@
 # default config
-baseurl = "http://127.0.0.1:1313"
+baseurl = "https://sockeqwe.github.io/pages/"
 languageCode = "en-us"
 title = "Hannes Dorfmann"
 theme = "parsa-hugo"
