@@ -16,15 +16,26 @@ VERSION:	Versoin Number
 
 .theme-light {
   --color-primary: #0060df;
-  --color-secondary: #fbfbfe;
+  --color-secondary: #fdefe6;
   --color-accent: #fd6f53;
-  --font-color: #000000;
+  --font-color-title: #000000;
+  --font-color-text: #585757;
+  --page-background-color: #ffffff;
+  --color-tag-background: #f4f4f4;
+  --font-color-tag: #000000;
+  --font-color-text-secondary: #000000;
 }
+
 .theme-dark {
   --color-primary: #17ed90;
-  --color-secondary: #2a2c2d;
+  --color-secondary: #021019;
   --color-accent: #12cdea;
-  --font-color: #ffffff;
+  --font-color-title: #ffffff;
+  --font-color-text: #A7A8A8;
+  --page-background-color: #3b3b3b;
+  --color-tag-background: #383838;
+  --font-color-tag: #ffffff;
+  --font-color-text-secondary: #ffffff;
 }
 
 
@@ -41,7 +52,9 @@ body {
   font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 17px;
-  color: #585757;
+  color: var(--font-color-text) ;
+  background-color: var(--page-background-color);
+  overflow-x: hidden;
 }
 
 p, .paragraph {
@@ -53,7 +66,7 @@ p, .paragraph {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #000000;
+  color: var(--font-color-title) ;
   font-family: "hanskendrick";
   font-weight: 600;
   line-height: 1.2;
@@ -154,11 +167,6 @@ h6, .h6 {
   border: 0;
 }
 
-body {
-  background-color: #fff;
-  overflow-x: hidden;
-}
-
 ::-moz-selection {
   background: #ff8c33;
   color: #fff;
@@ -176,7 +184,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #fff;
+  background-color: var(--page-background-color);
   z-index: 999;
   display: flex;
   align-items: center;
@@ -190,7 +198,7 @@ body {
   width: 142px;
   height: 40px;
   margin: -20px 0 0 -71px;
-  background: white;
+  background-color: var(--page-background-color);
 }
 
 .preloader .loader .dot {
@@ -358,7 +366,7 @@ a.text-dark:hover {
 }
 
 .bg-secondary {
-  background: #fdefe6 !important;
+  background: var(--color-secondary) !important;
 }
 
 .text-primary {
@@ -366,11 +374,11 @@ a.text-dark:hover {
 }
 
 .text-color {
-  color: #585757;
+  color: var(--font-color-text) ;
 }
 
 .text-dark {
-  color: #000000 !important;
+  color: var(--font-color-text-secondary) !important;
 }
 
 .font-secondary {
@@ -453,7 +461,7 @@ textarea.form-control {
   right: 0;
   transition: all .4s ease-in-out;
   padding: 10px 40px;
-  background-color: #fff;
+  background-color: var(--page-background-color);
 }
 
 @media (max-width: 575px) {
@@ -611,7 +619,7 @@ textarea.form-control {
   font-family: "hanskendrick";
   font-size: 30px;
   border: 0;
-  color: #585757;
+  color: var(--font-color-text) ;
 }
 
 @media (max-width: 767px) {
@@ -686,7 +694,7 @@ textarea.form-control {
 /* homepage 2 */
 .hero-section {
   padding: 70px 0 0;
-  background-image: linear-gradient(#fff 45%, #fdefe6 0);
+  background-image: linear-gradient(var(--page-background-color) 45%, var(--color-secondary)  0);
 }
 
 .dividers {
@@ -826,7 +834,7 @@ textarea.form-control {
 blockqublockquote {
   font-style: italic;
   color: #000000;
-  background: #fdefe6;
+  background: var(--color-secondary) ;
   padding: 20px;
   font-weight: 600;
 }
@@ -862,7 +870,7 @@ blockquote > p {
 }
 
 .content th {
-  background: #fdefe6;
+  background: var(--color-secondary) ;
   padding: 10px;
 }
 
@@ -917,9 +925,9 @@ blockquote > p {
 
 .tag-list li a {
   display: block;
-  background: #f4f4f4;
+  background: var(--color-tag-background);
   padding: 2px 5px;
-  color: #000000;
+  color: var(--font-color-tag);
 }
 
 .tag-list li a:hover {
@@ -933,10 +941,10 @@ blockquote > p {
   width: 70%;
   padding: 16px;
   background-color: #fdfdfd;
-  border-left: #fdefe6 6px solid;
-  border-right: #fdefe6 1px solid;
-  border-top: #fdefe6 1px solid;
-  border-bottom: #fdefe6 1px solid;
+  border-left: var(--color-secondary)  6px solid;
+  border-right: var(--color-secondary)  1px solid;
+  border-top: var(--color-secondary)  1px solid;
+  border-bottom: var(--color-secondary)  1px solid;
 }
 
 
