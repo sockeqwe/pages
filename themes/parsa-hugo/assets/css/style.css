@@ -15,27 +15,25 @@ VERSION:	Versoin Number
 }
 
 .theme-light {
-  --color-primary: #0060df;
   --color-secondary: #fdefe6;
-  --color-accent: #fd6f53;
   --font-color-title: #000000;
   --font-color-text: #585757;
+  --font-color-text-secondary: #000000;
   --page-background-color: #ffffff;
   --color-tag-background: #f4f4f4;
   --font-color-tag: #000000;
-  --font-color-text-secondary: #000000;
+  --pagination-font-color-current: #000000;
 }
 
 .theme-dark {
-  --color-primary: #17ed90;
   --color-secondary: #021019;
-  --color-accent: #12cdea;
   --font-color-title: #ffffff;
   --font-color-text: #A7A8A8;
+  --font-color-text-secondary: #ffffff;
   --page-background-color: #3b3b3b;
   --color-tag-background: #383838;
   --font-color-tag: #ffffff;
-  --font-color-text-secondary: #ffffff;
+  --pagination-font-color-current: #ffffff;
 }
 
 
@@ -437,16 +435,34 @@ a.text-dark:hover {
   border: 0;
   border-bottom: 1px solid #ababab;
   border-radius: 0;
+  color: var(--font-color-text);
+  background-color: var(--page-background-color);
 }
 
 .form-control:focus {
   outline: 0;
   box-shadow: none;
   border-color: #ff6f00;
+  background-color: var(--page-background-color);
+  color: var(--font-color-text);
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  background-color: var(--page-background-color) !important;
+  color: var(--font-color-text) !important;
+}  
 
 textarea.form-control {
   height: 150px;
+  background-color: var(--page-background-color);
 }
 
 .navigation {
@@ -459,7 +475,7 @@ textarea.form-control {
   top: 0;
   left: 0;
   right: 0;
-  transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out; 
   padding: 10px 40px;
   background-color: var(--page-background-color);
 }
@@ -619,7 +635,8 @@ textarea.form-control {
   font-family: "hanskendrick";
   font-size: 30px;
   border: 0;
-  color: var(--font-color-text) ;
+  color: var(--pagination-font-color-current);
+  background-color: transparent;
 }
 
 @media (max-width: 767px) {
@@ -629,8 +646,9 @@ textarea.form-control {
 }
 
 .pagination .page-item .page-link:hover {
-  color: #000000;
+  color: var(--pagination-font-color-current);
   background-color: transparent;
+  text-decoration: underline;
 }
 
 .pagination .page-link, .pagination .page-link .page-item-previous-next{
@@ -638,7 +656,7 @@ textarea.form-control {
 }
 
 .pagination .page-item.active .page-link {
-  color: #000000;
+  color: var(--pagination-font-color-current);
   text-decoration: underline;
   background: transparent;
 }
@@ -962,6 +980,7 @@ blockquote > p {
   opacity: 0;
   width: 0;
   height: 0;
+  color: var(--font-color-text)
 }
 
 /* The slider */
