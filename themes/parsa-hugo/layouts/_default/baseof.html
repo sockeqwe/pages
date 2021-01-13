@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ with site.LanguageCode }}{{ . }}{{ else }}en-US{{ end }}">
     {{- partial "head.html" . -}}
-    <body>
+    <body class="theme-light">
         {{- partial "preloader.html" . -}}
         {{- partial "header.html" . -}}
         {{- block "main" . }}{{- end }}
