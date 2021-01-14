@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Refactoring Plaid App on Hannes Dorfmann</title>
-    <link>https://sockeqwe.github.io/pages/series/refactoring-plaid-app/</link>
+    <link>https://hannesdorfmann.com/pages/series/refactoring-plaid-app/</link>
     <description>Recent content in Refactoring Plaid App on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 02 Dec 2015 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="https://sockeqwe.github.io/pages/series/refactoring-plaid-app/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hannesdorfmann.com/pages/series/refactoring-plaid-app/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Refactoring Plaid App - A reactive MVP Approach (Part 2)</title>
-      <link>https://sockeqwe.github.io/pages/android/plaid-refactored-2/</link>
+      <link>https://hannesdorfmann.com/pages/android/plaid-refactored-2/</link>
       <pubDate>Wed, 02 Dec 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/plaid-refactored-2/</guid>
+      <guid>https://hannesdorfmann.com/pages/android/plaid-refactored-2/</guid>
       <description>This is the second part of how we could refactor the Plaid app open sourced by Nick Butcher. In this part we are going to enhance the MVP architecture described in the first part to become truly reactive.
 Preface: I started the refactoring with the strong belief that I can refactor the whole app.</description>
     </item>
     
     <item>
       <title>Refactoring Plaid App - A reactive MVP Approach (Part 1)</title>
-      <link>https://sockeqwe.github.io/pages/android/plaid-refactored-1/</link>
+      <link>https://hannesdorfmann.com/pages/android/plaid-refactored-1/</link>
       <pubDate>Sun, 29 Nov 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/plaid-refactored-1/</guid>
+      <guid>https://hannesdorfmann.com/pages/android/plaid-refactored-1/</guid>
       <description>Nick Butcher has open sourced on github an awesome app called Plaid. The app is pretty cool and has an outstanding UI / UX. Whenever source code of such awesome apps are available developers start to copy code and best practice tips from it. So I did the same and decided to dive into the code of Plaid.</description>
     </item>
     
