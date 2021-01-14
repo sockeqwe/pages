@@ -390,23 +390,5 @@ The idea was simple: I wanted to build an android app that imitates and looks li
 The Samsung Galaxy Nexus was one of the first device without hardware buttons for &amp;ldquo;back&amp;rdquo;, &amp;ldquo;home&amp;rdquo; and &amp;ldquo;app switching (multitasking)&amp;rdquo; but used the androids navigation bar on screen (introduced in Android 4.</description>
     </item>
     
-    <item>
-      <title>Homepage 1</title>
-      <link>https://hannesdorfmann.com/pages/homepage/home-1/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/pages/homepage/home-1/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Homepage 2</title>
-      <link>https://hannesdorfmann.com/pages/homepage/home-2/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/pages/homepage/home-2/</guid>
-      <description></description>
-    </item>
-    
   </channel>
 </rss>
