@@ -2,98 +2,98 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>library on Hannes Dorfmann</title>
-    <link>https://hannesdorfmann.com/pages/tags/library/</link>
+    <link>https://sockeqwe.github.io/pages/tags/library/</link>
     <description>Recent content in library on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 02 Nov 2015 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="https://hannesdorfmann.com/pages/tags/library/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sockeqwe.github.io/pages/tags/library/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>FragmentArgs 3.0</title>
-      <link>https://hannesdorfmann.com/pages/android/fragmentargs3/</link>
+      <link>https://sockeqwe.github.io/pages/android/fragmentargs3/</link>
       <pubDate>Mon, 02 Nov 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/fragmentargs3/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/fragmentargs3/</guid>
       <description>I finally found some time last weekend to work on FragmentArgs and to release a new major version 3.0. Here is an overview of new features and bug fixes.
 Migration The good news first: FragmentArgs 3.0 is completely backward compatible to all previous versions (down to 1.0). So basically you have to do nothing.</description>
     </item>
     
     <item>
       <title>Debug Overlay</title>
-      <link>https://hannesdorfmann.com/pages/android/debugoverlay/</link>
+      <link>https://sockeqwe.github.io/pages/android/debugoverlay/</link>
       <pubDate>Fri, 16 Oct 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/debugoverlay/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/debugoverlay/</guid>
       <description>Lately I was looking for a way to display some app internal information to an external staff that is not a developer. I haven&amp;rsquo;t found a library that fit my needs. Hence I have written my own tiny library called DebugOverlay to do this job.
 Usually we as developers would log app internal things by using logcat Log.</description>
     </item>
     
     <item>
       <title>Joe&#39;s great adapter hell escape</title>
-      <link>https://hannesdorfmann.com/pages/android/adapter-delegates/</link>
+      <link>https://sockeqwe.github.io/pages/android/adapter-delegates/</link>
       <pubDate>Tue, 28 Jul 2015 14:46:10 +0600</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/adapter-delegates/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/adapter-delegates/</guid>
       <description>Let me tell you a story about Joe Somebody an android developer at MyLittleZoo Inc. and how he walked through the hell while trying to create reusable RecyclerView Adapters with different view types and how he finally managed to implement reusable Adapters painlessly.
 Once upon a time Joe Somebody, an android developer, was working for a young startup called MyLittleZoo Inc.</description>
     </item>
     
     <item>
       <title>SQLBrite DAO</title>
-      <link>https://hannesdorfmann.com/pages/android/sqlbrite-dao/</link>
+      <link>https://sockeqwe.github.io/pages/android/sqlbrite-dao/</link>
       <pubDate>Wed, 24 Jun 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/sqlbrite-dao/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/sqlbrite-dao/</guid>
       <description>Earlier this year, one day before Valentine&amp;rsquo;s Day to be precise, I had the glorious idea (ironie) to surprise my lovely girlfriend with a special android app on Valentine&amp;rsquo;s Day. Who said computer science can&amp;rsquo;t be romantic?
 The idea was simple: I wanted to build an android app that imitates and looks like Tinder but instead of displaying real people nearby, I faked everything so that only my profile gets displayed so she only can choose me.</description>
     </item>
     
     <item>
       <title>Stinson&#39;s Playbook for Mosby</title>
-      <link>https://hannesdorfmann.com/pages/android/mosby-playbook/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby-playbook/</link>
       <pubDate>Sat, 09 May 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/mosby-playbook/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby-playbook/</guid>
       <description>In my previous blog post I introduced Mosby, a Model-View-Presenter library for android. This time I&amp;rsquo;m going to discuss some more details about MVP in general and Mosby. I have implemented a mail client sample which can be found on Github which is used in this blog entry to describe how to use Mosby and to answer some of the common questions I have been asked after having released Mosby.</description>
     </item>
     
     <item>
       <title>Ted Mosby - Software Architect</title>
-      <link>https://hannesdorfmann.com/pages/android/mosby/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby/</link>
       <pubDate>Wed, 25 Mar 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/mosby/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby/</guid>
       <description>Ted Mosby, architect in How I met your mother (one of my favorite tv shows) was the inspiration for the name of this android library I&amp;rsquo;m going to talk about in this blog post. This library helps you to build good, robust and reusable software by implementing Model-View-Presenter pattern on android along with some nice features like ViewState for handling screen orientation changes easily.</description>
     </item>
     
     <item>
       <title>AnnotatedAdapter</title>
-      <link>https://hannesdorfmann.com/pages/android/annotatedadapter/</link>
+      <link>https://sockeqwe.github.io/pages/android/annotatedadapter/</link>
       <pubDate>Wed, 24 Sep 2014 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/annotatedadapter/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/annotatedadapter/</guid>
       <description>With FragmentArgs and ParcelablePlease I have already shown that Annotation Processor is really helpful to speedup development by reducing writing boilerplate code. Regarding Android I found one scenario where I find myself writing nearly the same code ever and ever again. I&amp;rsquo;m looking at you Adapter with your ViewHolders, layout inflating code and view types.</description>
     </item>
     
     <item>
       <title>ParcelablePlease</title>
-      <link>https://hannesdorfmann.com/pages/android/parcelableplease/</link>
+      <link>https://sockeqwe.github.io/pages/android/parcelableplease/</link>
       <pubDate>Wed, 24 Sep 2014 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/parcelableplease/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/parcelableplease/</guid>
       <description>In my last blog post I have introduced FragmentArgs an Annotation Processor for Fragments that reduces writing boilerplate code. In this post I want to talk about a similar problem android developer face: Writing boilerplate code for Parcelable
  This post is part of a series of posts about useful annotation processors like FragmentArgs or AnnotatedAdapter</description>
     </item>
     
     <item>
       <title>FragmentArgs</title>
-      <link>https://hannesdorfmann.com/pages/android/fragmentargs/</link>
+      <link>https://sockeqwe.github.io/pages/android/fragmentargs/</link>
       <pubDate>Mon, 15 Sep 2014 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/fragmentargs/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/fragmentargs/</guid>
       <description>Developing for Android is sometimes painful. You have to write lot of code to do simple things like setting up a Fragment. Fortunately java supports a powerful tool: Annotation Processors
  This post is part of a series of posts about useful annotation processors like ParcelablePlease or AnnotatedAdapter
  The Problem with Fragments is that you have to set arguments (the parameters) for a fragment to make them work correctly.</description>
@@ -101,10 +101,10 @@ The idea was simple: I wanted to build an android app that imitates and looks li
     
     <item>
       <title>SwipeBack</title>
-      <link>https://hannesdorfmann.com/pages/android/swipeback/</link>
+      <link>https://sockeqwe.github.io/pages/android/swipeback/</link>
       <pubDate>Fri, 27 Dec 2013 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/swipeback/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/swipeback/</guid>
       <description>SwipeBack for Android Activities does pretty the same as the android &amp;ldquo;back-button&amp;rdquo; does, but in a really intuitive way by using a swipe gesture
 The Samsung Galaxy Nexus was one of the first device without hardware buttons for &amp;ldquo;back&amp;rdquo;, &amp;ldquo;home&amp;rdquo; and &amp;ldquo;app switching (multitasking)&amp;rdquo; but used the androids navigation bar on screen (introduced in Android 4.</description>
     </item>

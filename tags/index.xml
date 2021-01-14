@@ -2,102 +2,102 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Hannes Dorfmann</title>
-    <link>https://hannesdorfmann.com/pages/tags/</link>
+    <link>https://sockeqwe.github.io/pages/tags/</link>
     <description>Recent content in Tags on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 06 May 2018 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="https://hannesdorfmann.com/pages/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sockeqwe.github.io/pages/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>android</title>
-      <link>https://hannesdorfmann.com/pages/tags/android/</link>
+      <link>https://sockeqwe.github.io/pages/tags/android/</link>
       <pubDate>Sun, 06 May 2018 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/android/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/android/</guid>
       <description></description>
     </item>
     
     <item>
       <title>design-patterns</title>
-      <link>https://hannesdorfmann.com/pages/tags/design-patterns/</link>
+      <link>https://sockeqwe.github.io/pages/tags/design-patterns/</link>
       <pubDate>Sun, 06 May 2018 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/design-patterns/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/design-patterns/</guid>
       <description></description>
     </item>
     
     <item>
       <title>software-architecture</title>
-      <link>https://hannesdorfmann.com/pages/tags/software-architecture/</link>
+      <link>https://sockeqwe.github.io/pages/tags/software-architecture/</link>
       <pubDate>Sun, 06 May 2018 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/software-architecture/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/software-architecture/</guid>
       <description></description>
     </item>
     
     <item>
       <title>navigation</title>
-      <link>https://hannesdorfmann.com/pages/tags/navigation/</link>
+      <link>https://sockeqwe.github.io/pages/tags/navigation/</link>
       <pubDate>Sat, 05 May 2018 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/navigation/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/navigation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>java</title>
-      <link>https://hannesdorfmann.com/pages/tags/java/</link>
+      <link>https://sockeqwe.github.io/pages/tags/java/</link>
       <pubDate>Thu, 13 Oct 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/java/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/java/</guid>
       <description></description>
     </item>
     
     <item>
       <title>algorithms</title>
-      <link>https://hannesdorfmann.com/pages/tags/algorithms/</link>
+      <link>https://sockeqwe.github.io/pages/tags/algorithms/</link>
       <pubDate>Sun, 07 Feb 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/algorithms/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/algorithms/</guid>
       <description></description>
     </item>
     
     <item>
       <title>library</title>
-      <link>https://hannesdorfmann.com/pages/tags/library/</link>
+      <link>https://sockeqwe.github.io/pages/tags/library/</link>
       <pubDate>Mon, 02 Nov 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/library/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/library/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ui</title>
-      <link>https://hannesdorfmann.com/pages/tags/ui/</link>
+      <link>https://sockeqwe.github.io/pages/tags/ui/</link>
       <pubDate>Tue, 18 Aug 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/ui/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/ui/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ux</title>
-      <link>https://hannesdorfmann.com/pages/tags/ux/</link>
+      <link>https://sockeqwe.github.io/pages/tags/ux/</link>
       <pubDate>Tue, 18 Aug 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/ux/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/ux/</guid>
       <description></description>
     </item>
     
     <item>
       <title>database</title>
-      <link>https://hannesdorfmann.com/pages/tags/database/</link>
+      <link>https://sockeqwe.github.io/pages/tags/database/</link>
       <pubDate>Wed, 24 Jun 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/tags/database/</guid>
+      <guid>https://sockeqwe.github.io/pages/tags/database/</guid>
       <description></description>
     </item>
     

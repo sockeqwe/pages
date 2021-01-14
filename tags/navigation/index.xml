@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>navigation on Hannes Dorfmann</title>
-    <link>https://hannesdorfmann.com/pages/tags/navigation/</link>
+    <link>https://sockeqwe.github.io/pages/tags/navigation/</link>
     <description>Recent content in navigation on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 05 May 2018 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="https://hannesdorfmann.com/pages/tags/navigation/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sockeqwe.github.io/pages/tags/navigation/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>In-App Navigation with Coordinators</title>
-      <link>https://hannesdorfmann.com/pages/android/coordinators-android/</link>
+      <link>https://sockeqwe.github.io/pages/android/coordinators-android/</link>
       <pubDate>Sat, 05 May 2018 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/coordinators-android/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/coordinators-android/</guid>
       <description>Over the last years we have established best practices for writing android apps: clean architecture, architectural patterns like MVP, MVVM, MVI, Repository pattern and so on. But what about in-app navigation? In this blog post I would like to talk about the Coordinator pattern and how we could apply this pattern in android development to organize our in-app navigation code.</description>
     </item>
     

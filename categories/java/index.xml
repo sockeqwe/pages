@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Java on Hannes Dorfmann</title>
-    <link>https://hannesdorfmann.com/pages/categories/java/</link>
+    <link>https://sockeqwe.github.io/pages/categories/java/</link>
     <description>Recent content in Java on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 26 Apr 2016 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="https://hannesdorfmann.com/pages/categories/java/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sockeqwe.github.io/pages/categories/java/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Mixins as an alternative to inheritance in Java 8</title>
-      <link>https://hannesdorfmann.com/pages/android/java-mixins/</link>
+      <link>https://sockeqwe.github.io/pages/android/java-mixins/</link>
       <pubDate>Tue, 26 Apr 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/pages/android/java-mixins/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/java-mixins/</guid>
       <description>Starting in Android N Google has added some java 8 language features. One of those features is the ability to add default methods to interfaces. Surprisingly (since java 8 has already been released 2 years ago) I haven&amp;rsquo;t found good articles describing the advantage of default methods for interfaces: Mixins!</description>
     </item>
     

@@ -11,24 +11,24 @@
 
   <!-- plugins -->
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/pages/plugins/bootstrap/bootstrap.min.css ">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/plugins/bootstrap/bootstrap.min.css ">
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/pages/plugins/slick/slick.css ">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/plugins/slick/slick.css ">
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/pages/plugins/themify-icons/themify-icons.css ">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/plugins/themify-icons/themify-icons.css ">
   
 
   <!-- Main Stylesheet -->
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/pages/css/style.min.css" media="screen">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/css/style.min.css" media="screen">
 
   <!-- Syntax highlightning Stylesheet -->
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/pages/css/syntax-highlighting.min.css" media="screen">
+  <link rel="stylesheet" href="https://sockeqwe.github.io/pages/css/syntax-highlighting.min.css" media="screen">
 
   <!--Favicon-->
-  <link rel="shortcut icon" href="https://hannesdorfmann.com/pages/images/favicon.png " type="image/x-icon">
-  <link rel="icon" href="https://hannesdorfmann.com/pages/images/favicon.png " type="image/x-icon">
+  <link rel="shortcut icon" href="https://sockeqwe.github.io/pages/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://sockeqwe.github.io/pages/images/favicon.png " type="image/x-icon">
 
   </head><body class="theme-light">
 <!-- preloader start -->
@@ -56,25 +56,25 @@
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/pages/">Home</a>
+          <a class="nav-link text-uppercase text-dark" href="https://sockeqwe.github.io/pages/">Home</a>
         </li>
         
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/pages/about">About</a>
+          <a class="nav-link text-uppercase text-dark" href="https://sockeqwe.github.io/pages/about">About</a>
         </li>
         
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/pages/presentations">Presentations</a>
+          <a class="nav-link text-uppercase text-dark" href="https://sockeqwe.github.io/pages/presentations">Presentations</a>
         </li>
         
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/pages/contact">Contact</a>
+          <a class="nav-link text-uppercase text-dark" href="https://sockeqwe.github.io/pages/contact">Contact</a>
         </li>
         
         
@@ -86,7 +86,7 @@
       </ul>
       
       <!-- search -->
-      <form class="form-inline position-relative ml-lg-4" action="https://hannesdorfmann.com/pages//search">
+      <form class="form-inline position-relative ml-lg-4" action="https://sockeqwe.github.io/pages//search">
         <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
         <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
       </form>
@@ -118,10 +118,10 @@
         </ul>
         <article class="content">
           
-          <p>In the <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-1/">first part</a> we have discussed what a Model actually is,
+          <p>In the <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-1/">first part</a> we have discussed what a Model actually is,
 the relation to State and how a well defined Model can solve some common issues in android development.
 In this blog post we continue our journey towards &ldquo;Reactive Apps&rdquo; by introducing the <strong>M</strong>odel-<strong>V</strong>iew-<strong>I</strong>ntent pattern to build Reactive Apps.</p>
-<p>If you haven&rsquo;t read <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-1/">part 1</a> yet, you should read that before continue with this blog post. To summarize:
+<p>If you haven&rsquo;t read <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-1/">part 1</a> yet, you should read that before continue with this blog post. To summarize:
 Rather then writing code like this (for example in &ldquo;traditional&rdquo; MVP)</p>
 <div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">PersonsPresenter</span> <span class="kd">extends</span> <span class="n">Presenter</span><span class="o">&lt;</span><span class="n">PersonsView</span><span class="o">&gt;</span> <span class="o">{</span>
 
@@ -181,7 +181,7 @@ From a theoretical (and mathematical) point of view we could describe Model-View
 translate it to &ldquo;something&rdquo; that will be passed as parameter to <strong>model()</strong> function.
 This could be a simple string to set a value of the model to or more complex data structure like an Object. We could say we have the intention to change the model with an intent.</li>
 <li><strong>model()</strong>: The model() function takes the output from <strong>intent()</strong> as input to manipulate the Model.
-The output of this function is a new Model (state changed). So it should not update an already existing Model. <strong>We want immutability!</strong> In the <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-1/">first part</a> I gave a concrete example with a &ldquo;counter app&rdquo;. Again, we don&rsquo;t change an already existing Model object instance. We create a new Model according to the changes described by the intent.
+The output of this function is a new Model (state changed). So it should not update an already existing Model. <strong>We want immutability!</strong> In the <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-1/">first part</a> I gave a concrete example with a &ldquo;counter app&rdquo;. Again, we don&rsquo;t change an already existing Model object instance. We create a new Model according to the changes described by the intent.
 Please note, that the model() function is the only piece of your code that is allowed to create a new Model object. Then this new immutable Model is the output of this function. Basically, the model() function calls our apps business logic (could be an Interactor, Usecase, Repository &hellip;
 whatever pattern / terminology you use in your app) and delivers a new Model object as result.</li>
 <li><strong>view()</strong>: This method takes the model returned from <strong>model()</strong> function and gives it as input to the  <strong>view()</strong> function. Then the View simply displays this Model somehow. view() is basically the same as <strong>view.render(model)</strong>.</li>
@@ -337,7 +337,7 @@ We certainly don&rsquo;t want to terminate this observable stream on a internet 
 </span><span class="cm">   */</span>
   <span class="kt">void</span> <span class="nf">render</span><span class="o">(</span><span class="n">SearchViewState</span> <span class="n">viewState</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre></div><p>In this case our View only offers one intent but in general a View could offer multiple intents. In <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-1/">part 1</a> we have discussed why a single render() function is a nice approach, if it is unclear why we should prefer a single render() you should read part 1 again (or leave a comment below; see also comment section in part 1). Before we start with the concrete implementation of the View layer, let&rsquo;s take a look how the final result should look like:</p>
+</code></pre></div><p>In this case our View only offers one intent but in general a View could offer multiple intents. In <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-1/">part 1</a> we have discussed why a single render() function is a nice approach, if it is unclear why we should prefer a single render() you should read part 1 again (or leave a comment below; see also comment section in part 1). Before we start with the concrete implementation of the View layer, let&rsquo;s take a look how the final result should look like:</p>
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
   <iframe src="https://www.youtube.com/embed/07pkkbFQhtk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
@@ -463,9 +463,9 @@ So actually this PublishSubject is subscribing to View&rsquo;s intent Observable
 <p><img src="/images/mvi-mosby3/MviBasePresenter.png" alt="MVI"></p>
 <p>The counter part to bindIntent() is  <strong>unbindIntents()</strong> which is invoked exactly one time the View is destroyed permanently. For instance putting a fragment on the back stack doesn&rsquo;t destroy the View permanently, but finishing an Activity does.
 Since intent() and subscribeViewState() already take care of subscription management you only barely need to implement unbindIntents().</p>
-<p>What about other lifecycle events like <strong>onPause()</strong> or <strong>onResume()</strong>? I still think that <a href="https://hannesdorfmann.com/pages/android/presenters-dont-need-lifecycle/">Presenters don&rsquo;t need lifecycle Events</a>. However, if you really think you need them you can simply see a lifecycle event like onPause() as an intent. Your View could offer a <strong>pauseIntent()</strong> which is triggered by android lifecycle instead of a user interaction intent like clicking on a button. But both are valid intents.</p>
+<p>What about other lifecycle events like <strong>onPause()</strong> or <strong>onResume()</strong>? I still think that <a href="https://sockeqwe.github.io/pages/android/presenters-dont-need-lifecycle/">Presenters don&rsquo;t need lifecycle Events</a>. However, if you really think you need them you can simply see a lifecycle event like onPause() as an intent. Your View could offer a <strong>pauseIntent()</strong> which is triggered by android lifecycle instead of a user interaction intent like clicking on a button. But both are valid intents.</p>
 <h2 id="conclusion">Conclusion</h2>
-<p>In this second part we have talked about the basics of Model-View-Intent and implemented a very simple screen by using MVI to get our feet wet. Maybe this example is too simple so that you don&rsquo;t fully see yet the benefits of MVI pattern, a Model which represents State and the unidirectional data flow compared to &ldquo;traditional&rdquo; MVP or MVVM. There is nothing wrong with MVP or MVVM and I&rsquo;m not saying that MVI is better than other architectural patterns. However, I think that MVI helps us to write elegant code for complex problems as we will see in the <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-3/">next part (Part 3)</a> of this blog series when we are going to talk about state reducers.</p>
+<p>In this second part we have talked about the basics of Model-View-Intent and implemented a very simple screen by using MVI to get our feet wet. Maybe this example is too simple so that you don&rsquo;t fully see yet the benefits of MVI pattern, a Model which represents State and the unidirectional data flow compared to &ldquo;traditional&rdquo; MVP or MVVM. There is nothing wrong with MVP or MVVM and I&rsquo;m not saying that MVI is better than other architectural patterns. However, I think that MVI helps us to write elegant code for complex problems as we will see in the <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-3/">next part (Part 3)</a> of this blog series when we are going to talk about state reducers.</p>
 
     
     <div class="series-box">
@@ -478,35 +478,35 @@ Since intent() and subscribeViewState() already take care of subscription manage
         <ul>
         
             <li>
-                <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-1/">Reactive Apps with Model-View-Intent - Part 1: Model</a>
+                <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-1/">Reactive Apps with Model-View-Intent - Part 1: Model</a>
             </li>
         
             <li>
-                <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-2/">Reactive Apps with Model-View-Intent - Part 2: View and Intent</a>
+                <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-2/">Reactive Apps with Model-View-Intent - Part 2: View and Intent</a>
             </li>
         
             <li>
-                <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-3/">Reactive Apps with Model-View-Intent - Part 3: State Reducer</a>
+                <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-3/">Reactive Apps with Model-View-Intent - Part 3: State Reducer</a>
             </li>
         
             <li>
-                <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-4/">Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</a>
+                <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-4/">Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</a>
             </li>
         
             <li>
-                <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-5/">Reactive Apps with Model-View-Intent - Part 5: Debugging with ease</a>
+                <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-5/">Reactive Apps with Model-View-Intent - Part 5: Debugging with ease</a>
             </li>
         
             <li>
-                <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-6/">Reactive Apps with Model-View-Intent - Part 6: Restoring State</a>
+                <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-6/">Reactive Apps with Model-View-Intent - Part 6: Restoring State</a>
             </li>
         
             <li>
-                <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a>
+                <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a>
             </li>
         
             <li>
-                <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a>
+                <a href="https://sockeqwe.github.io/pages/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a>
             </li>
         
         </ul>
@@ -527,38 +527,29 @@ Since intent() and subscribeViewState() already take care of subscription manage
   <h4 class="mb-4">LATEST POSTS</h4>
   
   <div class="media mb-4">
-    <div class="post-thumb-sm mr-3">
-      <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-8/"><img class="mr-3 post-thumb-sm" src="https://hannesdorfmann.com/pages/"></a>
-    </div>
     <div class="media-body">
       <ul class="list-inline d-flex justify-content-between mb-2">
         <li class="list-inline-item">May 06, 2018</li>
       </ul>
-      <h6><a class="text-dark" href="https://hannesdorfmann.com/pages/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+      <h6><a class="text-dark" href="https://sockeqwe.github.io/pages/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
     </div>
   </div>
   
   <div class="media mb-4">
-    <div class="post-thumb-sm mr-3">
-      <a href="https://hannesdorfmann.com/pages/android/coordinators-android/"><img class="mr-3 post-thumb-sm" src="https://hannesdorfmann.com/pages/"></a>
-    </div>
     <div class="media-body">
       <ul class="list-inline d-flex justify-content-between mb-2">
         <li class="list-inline-item">May 05, 2018</li>
       </ul>
-      <h6><a class="text-dark" href="https://hannesdorfmann.com/pages/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+      <h6><a class="text-dark" href="https://sockeqwe.github.io/pages/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
     </div>
   </div>
   
   <div class="media mb-4">
-    <div class="post-thumb-sm mr-3">
-      <a href="https://hannesdorfmann.com/pages/android/mosby3-mvi-7/"><img class="mr-3 post-thumb-sm" src="https://hannesdorfmann.com/pages/"></a>
-    </div>
     <div class="media-body">
       <ul class="list-inline d-flex justify-content-between mb-2">
         <li class="list-inline-item">Sep 13, 2017</li>
       </ul>
-      <h6><a class="text-dark" href="https://hannesdorfmann.com/pages/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+      <h6><a class="text-dark" href="https://sockeqwe.github.io/pages/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
     </div>
   </div>
   
@@ -628,7 +619,7 @@ Since intent() and subscribeViewState() already take care of subscription manage
             
             <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
             
-            <li class="list-inline-item"><a href="https://hannesdorfmann.com/pages//index.xml" class="text-dark"><i class="ti-rss"></i></a></li>
+            <li class="list-inline-item"><a href="https://sockeqwe.github.io/pages//index.xml" class="text-dark"><i class="ti-rss"></i></a></li>
           </ul>
         </div>
       </div>
@@ -640,34 +631,34 @@ Since intent() and subscribeViewState() already take care of subscription manage
 
 
 <script>
-  var indexURL = "https://hannesdorfmann.com/pages/index.json"
+  var indexURL = "https://sockeqwe.github.io/pages/index.json"
 </script>
 
 
 <!-- JS Plugins -->
 
-<script src="https://hannesdorfmann.com/pages/plugins/jQuery/jquery.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/jQuery/jquery.min.js"></script>
 
-<script src="https://hannesdorfmann.com/pages/plugins/bootstrap/bootstrap.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/bootstrap/bootstrap.min.js"></script>
 
-<script src="https://hannesdorfmann.com/pages/plugins/slick/slick.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/slick/slick.min.js"></script>
 
-<script src="https://hannesdorfmann.com/pages/plugins/headroom/headroom.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/headroom/headroom.js"></script>
 
-<script src="https://hannesdorfmann.com/pages/plugins/masonry/masonry.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/masonry/masonry.js"></script>
 
-<script src="https://hannesdorfmann.com/pages/plugins/smooth-scroll/smooth-scroll.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/smooth-scroll/smooth-scroll.js"></script>
 
-<script src="https://hannesdorfmann.com/pages/plugins/search/fuse.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/search/fuse.min.js"></script>
 
-<script src="https://hannesdorfmann.com/pages/plugins/search/mark.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/search/mark.js"></script>
 
-<script src="https://hannesdorfmann.com/pages/plugins/search/search.js"></script>
+<script src="https://sockeqwe.github.io/pages/plugins/search/search.js"></script>
 
 
 <!-- Main Script -->
 
-<script src="https://hannesdorfmann.com/pages/js/script.min.js"></script>
+<script src="https://sockeqwe.github.io/pages/js/script.min.js"></script>
 
 <!-- google analitycs -->
 
