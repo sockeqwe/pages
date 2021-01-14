@@ -23,6 +23,8 @@ VERSION:	Versoin Number
   --color-tag-background: #f4f4f4;
   --font-color-tag: #000000;
   --pagination-font-color-current: #000000;
+  --seriesbox-background-color: #fdfdfd;
+  --link-color: #007bff;
 }
 
 .theme-dark {
@@ -30,10 +32,12 @@ VERSION:	Versoin Number
   --font-color-title: #ffffff;
   --font-color-text: #A7A8A8;
   --font-color-text-secondary: #ffffff;
-  --page-background-color: #3b3b3b;
+  --page-background-color: #1d1f21;
   --color-tag-background: #383838;
   --font-color-tag: #ffffff;
   --pagination-font-color-current: #ffffff;
+  --seriesbox-background-color: #282a2e;
+  --link-color: #618fb8;
 }
 
 
@@ -53,6 +57,10 @@ body {
   color: var(--font-color-text) ;
   background-color: var(--page-background-color);
   overflow-x: hidden;
+}
+
+a {
+  color: var(--link-color);
 }
 
 p, .paragraph {
@@ -958,7 +966,7 @@ blockquote > p {
   margin: 60px auto;
   width: 70%;
   padding: 16px;
-  background-color: #fdfdfd;
+  background-color: var(--seriesbox-background-color);
   border-left: var(--color-secondary)  6px solid;
   border-right: var(--color-secondary)  1px solid;
   border-top: var(--color-secondary)  1px solid;
