@@ -54,9 +54,7 @@
             {{ range site.Params.social }}
             <li class="list-inline-item"><a href="{{ .URL }}" class="text-dark"><i class="{{ .icon }}"></i></a></li>
             {{ end }}
-            {{ with .OutputFormats.Get "RSS" }}
-            <li class="list-inline-item"><a href="{{ .RelPermalink }}" class="text-dark"><i class="ti-rss"></i></a></li>
-            {{ end }}
+            <li class="list-inline-item"><a href="{{ $.Site.BaseURL }}/index.xml" class="text-dark"><i class="ti-rss"></i></a></li>
           </ul>
         </div>
       </div>
