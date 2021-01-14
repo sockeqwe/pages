@@ -3,7 +3,7 @@
     <!-- <a class="navbar-brand" href="{{site.BaseURL}}"><img class="img-fluid" src="{{ site.Params.logo | absURL }}" alt="{{site.Title}}"></a> -->
     <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
       aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+      <span id="navbar-toggler" class="ti-menu"></span>
     </button>
 
     <div class="collapse navbar-collapse text-center" id="navogation">
@@ -27,6 +27,11 @@
         </li>
         {{ end }}
         {{ end }}
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" onclick="toggleTheme()">
+            <img id="themeSwitcher" class="navbar-nav ml-lg-4" src="/images/theme/moon.svg"/>
+          </a>
+        </li>
       </ul>
       {{ if site.Params.search }}
       {{ "<!-- search -->" | safeHTML }}
@@ -35,11 +40,6 @@
         <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
       </form>
       {{ end }}
-
-      <label id="switch" class="switch navbar-nav ml-lg-4">
-        <input type="checkbox" onchange="toggleTheme()" id="slider" />
-        <span class="slider round"></span>
-      </label>
     </div>
   </nav>
 </header>
