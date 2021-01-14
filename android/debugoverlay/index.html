@@ -30,7 +30,7 @@
   <link rel="shortcut icon" href="https://sockeqwe.github.io/pages/images/favicon.png " type="image/x-icon">
   <link rel="icon" href="https://sockeqwe.github.io/pages/images/favicon.png " type="image/x-icon">
 
-  </head><body>
+  </head><body class="theme-light">
 <!-- preloader start -->
 <div class="preloader">
   <div class="loader">
@@ -48,7 +48,7 @@
     
     <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
       aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+      <span id="navbar-toggler" class="ti-menu"></span>
     </button>
 
     <div class="collapse navbar-collapse text-center" id="navogation">
@@ -78,6 +78,11 @@
         </li>
         
         
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" onclick="toggleTheme()">
+            <img id="themeSwitcher" class="navbar-nav ml-lg-4" src="/images/theme/moon.svg"/>
+          </a>
+        </li>
       </ul>
       
       <!-- search -->
