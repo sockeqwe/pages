@@ -3,7 +3,7 @@ title: Annotation Processing 101
 date: 2015-06-05
 location: Berlin, Droidcon 2015
 youtube: 43FFfTyDYEg
-speakerdeck: f913a453af1a40278031d1aefae82aa5
+speakerdeck: 4ffe12e13cff4787b5dce56620d75c4d
 ---
 
 Writing Java application can be annoying because the Java programming language requires to write boilerplate code. Writing Android apps makes no difference. Moreover, on Android you have to write a lot of code for doing simple things like setting up a Fragment with arguments, implement the Parcelable interface, define ViewHolder classes for RecyclerViews and so on.
