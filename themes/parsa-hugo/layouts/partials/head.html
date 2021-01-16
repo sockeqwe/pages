@@ -7,6 +7,9 @@
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ with site.Params.description }}{{ . }}{{ end }}{{ end }}">
   {{ with site.Params.author }}<meta name="author" content="{{ . }}">{{ end }}
   {{ hugo.Generator }}
+  <meta property='og:title' content='{{ with .Title }}{{ . }}{{ else }}{{ with site.Params.Title }}{{ . }}{{ end }}{{ end }}'/>
+  <meta property='og:description' content='{{ with .Description }}{{ . }}{{ else }}{{ with site.Params.description }}{{ . }}{{ end }}{{ end }}' />
+
 
   {{ "<!-- plugins -->" | safeHTML }}
   {{ range site.Params.plugins.css }}
@@ -29,4 +32,5 @@
     {{ "<!--RSS-->" | safeHTML }}
   {{ printf `<link rel="%s" type="%s" href="%s" title="%s" />` .Rel .MediaType.Type .Permalink $.Site.Title | safeHTML }}
   {{ end -}}
-</head>
+
+ </head>

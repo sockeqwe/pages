@@ -1,0 +1,21 @@
+<section>
+    <div class="container">
+        <div class="row justify-content-md-center">
+
+            <div class="share-post-box">
+
+                <a class="text-dark"
+                    href="https://twitter.com/intent/tweet?text=&quot;{{ .Title }}&quot;%20{{ .Permalink }}%20via%20@sockeqwe"
+                    target="_blank" title="Share on Twitter"><i class="ti-twitter-alt share-icon"></i></a>
+
+                <a class="text-dark" href="http://www.reddit.com/submit?url={{ .Permalink }}&title={{ .Title }}"
+                    target="_blank" title="Share on Reddit"><i class="ti-reddit share-icon"></i></a>
+
+
+                <a class="text-dark" href="https://www.linkedin.com/sharing/share-offsite/?url={{ .Permalink }}"
+                    target="_blank" title="Share on LinkedIn"><i class="ti-linkedin share-icon"></i></a>
+
+            </div>
+        </div>
+    </div>
+</section>

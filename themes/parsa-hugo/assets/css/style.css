@@ -972,3 +972,23 @@ blockquote > p {
 #navbar-toggler {
   color: var(--font-color-title)
 }
+
+.share-icon {
+  font-size: 34px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.share-post-box {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 40px;
+  margin-bottom:40px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right:10px;
+  border-top: 1px solid var(--font-color-title);
+  border-bottom: 1px solid var(--font-color-title);
+}
