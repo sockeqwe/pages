@@ -87,7 +87,7 @@ address = "6 rip carl Avenue CA 90733"
 # Contact Form Action
 contact_form_action = "#"
 # Google Analitycs
-google_analitycs_id = "Your ID"
+google_analitycs_id = "UA-54945521-1"
 # copyright
 copyright = "Copyright &copy; 2020 Hannes Dorfmann a theme by [themefisher.com](themefisher.com)"
 
