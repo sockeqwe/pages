@@ -2,379 +2,379 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Hannes Dorfmann</title>
-    <link>https://localhost:1313/</link>
+    <link>https://sockeqwe.github.io/pages/</link>
     <description>Recent content on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 10 Jan 2020 14:46:10 +0600</lastBuildDate>
     
-	<atom:link href="https://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sockeqwe.github.io/pages/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Flowing in the Deep - Event Streams in Kotlin</title>
-      <link>https://localhost:1313/presentations/2019-07-02-flowing-in-the-deep/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep/</link>
       <pubDate>Tue, 02 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://localhost:1313/presentations/2019-07-02-flowing-in-the-deep/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2019-07-02-flowing-in-the-deep/</guid>
       <description>The Kotlin team introduced a new type called Flow which looks similar to RxJava’s Observable or Flowable. Have you ever wondered what’s the difference between Flow and RxJava? How does Flow work under the hood? How is it connected to Coroutines? How do you write your own operator? What about Kotlin Coroutine Channels?</description>
     </item>
     
     <item>
       <title>Testing By Design</title>
-      <link>https://localhost:1313/presentations/2019-05-22-testing-by-design/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2019-05-22-testing-by-design/</link>
       <pubDate>Wed, 22 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://localhost:1313/presentations/2019-05-22-testing-by-design/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2019-05-22-testing-by-design/</guid>
       <description>Together with my friend Kostiantyn Tarasenko we talked about testing android apps.
 Building an efficient and maintainable test suite for an app is challenging. Design patterns like MVP or MVVM help decouple responsibilities so that it becomes easier to write testable code. What is the next level though? How can we get more out of our tests?</description>
     </item>
     
     <item>
       <title>Advanced Model-View-Intent: The Missing Guide</title>
-      <link>https://localhost:1313/presentations/2018-06-26-advanced-mvi-guide/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2018-06-26-advanced-mvi-guide/</link>
       <pubDate>Tue, 26 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://localhost:1313/presentations/2018-06-26-advanced-mvi-guide/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2018-06-26-advanced-mvi-guide/</guid>
       <description>Together with my friend Kostiantyn Tarasenko we talked about Model-View-Intent (MVI) and were sharing some tips that worked well for us.
 We also introduced a library to help us build state machines with RxJava called RxRedux</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 8: Navigation</title>
-      <link>https://localhost:1313/android/mosby3-mvi-8/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-8/</link>
       <pubDate>Sun, 06 May 2018 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby3-mvi-8/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-8/</guid>
       <description>In my previous blog post we discussed how the Coordinator pattern can be applied on Android. This time I would like to show how this can be used in Model-View-Intent.
 If you don&amp;rsquo;t know yet what the Coordinator pattern is I highly recommend to go back and read the introdcution.</description>
     </item>
     
     <item>
       <title>In-App Navigation with Coordinators</title>
-      <link>https://localhost:1313/android/coordinators-android/</link>
+      <link>https://sockeqwe.github.io/pages/android/coordinators-android/</link>
       <pubDate>Sat, 05 May 2018 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/coordinators-android/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/coordinators-android/</guid>
       <description>Over the last years we have established best practices for writing android apps: clean architecture, architectural patterns like MVP, MVVM, MVI, Repository pattern and so on. But what about in-app navigation? In this blog post I would like to talk about the Coordinator pattern and how we could apply this pattern in android development to organize our in-app navigation code.</description>
     </item>
     
     <item>
       <title>Demystifying RxJava by reimplementing it from scratch</title>
-      <link>https://localhost:1313/presentations/2018-04-20-demystifying-rxjava/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2018-04-20-demystifying-rxjava/</link>
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://localhost:1313/presentations/2018-04-20-demystifying-rxjava/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2018-04-20-demystifying-rxjava/</guid>
       <description>There are no slides available because it was actually a live coding session where we reimplemented RxJava&amp;rsquo;s basic of observers, subscriber and operators.</description>
     </item>
     
     <item>
       <title>Reactive State Management with Model-View-Intent</title>
-      <link>https://localhost:1313/presentations/2018-10-22-reactive-statemanagement-mvi/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2018-10-22-reactive-statemanagement-mvi/</link>
       <pubDate>Thu, 05 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://localhost:1313/presentations/2018-10-22-reactive-statemanagement-mvi/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2018-10-22-reactive-statemanagement-mvi/</guid>
       <description>Managing application state is not a simple topic especially on Android with a synchronous and asynchronous source of data, components having different lifecycles, back stack navigation and process death.
 Model-View-Intent (MVI) is an architectural design pattern to separate the View from the Model. In this talk, we will discuss the idea behind MVI and how this pattern compares to other architectural patterns like Flux, Redux, Model-View-Presenter or Model-View-ViewModel.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</title>
-      <link>https://localhost:1313/android/mosby3-mvi-7/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-7/</link>
       <pubDate>Wed, 13 Sep 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby3-mvi-7/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-7/</guid>
       <description>In my previous blog post we discussed the importance of proper state management and why I think introducing a SingleLiveEvent as discussed in Google&amp;rsquo;s Architecture Components GitHub repo is not a good idea because it just hides the real underlying problem: state management. In this blog post I would like to discuss how the problem SingleLiveEvent claims to solve can be solved with Model-View-Intent and proper state management.</description>
     </item>
     
     <item>
       <title>Architecture Components - I&#39;m not a purist but ...</title>
-      <link>https://localhost:1313/android/arch-components-purist/</link>
+      <link>https://sockeqwe.github.io/pages/android/arch-components-purist/</link>
       <pubDate>Sun, 25 Jun 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/arch-components-purist/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/arch-components-purist/</guid>
       <description>At I/O 2017 Google surprised us with a new initiative: Architecture Components. I really appreciate this initiative. In this blog post I would like to share my thoughts about ViewModel and some pitfalls you might stumble upon when using ViewModel and LiveData by taking a look at the official Google samples.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 6: Restoring State</title>
-      <link>https://localhost:1313/android/mosby3-mvi-6/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-6/</link>
       <pubDate>Tue, 02 May 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby3-mvi-6/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-6/</guid>
       <description>In the previous blog posts we have discussed Model-View-Intent (MVI) and the importance of unidirectional data flow. That simplifies state restoration a lot. How and why? We will discuss that in this blog post.
 There are two scenarios we will focus on in this blog post: Restoring state &amp;ldquo;in memory&amp;rdquo; (for example during screen orientation change) and restoring a &amp;ldquo;persistent state&amp;rdquo; (for example from Bundle previously saved in Activity.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 5: Debugging with ease</title>
-      <link>https://localhost:1313/android/mosby3-mvi-5/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-5/</link>
       <pubDate>Fri, 17 Mar 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby3-mvi-5/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-5/</guid>
       <description>In the previous blog posts we have discussed the Model-View-Intent (MVI) pattern and it&amp;rsquo;s characteristics. In part 1 we have talked about the importance of an unidirectional data flow and application state that is driven by the &amp;ldquo;business logic&amp;rdquo;. In this blog post we will see how this pays off when it comes to debugging to simplify the life of developers.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</title>
-      <link>https://localhost:1313/android/mosby3-mvi-4/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-4/</link>
       <pubDate>Sat, 25 Feb 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby3-mvi-4/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-4/</guid>
       <description>In this blog post we will discuss how to build independent UI components and clarify why Parent-Child relations are a code smell in my opinion. Furthermore, we will discuss why I think such relations are needless.
 One question that arises from time to time with architectural design patterns such as Model-View-Intent, Model-View-Presenter or Model-View-ViewModel is how do Presenters (or ViewModels) communicate with each other?</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 3: State Reducer</title>
-      <link>https://localhost:1313/android/mosby3-mvi-3/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-3/</link>
       <pubDate>Thu, 19 Jan 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby3-mvi-3/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-3/</guid>
       <description>In the previous part we have discussed how to implement a simple screen with the Model-View-Intent pattern with an unidirectional data flow. In this blog post we are going to build a more complex screen with MVI with the help of a state reducer.
 If you haven&amp;rsquo;t read part 2 yet, you should read that before continue with this blog post, because there is described how we connect the View via Presenter with the business logic and how data flows unidirectional.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 2: View and Intent</title>
-      <link>https://localhost:1313/android/mosby3-mvi-2/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-2/</link>
       <pubDate>Tue, 17 Jan 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby3-mvi-2/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-2/</guid>
       <description>In the first part we have discussed what a Model actually is, the relation to State and how a well defined Model can solve some common issues in android development. In this blog post we continue our journey towards &amp;ldquo;Reactive Apps&amp;rdquo; by introducing the Model-View-Intent pattern to build Reactive Apps.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 1: Model</title>
-      <link>https://localhost:1313/android/mosby3-mvi-1/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-1/</link>
       <pubDate>Mon, 09 Jan 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby3-mvi-1/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-1/</guid>
       <description>Once I have figured out that I have modeled my Model classes wrong all the time, a lot of issues and headache I previously had with some Android platform related topics are gone. Moreover, finally I was able to build Reactive Apps using RxJava and Model-View-Intent (MVI) as I never was able before although the apps I have built so far are reactive too but not on the same level of reactiveness as I&amp;rsquo;m going to describe in this blog post series.</description>
     </item>
     
     <item>
       <title>Why a library developer should use abstract class instead of interface</title>
-      <link>https://localhost:1313/android/library-abstract-class/</link>
+      <link>https://sockeqwe.github.io/pages/android/library-abstract-class/</link>
       <pubDate>Thu, 13 Oct 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/library-abstract-class/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/library-abstract-class/</guid>
       <description>Use interfaces for java development they said. It will be more flexible they said. Well, that all might be true but for library projects that doesn&amp;rsquo;t necessarily has to be true as well. In this post I will explain you why I have switched from interface to an abstract class as base class in one of my library projects called AdapterDelegates 3.</description>
     </item>
     
     <item>
       <title>The evolution of the Repository Pattern - Be aware of over abstraction</title>
-      <link>https://localhost:1313/android/from-prefabricated-house-to-lego-house/</link>
+      <link>https://sockeqwe.github.io/pages/android/from-prefabricated-house-to-lego-house/</link>
       <pubDate>Sun, 17 Jul 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/from-prefabricated-house-to-lego-house/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/from-prefabricated-house-to-lego-house/</guid>
       <description>A listener from our podcast, The Context, that Artem Zinnatullin and I run asked me, if I can give him an example of the Repository Pattern. So I googled around and stumbled upon some blog posts and found out that the term Repository Pattern is used and described in many different ways.</description>
     </item>
     
     <item>
       <title>Refactoring Plaid App – A reactive MVP approach</title>
-      <link>https://localhost:1313/presentations/2016-06-16-refactoring-plaid/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2016-06-16-refactoring-plaid/</link>
       <pubDate>Thu, 16 Jun 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://localhost:1313/presentations/2016-06-16-refactoring-plaid/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2016-06-16-refactoring-plaid/</guid>
       <description>Nick Butcher, developer advocate at Google, has open sourced an android app called Plaid with an outstanding UI, meaningful animations and a lot of others material design goodies.
 However, from the software architecture’s point of view, the architecture of this app more “traditional” so that both, beginners and expert developers, can understand the source code easily.</description>
     </item>
     
     <item>
       <title>Android Software Architecutre by Example</title>
-      <link>https://localhost:1313/presentations/2016-06-02-android-architecture-by-example/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2016-06-02-android-architecture-by-example/</link>
       <pubDate>Thu, 02 Jun 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://localhost:1313/presentations/2016-06-02-android-architecture-by-example/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2016-06-02-android-architecture-by-example/</guid>
       <description>Comparing some architectural design patterns like MVC, MVP, MVVM, Redux, Flux, MVI and how they could be applied on existing open source applications.</description>
     </item>
     
     <item>
       <title>From Prefab House to Lego House</title>
-      <link>https://localhost:1313/android/from-prefabricated-house-to-lego-house/</link>
+      <link>https://sockeqwe.github.io/pages/android/from-prefabricated-house-to-lego-house/</link>
       <pubDate>Fri, 13 May 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/from-prefabricated-house-to-lego-house/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/from-prefabricated-house-to-lego-house/</guid>
       <description>Before joining my current employer I have worked for an app agency and one thing I have noticed is that we were building every app entirely new from scratch even if we were building a similar app for the same customer with similar UI. We hadn&amp;rsquo;t reusable components. In this blog post I want to share some thoughts and lessons learned while building such reusable components.</description>
     </item>
     
     <item>
       <title>Mixins as an alternative to inheritance in Java 8</title>
-      <link>https://localhost:1313/android/java-mixins/</link>
+      <link>https://sockeqwe.github.io/pages/android/java-mixins/</link>
       <pubDate>Tue, 26 Apr 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/java-mixins/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/java-mixins/</guid>
       <description>Starting in Android N Google has added some java 8 language features. One of those features is the ability to add default methods to interfaces. Surprisingly (since java 8 has already been released 2 years ago) I haven&amp;rsquo;t found good articles describing the advantage of default methods for interfaces: Mixins!</description>
     </item>
     
     <item>
       <title>Presenters don&#39;t need lifecycle events</title>
-      <link>https://localhost:1313/android/presenters-dont-need-lifecycle/</link>
+      <link>https://sockeqwe.github.io/pages/android/presenters-dont-need-lifecycle/</link>
       <pubDate>Thu, 24 Mar 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/presenters-dont-need-lifecycle/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/presenters-dont-need-lifecycle/</guid>
       <description>I have been asked several times why Presenters in Mosby (MVP library) don&amp;rsquo;t have lifecycle callback methods like onCreate(Bundle), onResume() etc. Also the awesome guys over at SoundCloud have published a library called LightCycle that helps break logic out of Activity or Fragments into smaller containers bound to the parents Activity&amp;rsquo;s or Fragment&amp;rsquo;s lifecycle.</description>
     </item>
     
     <item>
       <title>Model-View-Intent on Android</title>
-      <link>https://localhost:1313/android/model-view-intent/</link>
+      <link>https://sockeqwe.github.io/pages/android/model-view-intent/</link>
       <pubDate>Fri, 04 Mar 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/model-view-intent/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/model-view-intent/</guid>
       <description>As developers we should always think outside the box. A month ago Artem Zinnatullin and I have discussed some architectural trends on android and on other platforms, like .NET and javascript, in his Podcast The Context. A few days later Christina Lee gave an awesome lightning talk Redux-ing UI Bugs during square&amp;rsquo;s The Journey of Android Engineers event.</description>
     </item>
     
     <item>
       <title>Let Mosby Flow - An alternative to Fragments</title>
-      <link>https://localhost:1313/android/let-mosby-flow/</link>
+      <link>https://sockeqwe.github.io/pages/android/let-mosby-flow/</link>
       <pubDate>Tue, 01 Mar 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/let-mosby-flow/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/let-mosby-flow/</guid>
       <description>The usage of Fragments in Android apps is highly controversial. While some developers love them, others hate them. In this blog post I will give you a short introduction of how to use Mosby 3.0 to build MVP base screens and square&amp;rsquo;s Flow library as navigation stack replacement.
 Preface: Usually I use Fragments in my apps and 99% of the time they work well.</description>
     </item>
     
     <item>
       <title>AdapterCommands</title>
-      <link>https://localhost:1313/android/adapter-commands/</link>
+      <link>https://sockeqwe.github.io/pages/android/adapter-commands/</link>
       <pubDate>Sun, 07 Feb 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/adapter-commands/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/adapter-commands/</guid>
       <description>Last week I was honored to be guest at Artem Zinnatullin&amp;rsquo;s podcast The Context where we talked about software architecture on android. In this episode I have highlighted how important a presentation model in MVP is by giving an example how to deal with RecyclerView Adapters dataset changes. Afterwards people asked me how exactly do I apply animated dataset changes and why a presentation model is helpful in this case.</description>
     </item>
     
     <item>
       <title>Refactoring Plaid App - A reactive MVP Approach (Part 2)</title>
-      <link>https://localhost:1313/android/plaid-refactored-2/</link>
+      <link>https://sockeqwe.github.io/pages/android/plaid-refactored-2/</link>
       <pubDate>Wed, 02 Dec 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/plaid-refactored-2/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/plaid-refactored-2/</guid>
       <description>This is the second part of how we could refactor the Plaid app open sourced by Nick Butcher. In this part we are going to enhance the MVP architecture described in the first part to become truly reactive.
 Preface: I started the refactoring with the strong belief that I can refactor the whole app.</description>
     </item>
     
     <item>
       <title>Refactoring Plaid App - A reactive MVP Approach (Part 1)</title>
-      <link>https://localhost:1313/android/plaid-refactored-1/</link>
+      <link>https://sockeqwe.github.io/pages/android/plaid-refactored-1/</link>
       <pubDate>Sun, 29 Nov 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/plaid-refactored-1/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/plaid-refactored-1/</guid>
       <description>Nick Butcher has open sourced on github an awesome app called Plaid. The app is pretty cool and has an outstanding UI / UX. Whenever source code of such awesome apps are available developers start to copy code and best practice tips from it. So I did the same and decided to dive into the code of Plaid.</description>
     </item>
     
     <item>
       <title>FragmentArgs 3.0</title>
-      <link>https://localhost:1313/android/fragmentargs3/</link>
+      <link>https://sockeqwe.github.io/pages/android/fragmentargs3/</link>
       <pubDate>Mon, 02 Nov 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/fragmentargs3/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/fragmentargs3/</guid>
       <description>I finally found some time last weekend to work on FragmentArgs and to release a new major version 3.0. Here is an overview of new features and bug fixes.
 Migration The good news first: FragmentArgs 3.0 is completely backward compatible to all previous versions (down to 1.0). So basically you have to do nothing.</description>
     </item>
     
     <item>
       <title>Debug Overlay</title>
-      <link>https://localhost:1313/android/debugoverlay/</link>
+      <link>https://sockeqwe.github.io/pages/android/debugoverlay/</link>
       <pubDate>Fri, 16 Oct 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/debugoverlay/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/debugoverlay/</guid>
       <description>Lately I was looking for a way to display some app internal information to an external staff that is not a developer. I haven&amp;rsquo;t found a library that fit my needs. Hence I have written my own tiny library called DebugOverlay to do this job.
 Usually we as developers would log app internal things by using logcat Log.</description>
     </item>
     
     <item>
       <title>Don&#39;t interrupt the user&#39;s flow</title>
-      <link>https://localhost:1313/android/dont-interrupt-user-flow/</link>
+      <link>https://sockeqwe.github.io/pages/android/dont-interrupt-user-flow/</link>
       <pubDate>Tue, 18 Aug 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/dont-interrupt-user-flow/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/dont-interrupt-user-flow/</guid>
       <description>From my point of view user experience is a very important topic but sometimes doesn&amp;rsquo;t get the attention it deserves. In this blog post I want to show you how to use RecyclerView to build an user experience that is not interrupting the user&amp;rsquo;s flow.
 I&amp;rsquo;m very lucky to work in a very talented team at Tickaroo where we are building and maintaining the android and iOS apps for kicker, one of the most important football magazine in Europe (even though the main language is German).</description>
     </item>
     
     <item>
       <title>Joe&#39;s great adapter hell escape</title>
-      <link>https://localhost:1313/android/adapter-delegates/</link>
+      <link>https://sockeqwe.github.io/pages/android/adapter-delegates/</link>
       <pubDate>Tue, 28 Jul 2015 14:46:10 +0600</pubDate>
       
-      <guid>https://localhost:1313/android/adapter-delegates/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/adapter-delegates/</guid>
       <description>Let me tell you a story about Joe Somebody an android developer at MyLittleZoo Inc. and how he walked through the hell while trying to create reusable RecyclerView Adapters with different view types and how he finally managed to implement reusable Adapters painlessly.
 Once upon a time Joe Somebody, an android developer, was working for a young startup called MyLittleZoo Inc.</description>
     </item>
     
     <item>
       <title>SQLBrite DAO</title>
-      <link>https://localhost:1313/android/sqlbrite-dao/</link>
+      <link>https://sockeqwe.github.io/pages/android/sqlbrite-dao/</link>
       <pubDate>Wed, 24 Jun 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/sqlbrite-dao/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/sqlbrite-dao/</guid>
       <description>Earlier this year, one day before Valentine&amp;rsquo;s Day to be precise, I had the glorious idea (ironie) to surprise my lovely girlfriend with a special android app on Valentine&amp;rsquo;s Day. Who said computer science can&amp;rsquo;t be romantic?
 The idea was simple: I wanted to build an android app that imitates and looks like Tinder but instead of displaying real people nearby, I faked everything so that only my profile gets displayed so she only can choose me.</description>
     </item>
     
     <item>
       <title>Annotation Processing 101</title>
-      <link>https://localhost:1313/presentations/2015-06-04-annotation-processing101/</link>
+      <link>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</link>
       <pubDate>Fri, 05 Jun 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://localhost:1313/presentations/2015-06-04-annotation-processing101/</guid>
+      <guid>https://sockeqwe.github.io/pages/presentations/2015-06-04-annotation-processing101/</guid>
       <description>Writing Java application can be annoying because the Java programming language requires to write boilerplate code. Writing Android apps makes no difference. Moreover, on Android you have to write a lot of code for doing simple things like setting up a Fragment with arguments, implement the Parcelable interface, define ViewHolder classes for RecyclerViews and so on.</description>
     </item>
     
     <item>
       <title>Stinson&#39;s Playbook for Mosby</title>
-      <link>https://localhost:1313/android/mosby-playbook/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby-playbook/</link>
       <pubDate>Sat, 09 May 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby-playbook/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby-playbook/</guid>
       <description>In my previous blog post I introduced Mosby, a Model-View-Presenter library for android. This time I&amp;rsquo;m going to discuss some more details about MVP in general and Mosby. I have implemented a mail client sample which can be found on Github which is used in this blog entry to describe how to use Mosby and to answer some of the common questions I have been asked after having released Mosby.</description>
     </item>
     
     <item>
       <title>Ted Mosby - Software Architect</title>
-      <link>https://localhost:1313/android/mosby/</link>
+      <link>https://sockeqwe.github.io/pages/android/mosby/</link>
       <pubDate>Wed, 25 Mar 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/mosby/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/mosby/</guid>
       <description>Ted Mosby, architect in How I met your mother (one of my favorite tv shows) was the inspiration for the name of this android library I&amp;rsquo;m going to talk about in this blog post. This library helps you to build good, robust and reusable software by implementing Model-View-Presenter pattern on android along with some nice features like ViewState for handling screen orientation changes easily.</description>
     </item>
     
     <item>
       <title>Annotation Processing 101</title>
-      <link>https://localhost:1313/annotation-processing/annotationprocessing101/</link>
+      <link>https://sockeqwe.github.io/pages/annotation-processing/annotationprocessing101/</link>
       <pubDate>Sat, 10 Jan 2015 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/annotation-processing/annotationprocessing101/</guid>
+      <guid>https://sockeqwe.github.io/pages/annotation-processing/annotationprocessing101/</guid>
       <description>In this blog entry I would like to explain how to write an annotation processor. First, I am going to explain to you what annotation processing is, what you can do with that powerful tool and finally what you cannot do with it. In a second step we will implement a simple annotation processor step by step.</description>
     </item>
     
     <item>
       <title>AnnotatedAdapter</title>
-      <link>https://localhost:1313/android/annotatedadapter/</link>
+      <link>https://sockeqwe.github.io/pages/android/annotatedadapter/</link>
       <pubDate>Wed, 24 Sep 2014 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/annotatedadapter/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/annotatedadapter/</guid>
       <description>With FragmentArgs and ParcelablePlease I have already shown that Annotation Processor is really helpful to speedup development by reducing writing boilerplate code. Regarding Android I found one scenario where I find myself writing nearly the same code ever and ever again. I&amp;rsquo;m looking at you Adapter with your ViewHolders, layout inflating code and view types.</description>
     </item>
     
     <item>
       <title>ParcelablePlease</title>
-      <link>https://localhost:1313/android/parcelableplease/</link>
+      <link>https://sockeqwe.github.io/pages/android/parcelableplease/</link>
       <pubDate>Wed, 24 Sep 2014 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/parcelableplease/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/parcelableplease/</guid>
       <description>In my last blog post I have introduced FragmentArgs an Annotation Processor for Fragments that reduces writing boilerplate code. In this post I want to talk about a similar problem android developer face: Writing boilerplate code for Parcelable
  This post is part of a series of posts about useful annotation processors like FragmentArgs or AnnotatedAdapter</description>
     </item>
     
     <item>
       <title>FragmentArgs</title>
-      <link>https://localhost:1313/android/fragmentargs/</link>
+      <link>https://sockeqwe.github.io/pages/android/fragmentargs/</link>
       <pubDate>Mon, 15 Sep 2014 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/fragmentargs/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/fragmentargs/</guid>
       <description>Developing for Android is sometimes painful. You have to write lot of code to do simple things like setting up a Fragment. Fortunately java supports a powerful tool: Annotation Processors
  This post is part of a series of posts about useful annotation processors like ParcelablePlease or AnnotatedAdapter
  The Problem with Fragments is that you have to set arguments (the parameters) for a fragment to make them work correctly.</description>
@@ -382,10 +382,10 @@ The idea was simple: I wanted to build an android app that imitates and looks li
     
     <item>
       <title>SwipeBack</title>
-      <link>https://localhost:1313/android/swipeback/</link>
+      <link>https://sockeqwe.github.io/pages/android/swipeback/</link>
       <pubDate>Fri, 27 Dec 2013 10:00:00 +0100</pubDate>
       
-      <guid>https://localhost:1313/android/swipeback/</guid>
+      <guid>https://sockeqwe.github.io/pages/android/swipeback/</guid>
       <description>SwipeBack for Android Activities does pretty the same as the android &amp;ldquo;back-button&amp;rdquo; does, but in a really intuitive way by using a swipe gesture
 The Samsung Galaxy Nexus was one of the first device without hardware buttons for &amp;ldquo;back&amp;rdquo;, &amp;ldquo;home&amp;rdquo; and &amp;ldquo;app switching (multitasking)&amp;rdquo; but used the androids navigation bar on screen (introduced in Android 4.</description>
     </item>
