@@ -1,5 +1,5 @@
 # default config
-baseurl = "http://hannesdorfmann.com"
+baseurl = "https://hannesdorfmann.com"
 # baseurl = "https://localhost:1313"
 languageCode = "en-us"
 title = "Hannes Dorfmann"
