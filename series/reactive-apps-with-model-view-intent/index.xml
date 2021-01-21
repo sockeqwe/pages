@@ -2,88 +2,88 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Reactive Apps with Model-View-Intent on Hannes Dorfmann</title>
-    <link>https://sockeqwe.github.io/pages/series/reactive-apps-with-model-view-intent/</link>
+    <link>https://hannesdorfmann.com/series/reactive-apps-with-model-view-intent/</link>
     <description>Recent content in Reactive Apps with Model-View-Intent on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 06 May 2018 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="https://sockeqwe.github.io/pages/series/reactive-apps-with-model-view-intent/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hannesdorfmann.com/series/reactive-apps-with-model-view-intent/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 8: Navigation</title>
-      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-8/</link>
+      <link>https://hannesdorfmann.com/android/mosby3-mvi-8/</link>
       <pubDate>Sun, 06 May 2018 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-8/</guid>
+      <guid>https://hannesdorfmann.com/android/mosby3-mvi-8/</guid>
       <description>In my previous blog post we discussed how the Coordinator pattern can be applied on Android. This time I would like to show how this can be used in Model-View-Intent.
 If you don&amp;rsquo;t know yet what the Coordinator pattern is I highly recommend to go back and read the introdcution.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</title>
-      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-7/</link>
+      <link>https://hannesdorfmann.com/android/mosby3-mvi-7/</link>
       <pubDate>Wed, 13 Sep 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-7/</guid>
+      <guid>https://hannesdorfmann.com/android/mosby3-mvi-7/</guid>
       <description>In my previous blog post we discussed the importance of proper state management and why I think introducing a SingleLiveEvent as discussed in Google&amp;rsquo;s Architecture Components GitHub repo is not a good idea because it just hides the real underlying problem: state management. In this blog post I would like to discuss how the problem SingleLiveEvent claims to solve can be solved with Model-View-Intent and proper state management.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 6: Restoring State</title>
-      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-6/</link>
+      <link>https://hannesdorfmann.com/android/mosby3-mvi-6/</link>
       <pubDate>Tue, 02 May 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-6/</guid>
+      <guid>https://hannesdorfmann.com/android/mosby3-mvi-6/</guid>
       <description>In the previous blog posts we have discussed Model-View-Intent (MVI) and the importance of unidirectional data flow. That simplifies state restoration a lot. How and why? We will discuss that in this blog post.
 There are two scenarios we will focus on in this blog post: Restoring state &amp;ldquo;in memory&amp;rdquo; (for example during screen orientation change) and restoring a &amp;ldquo;persistent state&amp;rdquo; (for example from Bundle previously saved in Activity.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 5: Debugging with ease</title>
-      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-5/</link>
+      <link>https://hannesdorfmann.com/android/mosby3-mvi-5/</link>
       <pubDate>Fri, 17 Mar 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-5/</guid>
+      <guid>https://hannesdorfmann.com/android/mosby3-mvi-5/</guid>
       <description>In the previous blog posts we have discussed the Model-View-Intent (MVI) pattern and it&amp;rsquo;s characteristics. In part 1 we have talked about the importance of an unidirectional data flow and application state that is driven by the &amp;ldquo;business logic&amp;rdquo;. In this blog post we will see how this pays off when it comes to debugging to simplify the life of developers.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 4: Independent UI Components</title>
-      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-4/</link>
+      <link>https://hannesdorfmann.com/android/mosby3-mvi-4/</link>
       <pubDate>Sat, 25 Feb 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-4/</guid>
+      <guid>https://hannesdorfmann.com/android/mosby3-mvi-4/</guid>
       <description>In this blog post we will discuss how to build independent UI components and clarify why Parent-Child relations are a code smell in my opinion. Furthermore, we will discuss why I think such relations are needless.
 One question that arises from time to time with architectural design patterns such as Model-View-Intent, Model-View-Presenter or Model-View-ViewModel is how do Presenters (or ViewModels) communicate with each other?</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 3: State Reducer</title>
-      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-3/</link>
+      <link>https://hannesdorfmann.com/android/mosby3-mvi-3/</link>
       <pubDate>Thu, 19 Jan 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-3/</guid>
+      <guid>https://hannesdorfmann.com/android/mosby3-mvi-3/</guid>
       <description>In the previous part we have discussed how to implement a simple screen with the Model-View-Intent pattern with an unidirectional data flow. In this blog post we are going to build a more complex screen with MVI with the help of a state reducer.
 If you haven&amp;rsquo;t read part 2 yet, you should read that before continue with this blog post, because there is described how we connect the View via Presenter with the business logic and how data flows unidirectional.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 2: View and Intent</title>
-      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-2/</link>
+      <link>https://hannesdorfmann.com/android/mosby3-mvi-2/</link>
       <pubDate>Tue, 17 Jan 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-2/</guid>
+      <guid>https://hannesdorfmann.com/android/mosby3-mvi-2/</guid>
       <description>In the first part we have discussed what a Model actually is, the relation to State and how a well defined Model can solve some common issues in android development. In this blog post we continue our journey towards &amp;ldquo;Reactive Apps&amp;rdquo; by introducing the Model-View-Intent pattern to build Reactive Apps.</description>
     </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 1: Model</title>
-      <link>https://sockeqwe.github.io/pages/android/mosby3-mvi-1/</link>
+      <link>https://hannesdorfmann.com/android/mosby3-mvi-1/</link>
       <pubDate>Mon, 09 Jan 2017 10:00:00 +0100</pubDate>
       
-      <guid>https://sockeqwe.github.io/pages/android/mosby3-mvi-1/</guid>
+      <guid>https://hannesdorfmann.com/android/mosby3-mvi-1/</guid>
       <description>Once I have figured out that I have modeled my Model classes wrong all the time, a lot of issues and headache I previously had with some Android platform related topics are gone. Moreover, finally I was able to build Reactive Apps using RxJava and Model-View-Intent (MVI) as I never was able before although the apps I have built so far are reactive too but not on the same level of reactiveness as I&amp;rsquo;m going to describe in this blog post series.</description>
     </item>
     
