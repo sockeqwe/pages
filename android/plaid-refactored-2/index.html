@@ -14,24 +14,24 @@
 
   <!-- plugins -->
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/plugins/bootstrap/bootstrap.min.css ">
+  <link rel="stylesheet" href="http://hannesdorfmann.com/plugins/bootstrap/bootstrap.min.css ">
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/plugins/slick/slick.css ">
+  <link rel="stylesheet" href="http://hannesdorfmann.com/plugins/slick/slick.css ">
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/plugins/themify-icons/themify-icons.css ">
+  <link rel="stylesheet" href="http://hannesdorfmann.com/plugins/themify-icons/themify-icons.css ">
   
 
   <!-- Main Stylesheet -->
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/css/style.min.css" media="screen">
+  <link rel="stylesheet" href="http://hannesdorfmann.com/css/style.min.css" media="screen">
 
   <!-- Syntax highlightning Stylesheet -->
   
-  <link rel="stylesheet" href="https://hannesdorfmann.com/css/syntax-highlighting.min.css" media="screen">
+  <link rel="stylesheet" href="http://hannesdorfmann.com/css/syntax-highlighting.min.css" media="screen">
 
   <!--Favicon-->
-  <link rel="shortcut icon" href="https://hannesdorfmann.com/images/favicon.png " type="image/x-icon">
-  <link rel="icon" href="https://hannesdorfmann.com/images/favicon.png " type="image/x-icon">
+  <link rel="shortcut icon" href="http://hannesdorfmann.com/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="http://hannesdorfmann.com/images/favicon.png " type="image/x-icon">
 
   </head><body class="theme-light">
 <!-- preloader start -->
@@ -59,25 +59,25 @@
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com">Home</a>
+          <a class="nav-link text-uppercase text-dark" href="http://hannesdorfmann.com">Home</a>
         </li>
         
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/about">About</a>
+          <a class="nav-link text-uppercase text-dark" href="http://hannesdorfmann.com/about">About</a>
         </li>
         
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/presentations">Presentations</a>
+          <a class="nav-link text-uppercase text-dark" href="http://hannesdorfmann.com/presentations">Presentations</a>
         </li>
         
         
         
         <li class="nav-item">
-          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/contact">Contact</a>
+          <a class="nav-link text-uppercase text-dark" href="http://hannesdorfmann.com/contact">Contact</a>
         </li>
         
         
@@ -89,7 +89,7 @@
       </ul>
       
       <!-- search -->
-      <form class="form-inline position-relative ml-lg-4" action="https://hannesdorfmann.com/search">
+      <form class="form-inline position-relative ml-lg-4" action="http://hannesdorfmann.com/search">
         <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
         <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
       </form>
@@ -121,10 +121,10 @@
         </ul>
         <article class="content">
           
-          <p>This is the second part of how we could refactor the <a href="https://github.com/nickbutcher/plaid">Plaid</a> app open sourced by Nick Butcher. In this part we are going to enhance the MVP architecture described in the <a href="https://hannesdorfmann.com/android/plaid-refactored-1/">first part</a> to become truly reactive.</p>
+          <p>This is the second part of how we could refactor the <a href="https://github.com/nickbutcher/plaid">Plaid</a> app open sourced by Nick Butcher. In this part we are going to enhance the MVP architecture described in the <a href="http://hannesdorfmann.com/android/plaid-refactored-1/">first part</a> to become truly reactive.</p>
 <p><strong>Preface:</strong> I started the refactoring with the strong belief that I can refactor the whole app. Surprisingly (ironic), it turns out that I was a very naive man. I simply have underestimated the complexity of the app and the number of features. Therefore, I have started writing this blog post even if not everything described here is implemented (refactored). I just want to give some ideas how this could be implemented. My refactored code can be found on <a href="https://github.com/sockeqwe/plaid">github</a> as well.</p>
 <h2 id="recap-from-first-part">Recap from first part</h2>
-<p>This is the second part of a blog series about refactoring plaid app. In the <a href="https://hannesdorfmann.com/android/plaid-refactored-1/">first part</a> we have applied Model-View-Presenter and have introduced an <strong>ItemsLoader</strong> for loading items from different backend endpoints by invoking <strong>RouteCallers</strong>. Please read the <a href="https://hannesdorfmann.com/android/plaid-refactored-1/">first part</a> for more details.</p>
+<p>This is the second part of a blog series about refactoring plaid app. In the <a href="http://hannesdorfmann.com/android/plaid-refactored-1/">first part</a> we have applied Model-View-Presenter and have introduced an <strong>ItemsLoader</strong> for loading items from different backend endpoints by invoking <strong>RouteCallers</strong>. Please read the <a href="http://hannesdorfmann.com/android/plaid-refactored-1/">first part</a> for more details.</p>
 <p>People also aksed me if there is a need for yet another MVP blog post as there are already many of them availabale. Well, my intention is not write about MVP. Rather I want to discuss how to build a &ldquo;truly reactive&rdquo; app (with MVP on top). Let&rsquo;s continue where we left off.</p>
 <h2 id="source---filter">Source - Filter</h2>
 <p>In the app&rsquo;s home screen you can open a drawer on the right side of the screen (or by clicking on the filter icon in the Toolbar) to enable/disable different backend endpoints we load items from. We call a backend endpoint <strong>Source</strong>. So we have sources like &ldquo;Dribbble Popular&rdquo;, &ldquo;Dribbble Recent&rdquo;, &ldquo;Designer News Popular&rdquo; and so on.</p>
@@ -589,11 +589,11 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
         <ul>
         
             <li>
-                <a href="https://hannesdorfmann.com/android/plaid-refactored-1/">Refactoring Plaid App - A reactive MVP Approach (Part 1)</a>
+                <a href="http://hannesdorfmann.com/android/plaid-refactored-1/">Refactoring Plaid App - A reactive MVP Approach (Part 1)</a>
             </li>
         
             <li>
-                <a href="https://hannesdorfmann.com/android/plaid-refactored-2/">Refactoring Plaid App - A reactive MVP Approach (Part 2)</a>
+                <a href="http://hannesdorfmann.com/android/plaid-refactored-2/">Refactoring Plaid App - A reactive MVP Approach (Part 2)</a>
             </li>
         
         </ul>
@@ -614,14 +614,14 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
             <div class="share-post-box">
 
                 <a class="text-dark"
-                    href="https://twitter.com/intent/tweet?text=&quot;Refactoring%20Plaid%20App%20-%20A%20reactive%20MVP%20Approach%20%28Part%202%29&quot;%20https%3a%2f%2fhannesdorfmann.com%2fandroid%2fplaid-refactored-2%2f%20via%20@sockeqwe"
+                    href="https://twitter.com/intent/tweet?text=&quot;Refactoring%20Plaid%20App%20-%20A%20reactive%20MVP%20Approach%20%28Part%202%29&quot;%20http%3a%2f%2fhannesdorfmann.com%2fandroid%2fplaid-refactored-2%2f%20via%20@sockeqwe"
                     target="_blank" title="Share on Twitter"><i class="ti-twitter-alt share-icon"></i></a>
 
-                <a class="text-dark" href="http://www.reddit.com/submit?url=https%3a%2f%2fhannesdorfmann.com%2fandroid%2fplaid-refactored-2%2f&title=Refactoring%20Plaid%20App%20-%20A%20reactive%20MVP%20Approach%20%28Part%202%29"
+                <a class="text-dark" href="http://www.reddit.com/submit?url=http%3a%2f%2fhannesdorfmann.com%2fandroid%2fplaid-refactored-2%2f&title=Refactoring%20Plaid%20App%20-%20A%20reactive%20MVP%20Approach%20%28Part%202%29"
                     target="_blank" title="Share on Reddit"><i class="ti-reddit share-icon"></i></a>
 
 
-                <a class="text-dark" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fhannesdorfmann.com%2fandroid%2fplaid-refactored-2%2f"
+                <a class="text-dark" href="https://www.linkedin.com/sharing/share-offsite/?url=http%3a%2f%2fhannesdorfmann.com%2fandroid%2fplaid-refactored-2%2f"
                     target="_blank" title="Share on LinkedIn"><i class="ti-linkedin share-icon"></i></a>
 
             </div>
@@ -641,7 +641,7 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
       <ul class="list-inline d-flex justify-content-between mb-2">
         <li class="list-inline-item">May 06, 2018</li>
       </ul>
-      <h6><a class="text-dark" href="https://hannesdorfmann.com/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+      <h6><a class="text-dark" href="http://hannesdorfmann.com/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
     </div>
   </div>
   
@@ -650,7 +650,7 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
       <ul class="list-inline d-flex justify-content-between mb-2">
         <li class="list-inline-item">May 05, 2018</li>
       </ul>
-      <h6><a class="text-dark" href="https://hannesdorfmann.com/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+      <h6><a class="text-dark" href="http://hannesdorfmann.com/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
     </div>
   </div>
   
@@ -659,7 +659,7 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
       <ul class="list-inline d-flex justify-content-between mb-2">
         <li class="list-inline-item">Sep 13, 2017</li>
       </ul>
-      <h6><a class="text-dark" href="https://hannesdorfmann.com/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
+      <h6><a class="text-dark" href="http://hannesdorfmann.com/android/mosby3-mvi-7/">Reactive Apps with Model-View-Intent - Part 7: Timing (SingleLiveEvent problem)</a></h6>
     </div>
   </div>
   
@@ -729,7 +729,7 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
             
             <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
             
-            <li class="list-inline-item"><a href="https://hannesdorfmann.com/index.xml" class="text-dark"><i class="ti-rss"></i></a></li>
+            <li class="list-inline-item"><a href="http://hannesdorfmann.com/index.xml" class="text-dark"><i class="ti-rss"></i></a></li>
           </ul>
         </div>
       </div>
@@ -741,34 +741,34 @@ We can improve that even more by starting <strong>PostStoryService</strong> with
 
 
 <script>
-  var indexURL = "https://hannesdorfmann.com/index.json"
+  var indexURL = "http://hannesdorfmann.com/index.json"
 </script>
 
 
 <!-- JS Plugins -->
 
-<script src="https://hannesdorfmann.com/plugins/jQuery/jquery.min.js"></script>
+<script src="http://hannesdorfmann.com/plugins/jQuery/jquery.min.js"></script>
 
-<script src="https://hannesdorfmann.com/plugins/bootstrap/bootstrap.min.js"></script>
+<script src="http://hannesdorfmann.com/plugins/bootstrap/bootstrap.min.js"></script>
 
-<script src="https://hannesdorfmann.com/plugins/slick/slick.min.js"></script>
+<script src="http://hannesdorfmann.com/plugins/slick/slick.min.js"></script>
 
-<script src="https://hannesdorfmann.com/plugins/headroom/headroom.js"></script>
+<script src="http://hannesdorfmann.com/plugins/headroom/headroom.js"></script>
 
-<script src="https://hannesdorfmann.com/plugins/masonry/masonry.js"></script>
+<script src="http://hannesdorfmann.com/plugins/masonry/masonry.js"></script>
 
-<script src="https://hannesdorfmann.com/plugins/smooth-scroll/smooth-scroll.js"></script>
+<script src="http://hannesdorfmann.com/plugins/smooth-scroll/smooth-scroll.js"></script>
 
-<script src="https://hannesdorfmann.com/plugins/search/fuse.min.js"></script>
+<script src="http://hannesdorfmann.com/plugins/search/fuse.min.js"></script>
 
-<script src="https://hannesdorfmann.com/plugins/search/mark.js"></script>
+<script src="http://hannesdorfmann.com/plugins/search/mark.js"></script>
 
-<script src="https://hannesdorfmann.com/plugins/search/search.js"></script>
+<script src="http://hannesdorfmann.com/plugins/search/search.js"></script>
 
 
 <!-- Main Script -->
 
-<script src="https://hannesdorfmann.com/js/script.min.js"></script>
+<script src="http://hannesdorfmann.com/js/script.min.js"></script>
 
 <!-- google analitycs -->
 
