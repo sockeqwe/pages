@@ -1,5 +1,5 @@
 # default config
-baseurl = "https://sockeqwe.github.io/pages/"
+baseurl = "https://hannesdorfmann.com"
 # baseurl = "https://localhost:1313"
 languageCode = "en-us"
 title = "Hannes Dorfmann"
