@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ui on Hannes Dorfmann</title>
-    <link>http://hannesdorfmann.com/tags/ui/</link>
+    <link>https://hannesdorfmann.com/tags/ui/</link>
     <description>Recent content in ui on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 18 Aug 2015 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="http://hannesdorfmann.com/tags/ui/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hannesdorfmann.com/tags/ui/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Don&#39;t interrupt the user&#39;s flow</title>
-      <link>http://hannesdorfmann.com/android/dont-interrupt-user-flow/</link>
+      <link>https://hannesdorfmann.com/android/dont-interrupt-user-flow/</link>
       <pubDate>Tue, 18 Aug 2015 10:00:00 +0100</pubDate>
       
-      <guid>http://hannesdorfmann.com/android/dont-interrupt-user-flow/</guid>
+      <guid>https://hannesdorfmann.com/android/dont-interrupt-user-flow/</guid>
       <description>From my point of view user experience is a very important topic but sometimes doesn&amp;rsquo;t get the attention it deserves. In this blog post I want to show you how to use RecyclerView to build an user experience that is not interrupting the user&amp;rsquo;s flow.
 I&amp;rsquo;m very lucky to work in a very talented team at Tickaroo where we are building and maintaining the android and iOS apps for kicker, one of the most important football magazine in Europe (even though the main language is German).</description>
     </item>
     
     <item>
       <title>SwipeBack</title>
-      <link>http://hannesdorfmann.com/android/swipeback/</link>
+      <link>https://hannesdorfmann.com/android/swipeback/</link>
       <pubDate>Fri, 27 Dec 2013 10:00:00 +0100</pubDate>
       
-      <guid>http://hannesdorfmann.com/android/swipeback/</guid>
+      <guid>https://hannesdorfmann.com/android/swipeback/</guid>
       <description>SwipeBack for Android Activities does pretty the same as the android &amp;ldquo;back-button&amp;rdquo; does, but in a really intuitive way by using a swipe gesture
 The Samsung Galaxy Nexus was one of the first device without hardware buttons for &amp;ldquo;back&amp;rdquo;, &amp;ldquo;home&amp;rdquo; and &amp;ldquo;app switching (multitasking)&amp;rdquo; but used the androids navigation bar on screen (introduced in Android 4.</description>
     </item>
