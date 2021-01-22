@@ -28,7 +28,7 @@
     --color-base-variable-name: #b294bb;
   }
   
-  /* Background */ .chroma { background-color: var(--color-block-background); padding: 16px; }
+  /* Background */ .chroma { background-color: var(--color-block-background); padding: 16px; color: var(--color-base05); }
   /* Other */ .chroma .x { color: var(--color-base05) }
   /* Error */ .chroma .err { color: var(--color-base08) }
   /* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }

@@ -7,6 +7,9 @@ theme = "parsa-hugo"
 summaryLength = "50"
 paginate = 10
 
+[permalinks]
+  posts = "posts/:title"
+
 # output
 [outputs]
 home = ["HTML", "RSS", "JSON"]
