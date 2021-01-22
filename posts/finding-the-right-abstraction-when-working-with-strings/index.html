@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="As android developers, how do we load string resources from inside our business logic?">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+  <meta property='og:title' content='Finding the right abstraction (when working with Strings)'/>
+  <meta property='og:description' content='As android developers, how do we load string resources from inside our business logic?' />
+
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="https://hannesdorfmann.com/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://hannesdorfmann.com/images/favicon.png " type="image/x-icon">
+
+  </head><body class="theme-light">
+<!-- preloader start -->
+<div class="preloader">
+  <div class="loader">
+    <span class="dot"></span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+<!-- preloader end -->
+<header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span id="navbar-toggler" class="ti-menu"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/contact">Contact</a>
+        </li>
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" onclick="toggleTheme()">
+            <img id="themeSwitcher" class="navbar-nav ml-lg-4" src="/images/theme/moon.svg"/>
+          </a>
+        </li>
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="https://hannesdorfmann.com/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Finding the right abstraction (when working with Strings)</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Jan 22, 2020</li>
+        </ul>
+        <article class="content">
+          
+          <p>Finding the right abstraction is hard.
+In this blog post, I would like to share a technique that works well for us (my android teammates and me) when dealing with String resources on android.</p>
+<h2 id="an-abstraction-layer-for-strings">An abstraction layer for Strings?</h2>
+<p>Why do we even need an abstraction to simply work with Strings on Android? Probably you don&rsquo;t if your app is simple enough. But the more flexible your app needs to be regarding displaying text as content the sooner you realize that there are different kind of string resources and to deal with all of these kinds gracefully in your codebase you probably need another layer of abstraction. Let me explain what I mean with different kind of string resources:</p>
+<ul>
+<li>A simple String resource like <code>R.string.some_text</code>, displayed on screen via <code>resources.getString(R.string.some_text)</code></li>
+<li>A formatted string which then is formatted at runtime. i.e. <code>context.getString(R.string.some_text, “arg1”, 123)</code> with
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">”some_formatted_text”</span><span class="nt">&gt;</span>Some formatted Text with args %s %i<span class="nt">&lt;/string&gt;</span>
+</code></pre></div></li>
+<li>More advanced String resources like <code>Plurals</code> that are loaded i.e. with <code>resources.getQuantityString(R.plurals.number_of_items, 2)</code>:
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;plurals</span> <span class="na">name=</span><span class="s">&#34;number_of_items&#34;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&#34;one&#34;</span><span class="nt">&gt;</span>%d item<span class="nt">&lt;/item&gt;</span>
+  <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&#34;other&#34;</span><span class="nt">&gt;</span>%d items<span class="nt">&lt;/item&gt;</span>
+<span class="nt">&lt;/plurals&gt;</span>
+</code></pre></div></li>
+<li>A simple text that is not loaded from any resource xml file like <code>strings.xml</code> but is loaded e.g. from a backend as a plain string already.</li>
+</ul>
+<p>Did you notice that to load these kinds of strings you have to invoke different methods with different parameters to actually get the string value?
+If we want to deal with all of them gracefully and not leaking implementation details (like which method to invoke to actually translate a resource into a string), make text first class citizen (if suitable) of our business logic layer instead of your UI layer so that the view layer can easily &ldquo;render&rdquo; it (again, only relevant if your application needs to be flexible regarding displaying different kinds of Strings coming from different sources) then you should consider introducing a layer of abstraction for Strings.</p>
+<p>Let&rsquo;s say that we want to load a string from a backend via http and if that fails we fallback to display a fallback string that is loaded from <code>strings.xml</code>. Something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">MyViewModel</span><span class="p">(</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="py">backend</span> <span class="p">:</span> <span class="n">Backend</span><span class="p">,</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="py">resources</span> <span class="p">:</span> <span class="n">Resources</span> <span class="c1">// Android resources from context.getResources()
+</span><span class="c1"></span><span class="p">)</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">val</span> <span class="py">textToDisplay</span> <span class="p">:</span> <span class="n">MutableLiveData</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span>  <span class="c1">// for the sake of readability I use MutableLiveData
+</span><span class="c1"></span>
+  <span class="k">fun</span> <span class="nf">loadText</span><span class="p">(){</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="k">val</span> <span class="py">text</span> <span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="n">backend</span><span class="p">.</span><span class="n">getText</span><span class="p">()</span> 
+      <span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span> <span class="p">=</span> <span class="n">text</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">t</span> <span class="p">:</span> <span class="n">Throwable</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span> <span class="p">=</span> <span class="n">resources</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">string</span><span class="p">.</span><span class="n">fallback_text</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>We are leaking implementation details into <code>MyViewModel</code> making our ViewModel overall harder to test. Actually, to write a test for <code>loadText()</code> we would need to either mock <code>Resources</code> or to introduce an interface like <code>StringRepository</code> (repository pattern alike) so that we can swap it with another implementation for testing:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">interface</span> <span class="nc">StringRepository</span><span class="p">{</span>
+  <span class="k">fun</span> <span class="nf">getString</span><span class="p">(</span><span class="n">@StringRes</span> <span class="n">id</span> <span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">String</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">AndroidStringRepository</span><span class="p">(</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="py">resources</span> <span class="p">:</span> <span class="n">Resources</span> <span class="c1">// Android resources from context.getResources()
+</span><span class="c1"></span><span class="p">)</span> <span class="p">:</span> <span class="n">StringRepository</span> <span class="p">{</span>
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">getString</span><span class="p">(</span><span class="n">@StringRes</span> <span class="n">id</span> <span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="n">resources</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">TestDoubleStringRepository</span><span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getString</span><span class="p">(</span><span class="n">@StringRes</span> <span class="n">id</span> <span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&#34;some string&#34;</span>
+<span class="p">}</span>
+</code></pre></div><p>Our ViewModel then gets a <code>StringRepository</code> instead of resources directly and we are good to go, right?</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">MyViewModel</span><span class="p">(</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="py">backend</span> <span class="p">:</span> <span class="n">Backend</span><span class="p">,</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="py">stringRepo</span> <span class="p">:</span> <span class="n">StringRepository</span> <span class="c1">// hiding implementation details behind an interface
+</span><span class="c1"></span><span class="p">)</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">val</span> <span class="py">textToDisplay</span> <span class="p">:</span> <span class="n">MutableLiveData</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span>  
+
+  <span class="k">fun</span> <span class="nf">loadText</span><span class="p">(){</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="k">val</span> <span class="py">text</span> <span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="n">backend</span><span class="p">.</span><span class="n">getText</span><span class="p">()</span> 
+      <span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span> <span class="p">=</span> <span class="n">text</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">t</span> <span class="p">:</span> <span class="n">Throwable</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span> <span class="p">=</span> <span class="n">stringRepo</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">string</span><span class="p">.</span><span class="n">fallback_text</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>We can unit test it like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@Test</span>
+<span class="k">fun</span> <span class="nf">when_backend_fails_fallback_string_is_displayed</span><span class="p">(){</span>
+  <span class="k">val</span> <span class="py">stringRepo</span> <span class="p">=</span> <span class="n">TestDoubleStringRepository</span><span class="p">()</span>
+  <span class="k">val</span> <span class="py">backend</span> <span class="p">=</span> <span class="n">TestDoubleBackend</span><span class="p">()</span>
+  <span class="n">backend</span><span class="p">.</span><span class="n">failWhenLoadingText</span> <span class="p">=</span> <span class="k">true</span> <span class="c1">// makes backend.getText() throw an exception
+</span><span class="c1"></span>  <span class="k">val</span> <span class="py">viewModel</span> <span class="p">=</span> <span class="n">MyViewModel</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">stringRepo</span><span class="p">)</span>
+  <span class="n">viewModel</span><span class="p">.</span><span class="n">loadText</span><span class="p">()</span>
+
+  <span class="n">Assert</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="s">&#34;some string&#34;</span><span class="p">,</span> <span class="n">viewModel</span><span class="p">.</span><span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>With the introduction of <code>interface StringRepository</code> we have introduced a layer of abstraction and our problem is solved, right? Wrong. We have introduced an abstraction layer but this does not solve the real problem:</p>
+<ul>
+<li><code>StringRepository</code> doesn&rsquo;t address the fact that different kind of text exists (see enumeration at the beginning of this article). This is shown by the fact that our ViewModel still has code that is hard to maintain because it explicitly knows how to transform different kinds of text to String. That is the real issues we want to find a good abstraction for.</li>
+<li>Moreover, if you look at our test and the implementation of <code>TestDoubleStringRepository</code>, how meaningful is the test we wrote?  <code>TestDoubleStringRepository</code> is always returning the same string. We could totally mess up our ViewModels code by passing <code>R.string.foo</code> instead of <code>R.string.fallback_text</code> to <code>StringRepository.getString()</code> and our test would still pass. Sure we can improve <code>TestDoubleStringRepository</code> by not just always return the same string, something like that:
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">TestDoubleStringRepository</span><span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getString</span><span class="p">(</span><span class="n">@StringRes</span> <span class="n">id</span> <span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="k">when</span><span class="p">(</span><span class="n">id</span><span class="p">){</span>
+      <span class="n">R</span><span class="p">.</span><span class="n">string</span><span class="p">.</span><span class="n">fallback_test</span> <span class="p">-&gt;</span> <span class="s">&#34;some string&#34;</span>
+      <span class="n">R</span><span class="p">.</span><span class="n">string</span><span class="p">.</span><span class="n">foo</span> <span class="p">-&gt;</span> <span class="s">&#34;foo&#34;</span>
+      <span class="k">else</span> <span class="p">-&gt;</span> <span class="n">UnsupportedStringResourceException</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>But how maintainable is that? Do you really want to do that for all your strings in your app (if you have hundreds of strings)?</p>
+</li>
+</ul>
+<p>A better abstraction helps to solve both issues with one single abstraction.</p>
+<h2 id="textresource-to-the-rescue">TextResource to the rescue</h2>
+<p>We call the abstraction that we came up with <code>TextResource</code> and looks as following:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">sealed</span> <span class="k">class</span> <span class="nc">TextResource</span> <span class="p">{</span>
+  <span class="k">companion</span> <span class="k">object</span> <span class="p">{</span> <span class="c1">// Just needed to for static method factory so that we can keep concrete implementations file private
+</span><span class="c1"></span>    <span class="k">fun</span> <span class="nf">fromText</span><span class="p">(</span><span class="n">text</span> <span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">:</span> <span class="n">TextResource</span> <span class="p">=</span> <span class="n">SimpleTextResource</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">fun</span> <span class="nf">fromStringId</span><span class="p">(</span><span class="n">@StringRes</span> <span class="n">id</span> <span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">TextResource</span> <span class="p">=</span> <span class="n">IdTextResource</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">fun</span> <span class="nf">fromPlural</span><span class="p">(</span><span class="n">@PluralRes</span> <span class="n">id</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">pluralValue</span> <span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">TextResource</span> <span class="p">=</span> <span class="n">PluralTextResource</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">pluralValue</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">private</span> <span class="k">data</span> <span class="k">class</span> <span class="nc">SimpleTextResource</span><span class="p">(</span> <span class="c1">// We could also use use inline classes in the future
+</span><span class="c1"></span>  <span class="k">val</span> <span class="py">text</span> <span class="p">:</span> <span class="n">String</span>
+<span class="p">)</span> <span class="p">:</span> <span class="n">TextResource</span><span class="p">()</span>
+
+<span class="k">private</span> <span class="k">data</span> <span class="k">class</span> <span class="nc">IdTextResource</span><span class="p">(</span>
+  <span class="n">@StringRes</span> <span class="n">id</span> <span class="p">:</span> <span class="n">Int</span>
+<span class="p">)</span> <span class="p">:</span> <span class="n">TextResource</span><span class="p">()</span>
+
+<span class="k">private</span> <span class="k">data</span> <span class="k">class</span> <span class="nc">PluralTextResource</span><span class="p">(</span>
+    <span class="n">@PluralsRes</span> <span class="k">val</span> <span class="py">pluralId</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span>
+    <span class="k">val</span> <span class="py">quantity</span><span class="p">:</span> <span class="n">Int</span>
+<span class="p">)</span> <span class="p">:</span> <span class="n">TextResource</span><span class="p">()</span>
+
+<span class="c1">// you could add more kinds of text in the future
+</span><span class="c1"></span><span class="p">...</span>
+</code></pre></div><p>With <code>TextResource</code> our ViewModel looks as follows:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">MyViewModel</span><span class="p">(</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="py">backend</span> <span class="p">:</span> <span class="n">Backend</span> <span class="c1">// Please note that we dont need to pass any Resources nor StringRepository.
+</span><span class="c1"></span><span class="p">)</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">val</span> <span class="py">textToDisplay</span> <span class="p">:</span> <span class="n">MutableLiveData</span><span class="p">&lt;</span><span class="n">TextResource</span><span class="p">&gt;</span> <span class="c1">// Not of type String anymore!  
+</span><span class="c1"></span>
+  <span class="k">fun</span> <span class="nf">loadText</span><span class="p">(){</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="k">val</span> <span class="py">text</span> <span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="n">backend</span><span class="p">.</span><span class="n">getText</span><span class="p">()</span> 
+      <span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span> <span class="p">=</span> <span class="n">TextResource</span><span class="p">.</span><span class="n">fromText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">t</span> <span class="p">:</span> <span class="n">Throwable</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span> <span class="p">=</span> <span class="n">TextResource</span><span class="p">.</span><span class="n">fromStringId</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">string</span><span class="p">.</span><span class="n">fallback_text</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>The major difference are the following:</p>
+<ul>
+<li><code>textToDisplay</code> changed from <code>LiveData&lt;String&gt;</code> to <code>LiveData&lt;TextResource&gt;</code> so ViewModel doesn&rsquo;t need to know how to translate to different kind of text to String anymore but how to translate it to TextResource but that is fine as TextResource is the abstraction that solves our problems as we will see.</li>
+<li>Take a look at ViewModels constructor. We were able to remove the &ldquo;wrong abstraction&rdquo; <code>StringRepository</code> (nor do we need <code>Resources</code>). You might wonder how do we write test then? Just as simple as test against <code>TextResource</code> directly as this abstraction also abstracts away the android dependencies like <code>Resources</code> or <code>Context</code> (<code>R.string.fallback_text</code> is just an <code>Int</code>). So this is how our unit test look like:
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@Test</span>
+<span class="k">fun</span> <span class="nf">when_backend_fails_fallback_string_is_displayed</span><span class="p">(){</span>
+  <span class="k">val</span> <span class="py">backend</span> <span class="p">=</span> <span class="n">TestDoubleBackend</span><span class="p">()</span>
+  <span class="n">backend</span><span class="p">.</span><span class="n">failWhenLoadingText</span> <span class="p">=</span> <span class="k">true</span> <span class="c1">// makes backend.getText() throw an exception
+</span><span class="c1"></span>  <span class="k">val</span> <span class="py">viewModel</span> <span class="p">=</span> <span class="n">MyViewModel</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+  <span class="n">viewModel</span><span class="p">.</span><span class="n">loadText</span><span class="p">()</span>
+
+  <span class="n">Assert</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">TextResource</span><span class="p">.</span><span class="n">fromStringId</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">string</span><span class="p">.</span><span class="n">fallback_text</span><span class="p">),</span> <span class="n">viewModel</span><span class="p">.</span><span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span><span class="p">)</span>
+  <span class="c1">// data classes generate equals methods for us so we can compare them easily
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div></li>
+</ul>
+<p>So far so good, but one piece is missing: how do we translate <code>TextResource</code> to <code>String</code> so that we can display it in a <code>TextView</code> for example? Well, that is a pure &ldquo;android rendering&rdquo; thing and we can create an extension function and keep it in our UI layer only.</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="c1">// Note: you can get resources with context.getResources()
+</span><span class="c1"></span><span class="k">fun</span> <span class="nf">TextResource</span><span class="p">.</span><span class="n">asString</span><span class="p">(</span><span class="n">resources</span> <span class="p">:</span> <span class="n">Resources</span><span class="p">)</span> <span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="k">when</span> <span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="p">{</span> 
+  <span class="k">is</span> <span class="n">SimpleTextResource</span> <span class="p">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="n">text</span> <span class="c1">// smart cast
+</span><span class="c1"></span>  <span class="k">is</span> <span class="n">IdTextResource</span> <span class="p">-&gt;</span> <span class="n">resources</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">)</span> <span class="c1">// smart cast
+</span><span class="c1"></span>  <span class="k">is</span> <span class="n">PluralTextResource</span> <span class="p">-&gt;</span> <span class="n">resources</span><span class="p">.</span><span class="n">getQuantityString</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">pluralId</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="n">quantity</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>Bonus: You can unit test <code>TextResource.asString()</code> easily (mocking Resources but you dont need to mock it with every single string resource in your app as all you really want to unit test is that the <code>when</code> state works properly, so here i.e. it is fine to always return the same string from mocked <code>resources.getStiring()</code>).
+Furthermore, <code>TextResource</code> is highly reusable throughout our codebase, follows the <a href="https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle">open-closed principle</a> and is therefore easy extendable for future use cases by only touching a few lines of code to our codebase (add a new data class that extends <code>TextResource</code> and add a new check to <code>TextResource.asString()</code>).</p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row justify-content-md-center">
+
+            <div class="share-post-box">
+
+                <a class="text-dark"
+                    href="https://twitter.com/intent/tweet?text=&quot;Finding%20the%20right%20abstraction%20%28when%20working%20with%20Strings%29&quot;%20https%3a%2f%2fhannesdorfmann.com%2fposts%2ffinding-the-right-abstraction-when-working-with-strings%2f%20via%20@sockeqwe"
+                    target="_blank" title="Share on Twitter"><i class="ti-twitter-alt share-icon"></i></a>
+
+                <a class="text-dark" href="http://www.reddit.com/submit?url=https%3a%2f%2fhannesdorfmann.com%2fposts%2ffinding-the-right-abstraction-when-working-with-strings%2f&title=Finding%20the%20right%20abstraction%20%28when%20working%20with%20Strings%29"
+                    target="_blank" title="Share on Reddit"><i class="ti-reddit share-icon"></i></a>
+
+
+                <a class="text-dark" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fhannesdorfmann.com%2fposts%2ffinding-the-right-abstraction-when-working-with-strings%2f"
+                    target="_blank" title="Share on LinkedIn"><i class="ti-linkedin share-icon"></i></a>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Jan 22, 2020</li>
+      </ul>
+      <h6><a class="text-dark" href="https://hannesdorfmann.com/posts/finding-the-right-abstraction-when-working-with-strings/">Finding the right abstraction (when working with Strings)</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 06, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="https://hannesdorfmann.com/android/mosby3-mvi-8/">Reactive Apps with Model-View-Intent - Part 8: Navigation</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">May 05, 2018</li>
+      </ul>
+      <h6><a class="text-dark" href="https://hannesdorfmann.com/android/coordinators-android/">In-App Navigation with Coordinators</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2021 <br /> Hannes Dorfmann</h6>
+              <small>Theme based on hugo-parsa.</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            <li class="list-inline-item"><a href="https://hannesdorfmann.com/index.xml" class="text-dark"><i class="ti-rss"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "https://hannesdorfmann.com/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="https://hannesdorfmann.com/plugins/jQuery/jquery.min.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/slick/slick.min.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/headroom/headroom.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/masonry/masonry.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/search/fuse.min.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/search/mark.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="https://hannesdorfmann.com/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-54945521-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  2 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+<script data-goatcounter="https://hannesdorfmann.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+    </body>
+</html>

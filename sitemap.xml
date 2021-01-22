@@ -3,17 +3,52 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://hannesdorfmann.com/categories/android/</loc>
+    <lastmod>2020-01-22T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/tags/android/</loc>
+    <lastmod>2020-01-22T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/categories/</loc>
+    <lastmod>2020-01-22T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/tags/design-patterns/</loc>
+    <lastmod>2020-01-22T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/posts/finding-the-right-abstraction-when-working-with-strings/</loc>
+    <lastmod>2020-01-22T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/</loc>
+    <lastmod>2020-01-22T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/posts/</loc>
+    <lastmod>2020-01-22T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/tags/</loc>
+    <lastmod>2020-01-22T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://hannesdorfmann.com/about/</loc>
     <lastmod>2020-01-10T14:46:10+06:00</lastmod>
   </url>
   
   <url>
     <loc>https://hannesdorfmann.com/contact/</loc>
-    <lastmod>2020-01-10T14:46:10+06:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://hannesdorfmann.com/</loc>
     <lastmod>2020-01-10T14:46:10+06:00</lastmod>
   </url>
   
@@ -43,26 +78,6 @@
   </url>
   
   <url>
-    <loc>https://hannesdorfmann.com/categories/android/</loc>
-    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://hannesdorfmann.com/tags/android/</loc>
-    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://hannesdorfmann.com/categories/</loc>
-    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://hannesdorfmann.com/tags/design-patterns/</loc>
-    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://hannesdorfmann.com/series/reactive-apps-with-model-view-intent/</loc>
     <lastmod>2018-05-06T10:00:00+01:00</lastmod>
   </url>
@@ -79,11 +94,6 @@
   
   <url>
     <loc>https://hannesdorfmann.com/tags/software-architecture/</loc>
-    <lastmod>2018-05-06T10:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://hannesdorfmann.com/tags/</loc>
     <lastmod>2018-05-06T10:00:00+01:00</lastmod>
   </url>
   

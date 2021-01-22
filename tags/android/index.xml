@@ -6,10 +6,20 @@
     <description>Recent content in android on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 06 May 2018 10:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 22 Jan 2020 10:00:00 +0100</lastBuildDate>
     
 	<atom:link href="https://hannesdorfmann.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Finding the right abstraction (when working with Strings)</title>
+      <link>https://hannesdorfmann.com/posts/finding-the-right-abstraction-when-working-with-strings/</link>
+      <pubDate>Wed, 22 Jan 2020 10:00:00 +0100</pubDate>
+      
+      <guid>https://hannesdorfmann.com/posts/finding-the-right-abstraction-when-working-with-strings/</guid>
+      <description>Finding the right abstraction is hard. In this blog post, I would like to share a technique that works well for us (my android teammates and me) when dealing with String resources on android.
+An abstraction layer for Strings? Why do we even need an abstraction to simply work with Strings on Android?</description>
+    </item>
     
     <item>
       <title>Reactive Apps with Model-View-Intent - Part 8: Navigation</title>

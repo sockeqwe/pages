@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Hannes Dorfmann</title>
-    <link>https://hannesdorfmann.com/</link>
-    <description>Recent content on Hannes Dorfmann</description>
+    <title>Posts on Hannes Dorfmann</title>
+    <link>https://hannesdorfmann.com/posts/</link>
+    <description>Recent content in Posts on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 22 Jan 2020 10:00:00 +0100</lastBuildDate>
     
-	<atom:link href="https://hannesdorfmann.com/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hannesdorfmann.com/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,35 +19,6 @@
       <guid>https://hannesdorfmann.com/posts/finding-the-right-abstraction-when-working-with-strings/</guid>
       <description>Finding the right abstraction is hard. In this blog post, I would like to share a technique that works well for us (my android teammates and me) when dealing with String resources on android.
 An abstraction layer for Strings? Why do we even need an abstraction to simply work with Strings on Android?</description>
-    </item>
-    
-    <item>
-      <title>Flowing in the Deep - Event Streams in Kotlin</title>
-      <link>https://hannesdorfmann.com/presentations/2019-07-02-flowing-in-the-deep/</link>
-      <pubDate>Tue, 02 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/presentations/2019-07-02-flowing-in-the-deep/</guid>
-      <description>The Kotlin team introduced a new type called Flow which looks similar to RxJava’s Observable or Flowable. Have you ever wondered what’s the difference between Flow and RxJava? How does Flow work under the hood? How is it connected to Coroutines? How do you write your own operator? What about Kotlin Coroutine Channels?</description>
-    </item>
-    
-    <item>
-      <title>Testing By Design</title>
-      <link>https://hannesdorfmann.com/presentations/2019-05-22-testing-by-design/</link>
-      <pubDate>Wed, 22 May 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/presentations/2019-05-22-testing-by-design/</guid>
-      <description>Together with my friend Kostiantyn Tarasenko we talked about testing android apps.
-Building an efficient and maintainable test suite for an app is challenging. Design patterns like MVP or MVVM help decouple responsibilities so that it becomes easier to write testable code. What is the next level though? How can we get more out of our tests?</description>
-    </item>
-    
-    <item>
-      <title>Advanced Model-View-Intent: The Missing Guide</title>
-      <link>https://hannesdorfmann.com/presentations/2018-06-26-advanced-mvi-guide/</link>
-      <pubDate>Tue, 26 Jun 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/presentations/2018-06-26-advanced-mvi-guide/</guid>
-      <description>Together with my friend Kostiantyn Tarasenko we talked about Model-View-Intent (MVI) and were sharing some tips that worked well for us.
-We also introduced a library to help us build state machines with RxJava called RxRedux</description>
     </item>
     
     <item>
@@ -67,25 +38,6 @@ If you don&amp;rsquo;t know yet what the Coordinator pattern is I highly recomme
       
       <guid>https://hannesdorfmann.com/android/coordinators-android/</guid>
       <description>Over the last years we have established best practices for writing android apps: clean architecture, architectural patterns like MVP, MVVM, MVI, Repository pattern and so on. But what about in-app navigation? In this blog post I would like to talk about the Coordinator pattern and how we could apply this pattern in android development to organize our in-app navigation code.</description>
-    </item>
-    
-    <item>
-      <title>Demystifying RxJava by reimplementing it from scratch</title>
-      <link>https://hannesdorfmann.com/presentations/2018-04-20-demystifying-rxjava/</link>
-      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/presentations/2018-04-20-demystifying-rxjava/</guid>
-      <description>There are no slides available because it was actually a live coding session where we reimplemented RxJava&amp;rsquo;s basic of observers, subscriber and operators.</description>
-    </item>
-    
-    <item>
-      <title>Reactive State Management with Model-View-Intent</title>
-      <link>https://hannesdorfmann.com/presentations/2018-10-22-reactive-statemanagement-mvi/</link>
-      <pubDate>Thu, 05 Oct 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/presentations/2018-10-22-reactive-statemanagement-mvi/</guid>
-      <description>Managing application state is not a simple topic especially on Android with a synchronous and asynchronous source of data, components having different lifecycles, back stack navigation and process death.
-Model-View-Intent (MVI) is an architectural design pattern to separate the View from the Model. In this talk, we will discuss the idea behind MVI and how this pattern compares to other architectural patterns like Flux, Redux, Model-View-Presenter or Model-View-ViewModel.</description>
     </item>
     
     <item>
@@ -179,25 +131,6 @@ If you haven&amp;rsquo;t read part 2 yet, you should read that before continue w
       
       <guid>https://hannesdorfmann.com/android/from-prefabricated-house-to-lego-house/</guid>
       <description>A listener from our podcast, The Context, that Artem Zinnatullin and I run asked me, if I can give him an example of the Repository Pattern. So I googled around and stumbled upon some blog posts and found out that the term Repository Pattern is used and described in many different ways.</description>
-    </item>
-    
-    <item>
-      <title>Refactoring Plaid App – A reactive MVP approach</title>
-      <link>https://hannesdorfmann.com/presentations/2016-06-16-refactoring-plaid/</link>
-      <pubDate>Thu, 16 Jun 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/presentations/2016-06-16-refactoring-plaid/</guid>
-      <description>Nick Butcher, developer advocate at Google, has open sourced an android app called Plaid with an outstanding UI, meaningful animations and a lot of others material design goodies.
-However, from the software architecture’s point of view, the architecture of this app more “traditional” so that both, beginners and expert developers, can understand the source code easily.</description>
-    </item>
-    
-    <item>
-      <title>Android Software Architecutre by Example</title>
-      <link>https://hannesdorfmann.com/presentations/2016-06-02-android-architecture-by-example/</link>
-      <pubDate>Thu, 02 Jun 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/presentations/2016-06-02-android-architecture-by-example/</guid>
-      <description>Comparing some architectural design patterns like MVC, MVP, MVVM, Redux, Flux, MVI and how they could be applied on existing open source applications.</description>
     </item>
     
     <item>
@@ -322,15 +255,6 @@ Once upon a time Joe Somebody, an android developer, was working for a young sta
       <guid>https://hannesdorfmann.com/android/sqlbrite-dao/</guid>
       <description>Earlier this year, one day before Valentine&amp;rsquo;s Day to be precise, I had the glorious idea (ironie) to surprise my lovely girlfriend with a special android app on Valentine&amp;rsquo;s Day. Who said computer science can&amp;rsquo;t be romantic?
 The idea was simple: I wanted to build an android app that imitates and looks like Tinder but instead of displaying real people nearby, I faked everything so that only my profile gets displayed so she only can choose me.</description>
-    </item>
-    
-    <item>
-      <title>Annotation Processing 101</title>
-      <link>https://hannesdorfmann.com/presentations/2015-06-04-annotation-processing101/</link>
-      <pubDate>Fri, 05 Jun 2015 00:00:00 +0000</pubDate>
-      
-      <guid>https://hannesdorfmann.com/presentations/2015-06-04-annotation-processing101/</guid>
-      <description>Writing Java application can be annoying because the Java programming language requires to write boilerplate code. Writing Android apps makes no difference. Moreover, on Android you have to write a lot of code for doing simple things like setting up a Fragment with arguments, implement the Parcelable interface, define ViewHolder classes for RecyclerViews and so on.</description>
     </item>
     
     <item>
