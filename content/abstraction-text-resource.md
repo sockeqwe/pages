@@ -1,6 +1,6 @@
 ---
 title: "Finding the right abstraction (when working with Strings)"
-date: 2020-01-22T10:00:00+01:00
+date: 2021-01-22T10:00:00+01:00
 description: "As android developers, how do we load string resources from inside our business logic?"
 type: "post"
 categories: 
