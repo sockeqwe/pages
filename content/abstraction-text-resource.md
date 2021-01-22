@@ -196,5 +196,6 @@ fun TextResource.asString(resources : Resources) : String = when (this) {
   is PluralTextResource -> resources.getQuantityString(this.pluralId, this.quantity)
 }
 ```
+
 Bonus: You can unit test `TextResource.asString()` easily (mocking Resources but you dont need to mock it with every single string resource in your app as all you really want to unit test is that the `when` state works properly, so here i.e. it is fine to always return the same string from mocked `resources.getStiring()`). 
-Furthermore, `TextResource` is highly reusable throughout our codebase, follows the [open-closed principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) and is therefore easy extendable for future use cases by only touching a few lines of code to our codebase (add a new data class that extends `TextResource` and add a new check to `TextResource.asString()`).
+Furthermore, `TextResource` is highly reusable throughout our codebase, follows the [open-closed principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) and is therefore extendable for future use cases by only addig a few lines of code to our codebase (add a new data class that extends `TextResource` and add a new check to `TextResource.asString()`).
