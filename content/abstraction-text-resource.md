@@ -127,7 +127,7 @@ We call the abstraction that we came up with `TextResource` and looks as followi
 
 ```kotlin
 sealed class TextResource {
-  companion object { // Just needed to for static method factory so that we can keep concrete implementations file private
+  companion object { // Just needed for static method factory so that we can keep concrete implementations file private
     fun fromText(text : String) : TextResource = SimpleTextResource(text)
     fun fromStringId(@StringRes id : Int) : TextResource = IdTextResource(id)
     fun fromPlural(@PluralRes id: Int, pluralValue : Int) : TextResource = PluralTextResource(id, pluralValue)
