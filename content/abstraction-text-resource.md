@@ -193,7 +193,7 @@ So far so good, but one piece is missing: how do we translate `TextResource` to 
 fun TextResource.asString(resources : Resources) : String = when (this) { 
   is SimpleTextResource -> this.text // smart cast
   is IdTextResource -> resources.getString(this.id) // smart cast
-  is PluralTextResource -> resources.getQuantityString(this.pluralId, this.quantity)
+  is PluralTextResource -> resources.getQuantityString(this.pluralId, this.quantity) // smart cast
 }
 ```
 
