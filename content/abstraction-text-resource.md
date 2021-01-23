@@ -125,7 +125,7 @@ With the introduction of `interface StringRepository` we have introduced a layer
 A better abstraction helps to solve both issues with one single abstraction.
 
 ## TextResource to the rescue
-We call the abstraction that we came up with `TextResource` and is a domain specific model to represent text and therefore a first class citizen of our business logic. It looks as following:
+We call the abstraction that we came up with `TextResource` and is a domain specific model to represent text. Thus, it is a first class citizen of our business logic. It looks as following:
 
 ```kotlin
 sealed class TextResource {
