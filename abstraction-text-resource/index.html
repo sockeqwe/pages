@@ -204,7 +204,7 @@ If we want to deal with all of them gracefully then we should consider introduct
 </ul>
 <p>A better abstraction helps to solve both issues with one single abstraction.</p>
 <h2 id="textresource-to-the-rescue">TextResource to the rescue</h2>
-<p>We call the abstraction that we came up with <code>TextResource</code> and is a domain specific model to represent text and therefore a first class citizen of our business logic. It looks as following:</p>
+<p>We call the abstraction that we came up with <code>TextResource</code> and is a domain specific model to represent text. Thus, it is a first class citizen of our business logic. It looks as following:</p>
 <div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">sealed</span> <span class="k">class</span> <span class="nc">TextResource</span> <span class="p">{</span>
   <span class="k">companion</span> <span class="k">object</span> <span class="p">{</span> <span class="c1">// Just needed for static method factory so that we can keep concrete implementations file private
 </span><span class="c1"></span>    <span class="k">fun</span> <span class="nf">fromText</span><span class="p">(</span><span class="n">text</span> <span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">:</span> <span class="n">TextResource</span> <span class="p">=</span> <span class="n">SimpleTextResource</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
