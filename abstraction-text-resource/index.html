@@ -123,11 +123,15 @@ In this blog post, I would like to share a technique that works well for us (my 
   <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&#34;other&#34;</span><span class="nt">&gt;</span>%d items<span class="nt">&lt;/item&gt;</span>
 <span class="nt">&lt;/plurals&gt;</span>
 </code></pre></div></li>
-<li>A simple text that is not loaded from any resource xml file like <code>strings.xml</code> but is loaded e.g. from a backend as a plain string already.</li>
+<li>A simple text that is not loaded from an android resource xml file like <code>strings.xml</code> but is loaded already as string type and doesn&rsquo;t need any further translation (in contrast to <code>R.string.some_text</code>). For example, just a piece of text extracted from a json backend response.</li>
 </ul>
 <p>Did you notice that to load these kinds of strings you have to invoke different methods with different parameters to actually get the string value?
-If we want to deal with all of them gracefully and not leaking implementation details (like which method to invoke to actually translate a resource into a string), make text first class citizen (if suitable) of our business logic layer instead of your UI layer so that the view layer can easily &ldquo;render&rdquo; it (again, only relevant if your application needs to be flexible regarding displaying different kinds of Strings coming from different sources) then you should consider introducing a layer of abstraction for Strings.</p>
-<p>Let&rsquo;s say that we want to load a string from a backend via http and if that fails we fallback to display a fallback string that is loaded from <code>strings.xml</code>. Something like this:</p>
+If we want to deal with all of them gracefully then we should consider introducting a layer of abstraction for strings. To do that we have to consider the following points:</p>
+<ol>
+<li>We don&rsquo;t want to leak implementation details like which method to invoke to actually translate a resource into a string.</li>
+<li>We need to make text a first class citizen (if suitable) of our business logic layer instead of our UI layer so that the view layer can easily &ldquo;render&rdquo; it.</li>
+</ol>
+<p>Let&rsquo;s go step by step through this points by implementing a concrete example: Let&rsquo;s say that we want to load a string from a backend via http and if that fails we fallback to display a fallback string that is loaded from <code>strings.xml</code>. Something like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">MyViewModel</span><span class="p">(</span>
   <span class="k">private</span> <span class="k">val</span> <span class="py">backend</span> <span class="p">:</span> <span class="n">Backend</span><span class="p">,</span>
   <span class="k">private</span> <span class="k">val</span> <span class="py">resources</span> <span class="p">:</span> <span class="n">Resources</span> <span class="c1">// Android resources from context.getResources()
@@ -200,7 +204,7 @@ If we want to deal with all of them gracefully and not leaking implementation de
 </ul>
 <p>A better abstraction helps to solve both issues with one single abstraction.</p>
 <h2 id="textresource-to-the-rescue">TextResource to the rescue</h2>
-<p>We call the abstraction that we came up with <code>TextResource</code> and looks as following:</p>
+<p>We call the abstraction that we came up with <code>TextResource</code> and is a domain specific model to represent text and therefore a first class citizen of our business logic. It looks as following:</p>
 <div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">sealed</span> <span class="k">class</span> <span class="nc">TextResource</span> <span class="p">{</span>
   <span class="k">companion</span> <span class="k">object</span> <span class="p">{</span> <span class="c1">// Just needed for static method factory so that we can keep concrete implementations file private
 </span><span class="c1"></span>    <span class="k">fun</span> <span class="nf">fromText</span><span class="p">(</span><span class="n">text</span> <span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">:</span> <span class="n">TextResource</span> <span class="p">=</span> <span class="n">SimpleTextResource</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
@@ -226,7 +230,7 @@ If we want to deal with all of them gracefully and not leaking implementation de
 </span><span class="c1"></span><span class="p">...</span>
 </code></pre></div><p>With <code>TextResource</code> our ViewModel looks as follows:</p>
 <div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">MyViewModel</span><span class="p">(</span>
-  <span class="k">private</span> <span class="k">val</span> <span class="py">backend</span> <span class="p">:</span> <span class="n">Backend</span> <span class="c1">// Please note that we dont need to pass any Resources nor StringRepository.
+  <span class="k">private</span> <span class="k">val</span> <span class="py">backend</span> <span class="p">:</span> <span class="n">Backend</span> <span class="c1">// Please note that we don&#39;t need to pass any Resources nor StringRepository.
 </span><span class="c1"></span><span class="p">)</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">val</span> <span class="py">textToDisplay</span> <span class="p">:</span> <span class="n">MutableLiveData</span><span class="p">&lt;</span><span class="n">TextResource</span><span class="p">&gt;</span> <span class="c1">// Not of type String anymore!  
 </span><span class="c1"></span>
@@ -242,7 +246,7 @@ If we want to deal with all of them gracefully and not leaking implementation de
 </code></pre></div><p>The major difference are the following:</p>
 <ul>
 <li><code>textToDisplay</code> changed from <code>LiveData&lt;String&gt;</code> to <code>LiveData&lt;TextResource&gt;</code> so ViewModel doesn&rsquo;t need to know how to translate to different kind of text to String anymore but how to translate it to TextResource but that is fine as TextResource is the abstraction that solves our problems as we will see.</li>
-<li>Take a look at ViewModels constructor. We were able to remove the &ldquo;wrong abstraction&rdquo; <code>StringRepository</code> (nor do we need <code>Resources</code>). You might wonder how do we write test then? Just as simple as test against <code>TextResource</code> directly as this abstraction also abstracts away the android dependencies like <code>Resources</code> or <code>Context</code> (<code>R.string.fallback_text</code> is just an <code>Int</code>). So this is how our unit test look like:
+<li>Take a look at ViewModel&rsquo;s constructor. We were able to remove the &ldquo;wrong abstraction&rdquo; <code>StringRepository</code> (nor do we need <code>Resources</code>). You might wonder how do we write test then? Just as simple as test against <code>TextResource</code> directly as this abstraction also abstracts away the android dependencies like <code>Resources</code> or <code>Context</code> (<code>R.string.fallback_text</code> is just an <code>Int</code>). So this is how our unit test look like:
 <div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@Test</span>
 <span class="k">fun</span> <span class="nf">when_backend_fails_fallback_string_is_displayed</span><span class="p">(){</span>
   <span class="k">val</span> <span class="py">backend</span> <span class="p">=</span> <span class="n">TestDoubleBackend</span><span class="p">()</span>
@@ -250,21 +254,22 @@ If we want to deal with all of them gracefully and not leaking implementation de
 </span><span class="c1"></span>  <span class="k">val</span> <span class="py">viewModel</span> <span class="p">=</span> <span class="n">MyViewModel</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
   <span class="n">viewModel</span><span class="p">.</span><span class="n">loadText</span><span class="p">()</span>
 
-  <span class="n">Assert</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">TextResource</span><span class="p">.</span><span class="n">fromStringId</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">string</span><span class="p">.</span><span class="n">fallback_text</span><span class="p">),</span> <span class="n">viewModel</span><span class="p">.</span><span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span><span class="p">)</span>
+  <span class="k">val</span> <span class="py">expectedText</span> <span class="p">=</span> <span class="n">TextResource</span><span class="p">.</span><span class="n">fromStringId</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">string</span><span class="p">.</span><span class="n">fallback_text</span><span class="p">)</span>
+  <span class="n">Assert</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">expectedText</span><span class="p">,</span> <span class="n">viewModel</span><span class="p">.</span><span class="n">textToDisplay</span><span class="p">.</span><span class="n">value</span><span class="p">)</span>
   <span class="c1">// data classes generate equals methods for us so we can compare them easily
 </span><span class="c1"></span><span class="p">}</span>
 </code></pre></div></li>
 </ul>
-<p>So far so good, but one piece is missing: how do we translate <code>TextResource</code> to <code>String</code> so that we can display it in a <code>TextView</code> for example? Well, that is a pure &ldquo;android rendering&rdquo; thing and we can create an extension function and keep it in our UI layer only.</p>
+<p>So far so good, but one piece is missing: how do we translate <code>TextResource</code> to <code>String</code> so that we can display it in a <code>TextView</code> for example? Well, that is a pure &ldquo;android rendering&rdquo; thing and we can create an extension function and keep it to our UI layer only.</p>
 <div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="c1">// Note: you can get resources with context.getResources()
 </span><span class="c1"></span><span class="k">fun</span> <span class="nf">TextResource</span><span class="p">.</span><span class="n">asString</span><span class="p">(</span><span class="n">resources</span> <span class="p">:</span> <span class="n">Resources</span><span class="p">)</span> <span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="k">when</span> <span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="p">{</span> 
   <span class="k">is</span> <span class="n">SimpleTextResource</span> <span class="p">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="n">text</span> <span class="c1">// smart cast
 </span><span class="c1"></span>  <span class="k">is</span> <span class="n">IdTextResource</span> <span class="p">-&gt;</span> <span class="n">resources</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">)</span> <span class="c1">// smart cast
 </span><span class="c1"></span>  <span class="k">is</span> <span class="n">PluralTextResource</span> <span class="p">-&gt;</span> <span class="n">resources</span><span class="p">.</span><span class="n">getQuantityString</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">pluralId</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="n">quantity</span><span class="p">)</span> <span class="c1">// smart cast
 </span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><p>Moreover, since &ldquo;translating&rdquo; <code>TextResource</code> to String is happening in the UI (or View layer) of your app&rsquo;s architecture your <code>TextResource</code> will be &ldquo;retranslated&rdquo; on config changes (i.e. changing system language on your smartphone) resulting in displaying the right localized string for any of your apps <code>R.string.*</code> resources.</p>
-<p>Bonus: You can unit test <code>TextResource.asString()</code> easily (mocking Resources but you dont need to mock it for every single string resource in your app as all you really want to unit test is that the <code>when</code> state works properly, so here i.e. it is fine to always return the same string from mocked <code>resources.getString()</code>).
-Furthermore, <code>TextResource</code> is highly reusable throughout our codebase, follows the <a href="https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle">open-closed principle</a> and is therefore extendable for future use cases by only addig a few lines of code to our codebase (add a new data class that extends <code>TextResource</code> and add a new check to <code>TextResource.asString()</code>).</p>
+</code></pre></div><p>Moreover, since &ldquo;translating&rdquo; <code>TextResource</code> to String is happening in the UI (or View layer) of our app&rsquo;s architecture <code>TextResource</code> will be &ldquo;retranslated&rdquo; on config changes (i.e. changing system language on your smartphone) results in displaying the right localized string for any of your apps <code>R.string.*</code> resources.</p>
+<p>Bonus: You can unit test <code>TextResource.asString()</code> easily (mocking Resources but you don&rsquo;t need to mock it for every single string resource in your app as all you really want to unit test is that the <code>when</code> state works properly, so here it is fine to always return the same string from mocked <code>resources.getString()</code>).
+Furthermore, <code>TextResource</code> is highly reusable throughout our codebas and follows the <a href="https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle">open-closed principle</a>. Thus, it is extendable for future use cases by only addig a few lines of code to our codebase (add a new data class that extends <code>TextResource</code> and add a new case in the <code>when</code> statement in <code>TextResource.asString()</code>).</p>
 
         </article>
       </div>
@@ -466,7 +471,7 @@ Furthermore, <code>TextResource</code> is highly reusable throughout our codebas
       cookieBox.classList.remove('cookie-box-hide');
       cookieButton.onclick = function () {
         Cookies.set('cookie-box', true, {
-          expires:  2 
+          expires:  365 
     });
     cookieBox.classList.add('cookie-box-hide');
   };
