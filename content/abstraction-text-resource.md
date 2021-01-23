@@ -27,13 +27,15 @@ Why do we even need an abstraction to simply work with Strings on Android? Proba
     <item quantity="other">%d items</item>
   </plurals>
   ```
-- A simple text that is not loaded from any resource xml file like `strings.xml` but is loaded e.g. from a backend as a plain string already.
+- A simple text that is not loaded from an android resource xml file like `strings.xml` but is loaded already as string type and doesn't need any further translation (in contrast to `R.string.some_text`). For example, just a piece of text extracted from a json backend response.
 
 Did you notice that to load these kinds of strings you have to invoke different methods with different parameters to actually get the string value?
-If we want to deal with all of them gracefully and not leaking implementation details (like which method to invoke to actually translate a resource into a string), make text first class citizen (if suitable) of our business logic layer instead of your UI layer so that the view layer can easily "render" it (again, only relevant if your application needs to be flexible regarding displaying different kinds of Strings coming from different sources) then you should consider introducing a layer of abstraction for Strings.
+If we want to deal with all of them gracefully then we should consider introducting a layer of abstraction for strings. To do that we have to consider the following points: 
+1. We don't want to leak implementation details like which method to invoke to actually translate a resource into a string.
+2. We need to make text a first class citizen (if suitable) of our business logic layer instead of our UI layer so that the view layer can easily "render" it.
 
 
-Let's say that we want to load a string from a backend via http and if that fails we fallback to display a fallback string that is loaded from `strings.xml`. Something like this:
+Let's go step by step through this points by implementing a concrete example: Let's say that we want to load a string from a backend via http and if that fails we fallback to display a fallback string that is loaded from `strings.xml`. Something like this:
 
 ```kotlin
 class MyViewModel(
@@ -123,7 +125,7 @@ With the introduction of `interface StringRepository` we have introduced a layer
 A better abstraction helps to solve both issues with one single abstraction.
 
 ## TextResource to the rescue
-We call the abstraction that we came up with `TextResource` and looks as following:
+We call the abstraction that we came up with `TextResource` and is a domain specific model to represent text and therefore a first class citizen of our business logic. It looks as following:
 
 ```kotlin
 sealed class TextResource {
@@ -155,7 +157,7 @@ With `TextResource` our ViewModel looks as follows:
 
 ```kotlin
 class MyViewModel(
-  private val backend : Backend // Please note that we dont need to pass any Resources nor StringRepository.
+  private val backend : Backend // Please note that we don't need to pass any Resources nor StringRepository.
 ) : ViewModel() {
   val textToDisplay : MutableLiveData<TextResource> // Not of type String anymore!  
 
@@ -172,7 +174,7 @@ class MyViewModel(
 
 The major difference are the following: 
 - `textToDisplay` changed from `LiveData<String>` to `LiveData<TextResource>` so ViewModel doesn't need to know how to translate to different kind of text to String anymore but how to translate it to TextResource but that is fine as TextResource is the abstraction that solves our problems as we will see.
-- Take a look at ViewModels constructor. We were able to remove the "wrong abstraction" `StringRepository` (nor do we need `Resources`). You might wonder how do we write test then? Just as simple as test against `TextResource` directly as this abstraction also abstracts away the android dependencies like `Resources` or `Context` (`R.string.fallback_text` is just an `Int`). So this is how our unit test look like:
+- Take a look at ViewModel's constructor. We were able to remove the "wrong abstraction" `StringRepository` (nor do we need `Resources`). You might wonder how do we write test then? Just as simple as test against `TextResource` directly as this abstraction also abstracts away the android dependencies like `Resources` or `Context` (`R.string.fallback_text` is just an `Int`). So this is how our unit test look like:
   ```kotlin
   @Test
   fun when_backend_fails_fallback_string_is_displayed(){
@@ -181,12 +183,13 @@ The major difference are the following:
     val viewModel = MyViewModel(backend)
     viewModel.loadText()
 
-    Assert.equals(TextResource.fromStringId(R.string.fallback_text), viewModel.textToDisplay.value)
+    val expectedText = TextResource.fromStringId(R.string.fallback_text)
+    Assert.equals(expectedText, viewModel.textToDisplay.value)
     // data classes generate equals methods for us so we can compare them easily
   }
   ```
 
-So far so good, but one piece is missing: how do we translate `TextResource` to `String` so that we can display it in a `TextView` for example? Well, that is a pure "android rendering" thing and we can create an extension function and keep it in our UI layer only.
+So far so good, but one piece is missing: how do we translate `TextResource` to `String` so that we can display it in a `TextView` for example? Well, that is a pure "android rendering" thing and we can create an extension function and keep it to our UI layer only.
 
 ```kotlin
 // Note: you can get resources with context.getResources()
@@ -197,7 +200,7 @@ fun TextResource.asString(resources : Resources) : String = when (this) {
 }
 ```
 
-Moreover, since "translating" `TextResource` to String is happening in the UI (or View layer) of your app's architecture your `TextResource` will be "retranslated" on config changes (i.e. changing system language on your smartphone) resulting in displaying the right localized string for any of your apps `R.string.*` resources.
+Moreover, since "translating" `TextResource` to String is happening in the UI (or View layer) of our app's architecture `TextResource` will be "retranslated" on config changes (i.e. changing system language on your smartphone) results in displaying the right localized string for any of your apps `R.string.*` resources.
 
-Bonus: You can unit test `TextResource.asString()` easily (mocking Resources but you dont need to mock it for every single string resource in your app as all you really want to unit test is that the `when` state works properly, so here i.e. it is fine to always return the same string from mocked `resources.getString()`). 
-Furthermore, `TextResource` is highly reusable throughout our codebase, follows the [open-closed principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) and is therefore extendable for future use cases by only addig a few lines of code to our codebase (add a new data class that extends `TextResource` and add a new check to `TextResource.asString()`).
+Bonus: You can unit test `TextResource.asString()` easily (mocking Resources but you don't need to mock it for every single string resource in your app as all you really want to unit test is that the `when` state works properly, so here it is fine to always return the same string from mocked `resources.getString()`). 
+Furthermore, `TextResource` is highly reusable throughout our codebas and follows the [open-closed principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle). Thus, it is extendable for future use cases by only addig a few lines of code to our codebase (add a new data class that extends `TextResource` and add a new case in the `when` statement in `TextResource.asString()`).

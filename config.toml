@@ -99,7 +99,7 @@ access_token = "IGQVJYeUk4YWNIY1h4OWZANeS1wRHZARdjJ5QmdueXN2RFR6NF9iYUtfcGp1Nmpx
 # cookies
 [params.cookies]
 enable = true
-expire_days = 2
+expire_days = 365
 
 # social site
 #[[params.social]]
