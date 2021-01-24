@@ -3,7 +3,7 @@ title: "The evolution of the Repository Pattern - Be aware of over abstraction"
 date: 2016-07-17T10:00:00+01:00
 description: "The evolution of the Repository Pattern - Be aware of over abstraction. Repository Pattern can lead to over architecture and unneccessary abstractions."
 type: "post"
-url: "android/from-prefabricated-house-to-lego-house"
+url: "android/evolution-of-the-repository-pattern"
 categories: 
   - "Android"
 tags:
