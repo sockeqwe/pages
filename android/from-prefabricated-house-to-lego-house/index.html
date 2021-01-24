@@ -5,11 +5,11 @@
 
   <!-- mobile responsive meta -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="The evolution of the Repository Pattern - Be aware of over abstraction. Repository Pattern can lead to over architecture and unneccessary abstractions.">
+  <meta name="description" content="From Prefab House to Lego House. A journey to why we should not use inheritance to create reusable screens and apps. How can we build reusable components?">
   <meta name="author" content="Hannes Dorfmann">
   <meta name="generator" content="Hugo 0.73.0" />
-  <meta property='og:title' content='The evolution of the Repository Pattern - Be aware of over abstraction'/>
-  <meta property='og:description' content='The evolution of the Repository Pattern - Be aware of over abstraction. Repository Pattern can lead to over architecture and unneccessary abstractions.' />
+  <meta property='og:title' content='From Prefab House to Lego House'/>
+  <meta property='og:description' content='From Prefab House to Lego House. A journey to why we should not use inheritance to create reusable screens and apps. How can we build reusable components?' />
 
 
   <!-- plugins -->
@@ -90,7 +90,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1>The evolution of the Repository Pattern - Be aware of over abstraction</h1>
+        <h1>From Prefab House to Lego House</h1>
       </div>
     </div>
   </div>
@@ -104,201 +104,128 @@
       <div class="col-lg-12">
         <ul class="list-inline d-flex justify-content-between py-3">
           <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
-          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Jul 17, 2016</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>May 13, 2016</li>
         </ul>
         <article class="content">
           
-          <p>A listener from our podcast, <a href="https://github.com/artem-zinnatullin/TheContext-Podcast">The Context</a>, that Artem Zinnatullin and I run asked me, if I can give him an example of the Repository Pattern. So I googled around and stumbled upon some blog posts and found out that the term Repository Pattern is used and described in many different ways. In this blog post I want give you a brief history of the Repository Pattern and I want to discuss why I think the Repository Pattern could lead to over abstraction and over engineering.</p>
-<p>Before we get started, I wanted to say that the term <em>Repository Pattern</em> is used and defined in different ways in different contexts and different programming languages. Therefore, I split this post into two parts: In the first part I want to discuss why I think the  &ldquo;original&rdquo; definition of the Repository Pattern is an over engineered abstraction you very very rarely need and in the second part I want to show a common and popular definition of the Repository Pattern that may be a better choice for the average use case.</p>
-<h2 id="the-original-repository-pattern">The original Repository Pattern</h2>
-<p>As far as I know the repository pattern was first introduced by Martin Fowler et al. in the book  <a href="http://martinfowler.com/eaaCatalog/repository.html">Patterns of Enterprise Application Architecture</a>.
-<a href="https://medium.com/@krzychukosobudzki/repository-design-pattern-bc490b256006#.h7cm2b24q">This blog post</a> by Krzychu Kosobudzki or <a href="http://panavtec.me/what-is-the-repository-pattern-and-why-im-not-going-to-use-it-on-android">this blog post</a> Christian Panadero give an example of the usage of this pattern in the context of android development. In my opinion the original repository pattern is an over engineered abstraction layer you very very rarely need. Especially on Android. What do I mean with over engineered? Let&rsquo;s have a look at the example from Krzychu Kosobudzki&rsquo;s blog post:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">interface</span> <span class="nc">Repository</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-    <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="n">T</span> <span class="n">item</span><span class="o">);</span>
-    <span class="kt">void</span> <span class="nf">remove</span><span class="o">(</span><span class="n">Specification</span> <span class="n">specification</span><span class="o">);</span>
-    <span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">query</span><span class="o">(</span><span class="n">Specification</span> <span class="n">specification</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></div><p>What is the <em>Specification</em> type? Basically <em>Specification</em> is just an interface like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">interface</span> <span class="nc">Specification</span> <span class="o">{</span> <span class="o">}</span>
-
-<span class="kd">interface</span> <span class="nc">SqlSpecification</span> <span class="kd">extends</span> <span class="n">Specification</span> <span class="o">{</span>
-    <span class="n">String</span> <span class="nf">toSqlQuery</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre></div><p>Then we could have concrete <em>Specification</em> to query all list of <em>News</em> from SQLite database, ordered by date, like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">NewestNewsesSqlSpecification</span> <span class="kd">implements</span> <span class="n">SqlSpecification</span> <span class="o">{</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toSqlQuery</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span>
-                <span class="s">&#34;SELECT * FROM %1$s ORDER BY `%2$s` DESC;&#34;</span><span class="o">,</span>
-                <span class="n">NewsTable</span><span class="o">.</span><span class="na">TABLE_NAME</span><span class="o">,</span>
-                <span class="n">NewsTable</span><span class="o">.</span><span class="na">Fields</span><span class="o">.</span><span class="na">DATE</span>
-        <span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><p>Another example of a <em>Specification</em> looks as follows:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewsByIdSqlSpecification</span> <span class="kd">implements</span> <span class="n">SqlSpecification</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="nf">NewsByIdSpecification</span><span class="o">(</span><span class="kd">final</span> <span class="kt">int</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toSqlQuery</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span>
-                <span class="s">&#34;SELECT * FROM %1$s WHERE `%2$s` = %3$d&#39;;&#34;</span><span class="o">,</span>
-                <span class="n">NewsTable</span><span class="o">.</span><span class="na">TABLE_NAME</span><span class="o">,</span>
-                <span class="n">NewsTable</span><span class="o">.</span><span class="na">Fields</span><span class="o">.</span><span class="na">ID</span><span class="o">,</span>
-                <span class="n">id</span>
-        <span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><p>And then use that components like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewsSqlRepository</span> <span class="kd">implements</span> <span class="n">Repository</span><span class="o">&lt;</span><span class="n">News</span><span class="o">&gt;</span> <span class="o">{</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">News</span><span class="o">&gt;</span> <span class="nf">query</span><span class="o">(</span><span class="n">Specification</span> <span class="n">specification</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">SqlSpecification</span> <span class="n">sqlSpecification</span> <span class="o">=</span> <span class="o">(</span><span class="n">SqlSpecification</span><span class="o">)</span> <span class="n">specification</span><span class="o">;</span>
-
-        <span class="n">SQLiteDatabase</span> <span class="n">database</span> <span class="o">=</span> <span class="n">openHelper</span><span class="o">.</span><span class="na">getReadableDatabase</span><span class="o">();</span>
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">News</span><span class="o">&gt;</span> <span class="n">newses</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-
-        <span class="n">Cursor</span> <span class="n">cursor</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">rawQuery</span><span class="o">(</span><span class="n">sqlSpecification</span><span class="o">.</span><span class="na">toSqlQuery</span><span class="o">());</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="na">getCount</span><span class="o">();</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="n">cursor</span><span class="o">.</span><span class="na">moveToPosition</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-            <span class="n">newses</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">toNewsMapper</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">cursor</span><span class="o">));</span>
-        <span class="o">}</span>
-        <span class="n">cursor</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-        <span class="k">return</span> <span class="n">newses</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><p>Again, all code snippets shown above are borrowed from <a href="https://medium.com/@krzychukosobudzki/repository-design-pattern-bc490b256006#.h7cm2b24q">Krzychu Kosobudzki blog post</a>.</p>
-<p>Usually you use <em>NewsRepository</em> i.e. in your Presenter (MVP) or use case / interactor if you are following the clean architecture like this: <em>newsRepository.query(new NewestNewsesSqlSpecification())</em>.</p>
-<p>So far so good. Before we continue, I want to ask you two essential questions:</p>
-<p>First question: <strong>Why and when do we use the repository pattern?</strong> I want to link to the book <a href="http://martinfowler.com/eaaCatalog/repository.html">Patterns of Enterprise Application Architecture</a> by Martin Fowler et al.</p>
+          <img src="https://hannesdorfmann.com/images/legohouse/legohouse.jpg" alt="post-thumb" class="img-fluid rounded float-left mr-5 mb-4">
+          
+          <p>Before joining my current employer I have worked for an app agency and one thing I have noticed is that we were building every app entirely new from scratch even if we were building a similar app for the same customer with similar UI. We hadn&rsquo;t reusable components. In this blog post I want to share some thoughts and lessons learned while building such reusable components.</p>
+<p>At my current employer, <a href="https://www.tickaroo.com">Tickaroo</a>, we were facing the same situation three years ago. Although Tickaroo is not an app agency, it&rsquo;s a startup for sport enthusiasts, we are building apps for our partners from the world of sports as well. One of this partner is the <em>Olympia Verlag</em> , a renowned publisher in Germany for which we have started building (and are still developing and maintaining) their native android and iOS apps for one of their magazines called <a href="https://play.google.com/store/apps/details?id=com.netbiscuits.kicker">kicker</a> (football magazine, which displays football news, live updated and so on) three years ago.</p>
+<p>After having released the first versions of the <a href="https://play.google.com/store/apps/details?id=com.netbiscuits.kicker">kicker</a> app successfully in 2013 the <em>Olympia Verlag</em> was pleased with our work and charged us with building another app called  <a href="https://play.google.com/store/apps/details?id=com.tickaroo.meinverein">MeinVerein</a>, also a football app where you can select your favorite football club and then the app displays news and games about your football club.</p>
+<p>While kicker app is quite a huge app that can be used for free (with advertisement), MeinVerein is a paid only app (subscription based). MeinVerein&rsquo;s app functionality can be seen as some kind of subset from kicker app.</p>
+<p>One thing was clear from the very beginning: since the same designer who already had designed the kicker app was going to design MeinVerein app too the UI should be quite similar for both apps. In fact, this was desired by our customer <em>Olympia Verlag</em> since they wanted to have a consistent design branding across all of their apps. Let&rsquo;s compare the UI of the apps:</p>
+<p><img src="/images/legohouse/comparison.png" alt="UI comparison"></p>
+<p>Basically MeinVerein app displays different data in more or less the same way as kicker app does with just some other colors / theme and the main navigation of both apps are different (navigation drawer vs. ViewPager). Some screens, for example the live updates screens, are completely identical. Other screens available in kicker app are not available in MeinVerein app. Additionally, MeinVerein offers some infos and screens kicker doesn&rsquo;t. Also, even if the UI seems pretty similar completely different actions and screens will be opened by for example clicking on a button. So MeinVerein should provide the same look and feel as kicker app, but you can&rsquo;t say that it is a simple build flavor / variant of the kicker app.</p>
+<h2 id="lets-build-a-prefabricated-house">Let&rsquo;s build a prefabricated house</h2>
+<p>Before we started with the development of MeinVerein app we, the iOS team and the android team, get together and discussed how we could build that app without much effort and in little time. The leading iOS developer, which by the way is the most experienced developer in our company, suggested to put all the stuff from the kicker app into a library. Software development is much about experience. Hence, it is priceless to have an experienced developers in your team and we from the android team had zero experience on how to build such a shared code base. He suggested to build a shared library as fundament for both, kicker app and MeinVerein app. So we did. The kicker app was build by using Fragments. Basically every screen is a Fragment, NewsListFragment to display a list of news, LeagueTableFragment etc. Furthermore, we have built this app by using <a href="http://hannesdorfmann.com/mosby/">Mosby</a> a Model-View-Presenter library and so we moved all Fragments (MVP View), RecyclerView Adapters, XML layouts, Presenters and Model classes from kicker app into the newly created shared library. kicker app&rsquo;s git repository was quite empty afterwards. For the sack of simplicity we only will discuss things in this blog post by using NewsListFragment as representative as a screen that looks similar in both apps, but keep in mind that there are also many other Fragments in this shared library.</p>
+<p>The vision was to build screens for the corresponding apps by extending from the corresponding Fragment of the shared library that has already his Presenter, his RecyclerView Adapter, his XML layouts and so on. Customization should be done by overriding some methods from shared library&rsquo;s Fragment, coloring and theming in xml and if required provide a custom dagger module to inject non default app specific components via dependency injection. The iOS team did the same with their UIViewControllers etc. In a nutshell: We built a prefabricated house where we can specify the color of the walls.</p>
+<h2 id="the-problems-of-our-prefabricated-house">The problems of our prefabricated house</h2>
+<p>Thanks to the shared library we were able to ship MeinVerein app within a few weeks. Everything was good. But we noticed the first symptoms: We caught ourselves programming 90% of the time in the shared library project even though that the actually code we were writing was kicker app exclusively and not even used by MeinVerein. But we ignored those symptoms: We use proguard which will remove all the unused classes from shared library in MeinVerein app or kicker app respectively, right?</p>
+<p>Another example: We decided to put all our model classes and http networking stuff in the library as well, because even if the backend is not the same (different url) the backend guys said to us that the json data feed structure will be the same. At least that was the case in the first version of MeinVerein but as time went by and more features had been implemented the data feeds for both backends begin to differ more and more. However, imho the real problem was that all the pitfalls and issues on kicker backend side regarding json feed structure had also been copied to MeinVerein backend instead of avoiding this issues from very beginning since MeinVerein backend was a greenfield. But you know, we had to move fast, so had the backend guys. Today I know: you don&rsquo;t move fast by writing bad code.</p>
+<p>Overall our shared library looks like this, i.e. to load and display a list of news items (NewsListFragment):</p>
+<p><img src="/images/legohouse/NewsListFragment.png" alt="NewsListFragment"></p>
+<p>Basically we used <em>NewsListFragment</em> directly in kicker app and <em>MVNewsListFragment extends NewsListFragment</em> in MeinVerein app with some overridden methods to achieve our goals. Looks reasonable, doesn&rsquo;t it?</p>
+<p>Unfortunately, the devil is in the detail. While kicker app has advertisement, MeinVerein app has not advertisement because it&rsquo;s a paid app. Also some features available in kicker App are not available MeinVerein app.</p>
+<p><img src="/images/legohouse/no-advertisement-feature.png" alt="No advertisement"></p>
+<p>Those are just two of many UI differences between both apps that has been envoled over the time.
+Sure, it&rsquo;s our fault because the inheritance hierarchy is incorrect: The shared library shouldn&rsquo;t provide a NewsListFragment with advertisement and feature XY build in but there should be rather a <em>AdvertismentNewsListFragment extends NewsListFragment</em> in the kicker app only, right?
+A few months later we started building a new app called &ldquo;Tippspiel app&rdquo; also for <em>Olympia Verlag</em> that looks like this:</p>
+<p><img src="/images/legohouse/kicker-meinverein-tippspiel.png" alt="Tippspiel"></p>
+<p>Tippspiel looks similar to kicker and MeinVerein app. Actually, is uses the same <em>NewsListFragment</em>. However, apart from displaying a list of news in the same way as kicker and MeinVerein this app has nothing in common with the other apps. Tippspiel app has advertisement in the NewsList but not the feature XY. So what actually should <em>NewsListFragment</em> provide? Clearly we should introduce a inheritance hierarchy like this:</p>
+<p><img src="/images/legohouse/inheritance-newslistfragment.png" alt="Tippspiel"></p>
+<p>So should we put <em>NewsListFragment</em>, <em>AdvertisementNewsListFragment</em>, <em>FeatureXYNewsListFragment</em> and <em>AdvertismenetFeatureXYNewsListFragment</em> into the shared library so that we can choose the right base class that matches the requirements for the app like MeinVerein <em>MVNewsListFragment extends NewsListFragment</em> (no advertisement, no feature XY), kicker <em>KikNewsListFragment extends AdvertismenetFeatureXYNewsListFragment</em> (advertisement and feature XY) and Tippspiel <em>TPNewsListFragment extends AdvertisementNewsListFragment</em>(advertiesment only)? You see, inheritance doesn&rsquo;t solve that problem, because for each feature you would have to introduce a new class in your inheriatance hierarchy and there are so many possible combinations for advertisement support, feature A, feature B, feature XY etc. Single inheritance as in java doesn&rsquo;t scale. I have written an blog post <a href="http://hannesdorfmann.com/android/java-mixins">Mixins as alternative to inheritance</a> that you may find useful in this context.</p>
+<p>But wait &hellip; there is more: lately we have worked on the newest member of <em>Olympia Verlag</em> apps called Nordbayern app (another magazine):</p>
+<p><img src="/images/legohouse/kicker-meinverein-tippspiel-nordbayern.png" alt="Tippspiel"></p>
+<p>So we decided to keep one single <em>NewsListFragment</em> in the shared library that has advertisement support and all features already implemented. Our solution for that problem was to extend from the &ldquo;super provide everything NewsListFragment&rdquo; but then inject a feature XY component that does nothing (stub) via dagger if the feature XY is not supported in the app. For Example, MeinVerein App doesn&rsquo;t have feature XY, so we injected a featureXY component that does nothing in MeinVerein app whereas kicker app uses the build in feature XY component that does something useful. We thought about this as some kind of workaround to &ldquo;remove unused&rdquo; functionality. That made our shared libraries code confusing and debugging wasn&rsquo;t easy because you didn&rsquo;t know if a invoked method of a feature component does something useful or is just a stub. But we hadn&rsquo;t a better solution.</p>
+<p>But wait &hellip; there is more: When we started to build our prefabricated house (a.k.a shared library) we were under the very naive illusion that now we only have to write one unit test for the <em>NewsListFragment</em> from shared library once for all apps and also if we would detect a bug in NewsListFragment we would fix it once for all apps. The reality was quite the opposite. Since, every app extended from <em>NewsListFragment</em> but has overridden some methods in the concrete apps fragment, we couldn&rsquo;t be sure that the bugfix really fixed the problem in all apps and that the fragment is working as expected. Moreover, with every change or new feature we added to shared library&rsquo;s <em>NewsListFragment</em> we had to fear that this will break things in other apps extending from this fragment. Our daily work flow was something like this: Write some code in share library (~ 10 minutes of work), test that each app is still working properly (~ 10 minutes of work for each app thanks to gradle incredible fast build time). So we spent around 1 hour for a code change doable in 10 minutes.</p>
+<p>But wait &hellip; there is more: until now we only talked about UI related things. But there are some other stuff like Tracking which are tight to lifecycle, one app has multiple tracking for some strange reason, another app uses an advertisement sdk which is also lifecycle aware and you have to call some methods like <em>advertismentView.stop()</em> in <em>Fragment.onDestroyView()</em> etc. Put all those things and dependencies into <em>NewsListFragment</em> in shared lib? It was a nightmare.</p>
+<h2 id="the-need-of-a-lego-kit">The need of a Lego kit</h2>
+<p>We from the android team decided to take on this problem. Things got completely out of hand and we were slowed down by our shared library which actually should help us go fast. To be fair, when we started with the shared library it wasn&rsquo;t predictable that we were going to build so many apps based on this shared library in the future and that requirements and features were that completely different from app to app.</p>
+<p>We started to brainstorm and we made an interesting observation: Actually, writing a Presenter is super easy and can be done within a few minutes. So let&rsquo;s remove the Presenters from shared library and let every app have their own Presenters. The same is true for our http library: communicating with a backend with Retrofit just requires to define a service interface with some Retrofit annotations. That takes only a few minutes. Also the &ldquo;Model&rdquo; classes like <em>NewsList</em> were part of the shared library. Defining your own Model class for each app is not a huge deal and is also not really time intensive. Obviously, those things (Presenter, http and &ldquo;model&rdquo; classes) weren&rsquo;t the biggest issue, but removing that from shared library pointed us towards to a general solution: Only keep that things in a shared library that are time intensive to code again and again. We came to the conclusion that the most time consuming thing for us was writing RecyclerView ViewHolders and corresponding XML layout files. Also, time intensive was to implement all the lifecycle aware stuff like tracking and so on and <strong>NOT</strong> implementing a Fragment or Activity class per se.</p>
+<p>Once we realized that the solution was obvious: We don&rsquo;t want to build a prefabricated house, we want to build a Lego house with only those Lego pieces we really need for that house / app. In other words: we needed a <strong>Lego kit</strong> containing ViewHolders and XML layouts and also a plugin mechanism to hook in tracking and advertisement into Fragment&rsquo;s lifecycle.</p>
+<p>So we decided to deprecate the shared library and build two libraries: One containing ViewHolders, one containing plugin components for lifecycle. Another thing was very clear to us:</p>
 <blockquote>
-<p>The Repository will carry out the appropriate operations behind the scenes. Conceptually, a Repository encapsulates the set of objects persisted in a data store and the operations performed over them, providing a more object-oriented view of the persistence layer. Repository also supports the objective of achieving a clean separation and one-way dependency between the domain and data mapping layers.</p>
+<p>Favor composition over inheritance
+We didn&rsquo;t wanted to make the same mistake again: a god alike <em>NewsListFragment</em> to extend from.</p>
 </blockquote>
-<p>Second Question: <strong>What are the benefits of abstractions like <em>Specification</em>?</strong></p>
-<ul>
-<li>Single responsibility: This class is responsible to create a &ldquo;criteria&rdquo;. In the case of <em>NewestNewsesSqlSpecification</em> this criteria is translated to an SQL string.</li>
-<li>Hide implementation details: The SQL Statement is hidden in <em>NewestNewsesSqlSpecification</em>, so that no other class has to know about SQL at all.</li>
-<li>We can reuse Specifications: Imagine a Specification with a SQL WHERE clause. We could define such a Specification once and reuse it whenever we need a different WHERE clause based specification.</li>
-<li>Open / Closed principle: As Krzychu Kosobudzki pointed out correctly, this allows to create new specifications (and therefore new functionality) without having to touch something else in your code base.</li>
-</ul>
-<p>What are the disadvantages with that extra abstraction layer?
-Well, now whoever calls <em>newsRepository.query(new NewestNewsesSqlSpecification())</em> has to know which <em>Specification</em> to pass in. That is not a problem per se, but developers begin to over abstract that pattern. For example, Krzychu Kosobudzki says that with the repository pattern we can change concrete implementation as requirements changes. He gives the example of using Realm instead of SQLite database:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"> <span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewsRealmRepository</span> <span class="kd">implements</span> <span class="n">Repository</span><span class="o">&lt;</span><span class="n">News</span><span class="o">&gt;</span> <span class="o">{</span>
+<p>First, let&rsquo;s talk about how we decided to deal with <em>ViewHolder</em>. Well, there is a library of mine which I have build in this context called <a href="https://github.com/sockeqwe/AdapterDelegates">AdapterDelegates</a>. The idea is simple: defining a delegate for each RecyclerView&rsquo;s ViewType / ViewHolder which does the job of inflating xml layout and binding the data:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"> <span class="k">public</span> <span class="k">class</span> <span class="nc">BigNewsItemAdapterDelegate</span> <span class="n">extends</span> <span class="n">AbsListItemAdapterDelegate</span><span class="p">&lt;</span><span class="n">BigNewsItem</span><span class="p">,</span> <span class="n">NewsViewHolder</span><span class="p">&gt;</span> <span class="p">{</span>
 
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">News</span><span class="o">&gt;</span> <span class="nf">query</span><span class="o">(</span><span class="n">Specification</span> <span class="n">specification</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">RealmSpecification</span> <span class="n">realmSpecification</span> <span class="o">=</span> <span class="o">(</span><span class="n">RealmSpecification</span><span class="o">)</span> <span class="n">specification</span><span class="o">;</span>
+     <span class="n">@Override</span> <span class="k">public</span> <span class="n">NewsViewHolder</span> <span class="n">onCreateViewHolder</span><span class="p">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="p">)</span> <span class="p">{</span>
+       <span class="k">return</span> <span class="n">new</span> <span class="n">CatViewHolder</span><span class="p">(</span><span class="n">inflater</span><span class="p">.</span><span class="n">inflate</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">item_cat</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="k">false</span><span class="p">));</span>
+     <span class="p">}</span>
 
-        <span class="n">Realm</span> <span class="n">realm</span> <span class="o">=</span> <span class="n">Realm</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="n">realmConfiguration</span><span class="o">);</span>
-        <span class="n">RealmResults</span><span class="o">&lt;</span><span class="n">NewsRealm</span><span class="o">&gt;</span> <span class="n">realmResults</span> <span class="o">=</span> <span class="n">realmSpecification</span><span class="o">.</span><span class="na">toRealmResults</span><span class="o">(</span><span class="n">realm</span><span class="o">);</span>
+     <span class="n">@Override</span> <span class="k">public</span> <span class="n">void</span> <span class="n">onBindViewHolder</span><span class="p">(</span><span class="n">BigNewsItem</span> <span class="n">item</span><span class="p">,</span> <span class="n">NewsViewHolder</span> <span class="n">vh</span><span class="p">)</span> <span class="p">{</span>
+       <span class="n">vh</span><span class="p">.</span><span class="n">title</span><span class="p">.</span><span class="n">setText</span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="n">getTitle</span><span class="p">());</span>
+       <span class="n">loadImage</span><span class="p">(</span><span class="n">vh</span><span class="p">.</span><span class="n">image</span><span class="p">,</span> <span class="n">item</span><span class="p">.</span><span class="n">getImageUrl</span><span class="p">());</span>
+     <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>So we defined all those AdapterDelegates like <em>BigNewsItemAdapterDelegate</em>,  <em>VideoNewsItemDelegate</em>, <em>SlideshowNewsItemDelegate</em> etc. and put them in a library.</p>
+<p>Now kicker&rsquo;s <em>KikNewsListFragment</em> looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@Override</span>
+<span class="k">public</span> <span class="n">void</span> <span class="n">onCreateView</span><span class="p">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="p">,</span> <span class="n">ViewGroup</span> <span class="n">parent</span><span class="p">,</span> <span class="n">Bundle</span> <span class="n">b</span><span class="p">){</span>
+    <span class="p">...</span>
+    <span class="n">RecyclerView</span> <span class="n">rv</span> <span class="p">=</span>  <span class="p">...;</span>
 
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">News</span><span class="o">&gt;</span> <span class="n">newses</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="n">Adapter</span> <span class="n">adapter</span> <span class="p">=</span> <span class="n">new</span> <span class="n">DelegatingAdapter</span><span class="p">&lt;</span><span class="n">NewsItem</span><span class="p">&gt;();</span>
+    <span class="n">adapter</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">new</span> <span class="n">BigNewsItemAdapterDelegate</span><span class="p">())</span>
+           <span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">new</span> <span class="n">VideoNewsItemDelegate</span><span class="p">())</span>
+           <span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">new</span> <span class="n">SlideshowNewsItemDelegate</span><span class="p">())</span>
+           <span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">new</span> <span class="n">AdvertisementDelegate</span><span class="p">());</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="n">NewsRealm</span> <span class="n">news</span> <span class="o">:</span> <span class="n">realmResults</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">newses</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">toNewsMapper</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">news</span><span class="o">));</span>
-        <span class="o">}</span>
-        <span class="n">realm</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-        <span class="k">return</span> <span class="n">newses</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><p>As you see there is another subtype of <em>Specification</em> for Realm:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">RealmSpecification</span> <span class="kd">extends</span> <span class="n">Specification</span> <span class="o">{</span>
-    <span class="n">RealmResults</span><span class="o">&lt;</span><span class="n">NewsRealm</span><span class="o">&gt;</span> <span class="nf">toRealmResults</span><span class="o">(</span><span class="n">Realm</span> <span class="n">realm</span><span class="o">);</span>
-<span class="o">}</span>
+   <span class="n">rv</span><span class="p">.</span><span class="n">setAdapter</span><span class="p">(</span><span class="n">adapter</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>Please note that the <em>AdvertisementDelegate()</em> is not part of the library, because this one is used in kicker app and but not in MeinVerein app. I guess you know how the code of Fragments of the other apps  look like, right? They reuse the same AdapterDelegates, the same xml layouts etc. However, to be really independent every AdapterDelegate has a tiny companion class for holding the required data to be displayed in a ViewHolder as well, i.e. <em>BigNewsItemAdapterDelegate</em> has a <em>BigNewsItem</em>, <em>VideoNewsItemDelegate</em> has a <em>VideoNewsItem</em> and so on.</p>
+<p>So at some point we have to map the data coming from backend to this companion object. This is where a MVP based App pays of. This is the responsibility of the Presenter. We transform the &ldquo;model&rdquo; into a &ldquo;presentation model&rdquo;. Overall the architecture looks like this:</p>
+<p><img src="/images/legohouse/adpterdeleages-architecture.png" alt="Tippspiel"></p>
+<p>And for the Tracking stuff? Favor composition over inheritance!</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">interface</span> <span class="nc">LifecycleDelegate</span> <span class="p">{</span>
+  <span class="n">void</span> <span class="n">onCreate</span><span class="p">();</span>
+  <span class="n">void</span> <span class="n">onPause</span><span class="p">();</span>
+  <span class="n">void</span> <span class="n">onResume</span><span class="p">();</span>
+  <span class="n">void</span> <span class="n">onDestroy</span><span class="p">();</span>
+  <span class="p">...</span>
+<span class="p">}</span>
 
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewsByIdSpecification</span> <span class="kd">implements</span> <span class="n">RealmSpecification</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+<span class="k">class</span> <span class="nc">TrackingLifecycleDelegate</span> <span class="n">implements</span> <span class="n">LifecycleDelegate</span> <span class="p">{</span>
+  <span class="k">private</span> <span class="n">String</span> <span class="n">trackingTag</span><span class="p">;</span>
+  <span class="k">public</span> <span class="n">TrackingLifecycleDelegate</span><span class="p">(</span><span class="n">String</span> <span class="n">trackingTag</span><span class="p">){</span>
+     <span class="k">this</span><span class="p">.</span><span class="n">trackingTag</span> <span class="p">=</span> <span class="n">trackingTag</span><span class="p">;</span>
+  <span class="p">}</span>
 
-    <span class="kd">public</span> <span class="nf">NewsByIdSpecification</span><span class="o">(</span><span class="kd">final</span> <span class="kt">int</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
-    <span class="o">}</span>
+  <span class="n">@Override</span>
+  <span class="k">public</span> <span class="n">void</span> <span class="n">onResume</span><span class="p">(){</span>
+    <span class="n">Tracking</span><span class="p">.</span><span class="n">viewAppeared</span><span class="p">(</span><span class="n">trackingTag</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="p">...</span>
+<span class="p">}</span>
 
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">RealmResults</span><span class="o">&lt;</span><span class="n">NewsRealm</span><span class="o">&gt;</span> <span class="nf">toRealmResults</span><span class="o">(</span><span class="n">Realm</span> <span class="n">realm</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">realm</span><span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">NewsRealm</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
-                <span class="o">.</span><span class="na">equalTo</span><span class="o">(</span><span class="n">NewsRealm</span><span class="o">.</span><span class="na">Fields</span><span class="o">.</span><span class="na">ID</span><span class="o">,</span> <span class="n">id</span><span class="o">)</span>
-                <span class="o">.</span><span class="na">findAll</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><p>The problem is that whoever calls <em>newsRepository.query(&hellip;)</em> has to know whether it has to pass in a <em>NewestNewsesSqlSpecification</em> or <em>NewestNewsesRealmSpecification</em>. So is it really that easy to change your implementation from SQLite to Realm? No, it&rsquo;s not because you have to change the specifications everywhere from <em>FooSqlSpecification</em> to <em>FooRealmSpecification</em>. There is also one big code smell coming along with this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
-<span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">News</span><span class="o">&gt;</span> <span class="nf">query</span><span class="o">(</span><span class="n">Specification</span> <span class="n">specification</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">SqlSpecification</span> <span class="n">sqlSpecification</span> <span class="o">=</span> <span class="o">(</span><span class="n">SqlSpecification</span><span class="o">)</span> <span class="n">specification</span><span class="o">;</span>
-  <span class="o">...</span>
-<span class="o">}</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
-<span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">News</span><span class="o">&gt;</span> <span class="nf">query</span><span class="o">(</span><span class="n">Specification</span> <span class="n">specification</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">RealmSpecification</span> <span class="n">realmSpecification</span> <span class="o">=</span> <span class="o">(</span><span class="n">RealmSpecification</span><span class="o">)</span> <span class="n">specification</span><span class="o">;</span>
-  <span class="o">...</span>
-<span class="o">}</span>
-</code></pre></div><p>Whenever you are programming against an interface but you have to cast an interface to a concrete class, in 95% of the time you are doing something wrong!</p>
-<p>Martin Fowler et al. didn&rsquo;t make a statement about Repository Pattern and changing concrete implementation (i.e. SQLite to Realm). Fowler et al, described the repository pattern  as</p>
-<blockquote>
-<p>adding this layer helps minimize duplicate query logic.</p>
-</blockquote>
-<p>So the original definition of the repository pattern is all about minimizing duplicate query logic and not necessarily to build an abstraction layer to change the underlying database.</p>
-<p>I don&rsquo;t want to blame anybody. This is not a Android related problem, we also see that quite often in Java EE world, especially in spring framework powered backends.</p>
-<h2 id="evolution-of-the-repository-pattern-term">Evolution of the Repository Pattern term</h2>
-<p>In android development the term Repository Pattern is quite often used in combination with Clean Architecture. So did Fernando Cejas in his excellent blog post <a href="http://fernandocejas.com/2014/09/03/architecting-android-the-clean-way/">Architecting Android…The clean way?</a> (scroll down to &ldquo;Data layer&rdquo; section). Interesting enough, he also links to the original definition of the Repository Pattern by Martin Fowler et al. However, Fernando Cejas says:</p>
-<blockquote>
-<p>All data needed for the application comes from this layer through a Repository implementation (the interface is in the domain layer) that uses a Repository Pattern with a strategy that, through a factory, picks different data sources depending on certain conditions.</p>
-</blockquote>
-<p><img src="/images/repository_pattern.png" alt="Repository Pattern"></p>
-<blockquote>
-<p>The idea behind all this is that the data origin is transparent for the client, which does not care if the data is coming from memory, disk or the cloud, the only truth is that the data will arrive and will be got.</p>
-</blockquote>
-<p>As you can see here, the term <em>Repository Pattern</em> is used to describe something slightly different. You can see it even more clear if you check out Fernando&rsquo;s <a href="https://github.com/android10/Android-CleanArchitecture/tree/master/data/src/main/java/com/fernandocejas/android10/sample/data/repository">Clean Architecture Sample Project</a> on Github. In his sample he uses RxJava. For my blog post I have removed RxJava in the code snippets below for better understanding if you don&rsquo;t have prior RxJava knowledge. I have also simplified the code a little bit to focus on the important things. For example Fernando wants to load an User by his id:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">interface</span> <span class="nc">UserRepository</span> <span class="o">{</span>
-  <span class="n">User</span> <span class="nf">user</span><span class="o">(</span><span class="kt">int</span> <span class="n">userId</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></div><p>The concrete implementation of that repository:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">UserDataRepository</span> <span class="kd">implements</span> <span class="n">UserRepository</span> <span class="o">{</span>
+<span class="k">class</span> <span class="nc">KikNewsListFragment</span> <span class="n">extends</span> <span class="n">Fragment</span> <span class="p">{</span>
 
-  <span class="kd">private</span> <span class="n">UserDataStoreFactory</span> <span class="n">userDataStoreFactory</span><span class="o">;</span>
+  <span class="n">List</span><span class="p">&lt;</span><span class="n">LifecycleDelegate</span><span class="p">&gt;</span> <span class="n">lifecycleDelegates</span> <span class="p">=</span> <span class="n">new</span> <span class="n">ArrayList</span><span class="p">&lt;&gt;();</span>
 
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="n">User</span> <span class="nf">user</span><span class="o">(</span><span class="kt">int</span> <span class="n">userId</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">UserDataStore</span> <span class="n">userDataStore</span> <span class="o">=</span> <span class="n">userDataStoreFactory</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">userId</span><span class="o">);</span>
-    <span class="k">return</span> <span class="n">userDataStore</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">userId</span><span class="o">);</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><p>An <em>UserDataStore</em> is, as the name already suggests, responsible to load a User from a store like disk or a backend (cloud).</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">interface</span> <span class="nc">UserDataStore</span> <span class="o">{</span>
-  <span class="n">User</span> <span class="nf">getUser</span><span class="o">(</span><span class="kt">int</span> <span class="n">userId</span><span class="o">);</span>
-<span class="o">}</span>
+  <span class="p">{</span> <span class="c1">// Initializer block
+</span><span class="c1"></span>    <span class="n">lifecycleDelegates</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">new</span> <span class="n">TrackingLifecycleDelegate</span><span class="p">(</span><span class="s">&#34;kicker app NewsListScreen&#34;</span><span class="p">));</span>
+  <span class="p">}</span>
 
-<span class="kd">class</span> <span class="nc">DiskUserDataStore</span> <span class="kd">implements</span> <span class="n">UserDataStore</span> <span class="o">{</span>
-  <span class="kd">private</span> <span class="n">DiskCache</span><span class="o">&lt;</span><span class="n">Int</span><span class="o">,</span> <span class="n">User</span><span class="o">&gt;</span> <span class="n">userCache</span><span class="o">;</span>
+  <span class="n">@Override</span>
+  <span class="k">public</span> <span class="n">void</span> <span class="n">onResume</span><span class="p">(){</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onResume</span><span class="p">();</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">LifecycleDelegate</span> <span class="n">l</span> <span class="p">:</span> <span class="n">lifecycleDelegates</span><span class="p">){</span>
+      <span class="n">lifecycleDelegates</span><span class="p">.</span><span class="n">onResume</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="n">User</span> <span class="nf">getUser</span><span class="o">(</span><span class="kt">int</span> <span class="n">userId</span><span class="o">){</span>
-    <span class="k">return</span> <span class="n">userCache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">userId</span><span class="o">);</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">class</span> <span class="nc">CloudUserDataStore</span> <span class="kd">implements</span> <span class="n">UserDataStore</span> <span class="o">{</span>
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="n">User</span> <span class="nf">getUser</span><span class="o">(</span><span class="kt">int</span> <span class="n">userId</span><span class="o">){</span>
-    <span class="c1">// Make an HTTP request and return User.
-</span><span class="c1"></span>  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><p><em>UserDataStoreFactory</em> is the component that decides which <em>UserDataStore</em> to use when someone calls <em>UserRepository.getUser(userId)</em>. For example the factory could check if <em>DiskUserDataStore</em> has a User and if the User object is expired then the factory returns <em>CloudUserDataStore</em>, otherwise <em>DiskUserDataStore</em>. The factory could also take into account if the smartphone  has an active internet connection or not. I guess you get the point.</p>
-<h2 id="conclusion">Conclusion</h2>
-<p>Fernando Cejas interpretation of the Repository Pattern is representative of other developers that nowadays interpret the Repository Pattern in a similar way. However, it has not much in common with the &ldquo;original&rdquo; definition of the Repository Pattern by Martin Fowler et al. Wasn&rsquo;t the repository pattern meant to be used to minimizing duplicate query logic? Martin Fowler didn&rsquo;t say anything about loading users from different UserDataStores. Where did the <em>Specification</em> class go?</p>
-<p>If you compare both, the original Repository Pattern and the later one, you will see that actually they are trying to solve two different kind of problems. While the original one tries to minimize duplicate query logic (by open / closed principle) the later one tries to hide the concrete data store your app is talking to. But from my point of view you can&rsquo;t really solve both problems at the same time within the same pattern as Krzychu tried in his blog post by adding another abstraction. You have to choose which problem you actually want to solve (you can chain both patterns together though).</p>
-<p>So why are both patterns called Repository Pattern? This happens quite often in history. A name gets (re)used for different purpose. For example Trygve Reenskaug introduced Model-View-Controller in the 1970s but his definition has nothing in common with what we nowadays call MVC, i.e. describing Activities as Controller on android, UIController on iOS, Controller in backends and so on. The same happened to the term Repository Pattern.</p>
-<p>No worries, evolution is good. We should just remember where we came from and why it has evolved to what it is used now, for better understanding where we are going. The original Repository Pattern was designed for <strong>Enterprise Applications</strong> to reduce duplication of query logic. Usually, your android app is not a enterprise application. Normally, in your android app you should follow Fernando Cejas definition of the Repository Pattern because mostly you want to hide the underlying data store implementation to be more flexible for future requirement changes and consequential refactoring.</p>
-<p><strong>But,</strong> if you take a closer look at the later interpretation of the Repository Pattern you will come to the conclusion that basically it just says: program against an interface so that you can change implementation details later and follow the single responsibility principle. That&rsquo;s what all the Clean Architecture and Repository Pattern blah blah is about.</p>
-<p>Don&rsquo;t over abstract. Don&rsquo;t over engineer. For example, if you start an app from scratch, yes, you should define an interface like <em>UserRepo</em> and all your business logic or domain layer or whatever layer should program agains this interface. However, if you only have one backend to load data from, then your <em>UserRepo</em> implementation should make these http calls directly in a concrete UserRepo class implementing the UserRepo interface. No need for <em>UserDataStore</em>, <em>CloudUserDataStore</em> and <em>UserDataStoreFactory</em>.</p>
-<p>You may ask yourself: What if one day my requirements change and I have to use Realm instead of SQLite. Then you provide <em>UserRepoRealm implements UserRepo</em> instead of <em>UserRepoSql implements UserRepo</em>. Still no need for <em>UserDataStore</em> and <em>UserDataStoreFactory</em>. My message here is: build the minimal piece of code you really need and don&rsquo;t over engineer it with requirements that may or may not be needed in the future. Seriously, I&rsquo;m working in this industry for quite some years now and I have never worked on a backend, not to mention an android app, that has ever changed the underlying database. Don&rsquo;t build an abstraction layer like <em>SqlSpecification</em> with such future requirements changes in mind. If one day you have to add something like a DiskCache along your cloud backend to communicate with, then it makes sense to refactor your code to respect the single responsibility principle and add classes like <em>UserDataStoreFactory</em>, <em>UserDataStore</em>, <em>DiskUserDataStore</em> and <em>CloudUserDataStore</em>. Since all your other layers are programming agains <em>UserRepo</em> interface, refactoring that is no problem at all.</p>
-<p>Until then, no need for all this abstractions.</p>
+  <span class="c1">// Same for other lifecycle methods
+</span><span class="c1"></span>  <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><p>Now we can share <em>TrackingLifecycleDelegate</em> with all apps. Overall it looks like this:</p>
+<p><img src="/images/legohouse/alldelegates-architecture.png" alt="Tippspiel"></p>
+<p>There are some libraries you can use to achieve the same thing: Soundcloud&rsquo;s <a href="https://github.com/soundcloud/lightcycle">Lightcycle</a> and <a href="https://github.com/passsy/CompositeAndroid">AndroidComposite</a> by  Pascal Welsch.</p>
+<h2 id="summary">Summary</h2>
+<p>In my opinion a Lego house is much more flexible and maintainable compared with a prefabricated house. Favor composition over inheritance is the key to build a Lego kit. Obviously, there is no silver bullet to solve that kind of problem. Our Lego house approach works quite good for us, but i.e. our  iOS team still prefer the prefabricated house approach even though they have similar issues as we had in our android apps. Somehow that approach works for them (but don&rsquo;t ask me how). I guess the important bit is that all developers working in the same team know exactly how this approach should be implemented and have committed to do that consistently the same way. Maybe we from the android team failed at this point.</p>
+<p>Was it an error to start with the prefabricated house approach suggested by the most experienced developer in our company? No! MeinVerein app has been build with that approach in incredible little time. I definitely would follow the experienced developers recommendation again, but not blindly. I have learned a lot, which hopefully will help me with future decisions. What really matters is to learn from the past to build a better future. I think with the Lego house approach we are moving in the right direction. But who knows, maybe in two years I will write a blog post about how bad the Lego house approach was.</p>
 
         </article>
       </div>
@@ -314,10 +241,10 @@ Well, now whoever calls <em>newsRepository.query(new NewestNewsesSqlSpecificatio
             <div class="share-post-box">
 
                 <a class="text-dark"
-                    href="https://twitter.com/intent/tweet?text=&quot;The%20evolution%20of%20the%20Repository%20Pattern%20-%20Be%20aware%20of%20over%20abstraction&quot;%20https%3a%2f%2fhannesdorfmann.com%2fandroid%2ffrom-prefabricated-house-to-lego-house%2f%20via%20@sockeqwe"
+                    href="https://twitter.com/intent/tweet?text=&quot;From%20Prefab%20House%20to%20Lego%20House&quot;%20https%3a%2f%2fhannesdorfmann.com%2fandroid%2ffrom-prefabricated-house-to-lego-house%2f%20via%20@sockeqwe"
                     target="_blank" title="Share on Twitter"><i class="ti-twitter-alt share-icon"></i></a>
 
-                <a class="text-dark" href="http://www.reddit.com/submit?url=https%3a%2f%2fhannesdorfmann.com%2fandroid%2ffrom-prefabricated-house-to-lego-house%2f&title=The%20evolution%20of%20the%20Repository%20Pattern%20-%20Be%20aware%20of%20over%20abstraction"
+                <a class="text-dark" href="http://www.reddit.com/submit?url=https%3a%2f%2fhannesdorfmann.com%2fandroid%2ffrom-prefabricated-house-to-lego-house%2f&title=From%20Prefab%20House%20to%20Lego%20House"
                     target="_blank" title="Share on Reddit"><i class="ti-reddit share-icon"></i></a>
 
 

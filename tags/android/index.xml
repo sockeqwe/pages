@@ -108,10 +108,10 @@ If you haven&amp;rsquo;t read part 2 yet, you should read that before continue w
     
     <item>
       <title>The evolution of the Repository Pattern - Be aware of over abstraction</title>
-      <link>https://hannesdorfmann.com/android/from-prefabricated-house-to-lego-house/</link>
+      <link>https://hannesdorfmann.com/android/evolution-of-the-repository-pattern/</link>
       <pubDate>Sun, 17 Jul 2016 10:00:00 +0100</pubDate>
       
-      <guid>https://hannesdorfmann.com/android/from-prefabricated-house-to-lego-house/</guid>
+      <guid>https://hannesdorfmann.com/android/evolution-of-the-repository-pattern/</guid>
       <description>A listener from our podcast, The Context, that Artem Zinnatullin and I run asked me, if I can give him an example of the Repository Pattern. So I googled around and stumbled upon some blog posts and found out that the term Repository Pattern is used and described in many different ways.</description>
     </item>
     
