@@ -211,4 +211,4 @@ Thus, it is extendable for future use cases by only adding a few lines of code t
 Thanks for your feedback, I really appreciate it! 
 We could make `TextResouce` follow the Open-Closed principle if `sealed class TextResouce` has a `abstract fun asString(r : Resources)` that all sub-classes implement. 
 I personally think it is fine to sacrifice the Open-Closed principle in favor of keeping the data structs lean and work with a pure (extension) function `asString(r : Resources)` that lives outside of the inheritance hierarchy (as described in this blog post; Plus to me it still feels extensible enough although it is not as exensible as it can be with Open-Closed principle). Why? Well, I see it as problematic to add a function with a parameter `Resources` to the public API of TextResource because only a subset of all subclasses need that parameter (i.e. `SimpleTextResource` doesnt need this parameter add all). 
-It just adds maintainance overhead and complexity (especially for testing) longterm once it is part of the public API.
+It just adds maintainance overhead and complexity (especially for testing) once it is part of the public API.
