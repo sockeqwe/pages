@@ -134,6 +134,9 @@ enableEmoji = true
     noClasses = false
     style= "monokai"
     tabWidth = 4
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      strikethrough = true
 
 [taxonomies]
   category = "categories"
