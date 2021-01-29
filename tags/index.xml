@@ -6,10 +6,19 @@
     <description>Recent content in Tags on Hannes Dorfmann</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Jan 2021 10:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Fri, 29 Jan 2021 10:00:00 +0100</lastBuildDate>
     
 	<atom:link href="https://hannesdorfmann.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>code-review</title>
+      <link>https://hannesdorfmann.com/tags/code-review/</link>
+      <pubDate>Fri, 29 Jan 2021 10:00:00 +0100</pubDate>
+      
+      <guid>https://hannesdorfmann.com/tags/code-review/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>android</title>

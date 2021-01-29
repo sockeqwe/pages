@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>code-review on Hannes Dorfmann</title>
+    <link>https://hannesdorfmann.com/tags/code-review/</link>
+    <description>Recent content in code-review on Hannes Dorfmann</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 29 Jan 2021 10:00:00 +0100</lastBuildDate>
+    
+	<atom:link href="https://hannesdorfmann.com/tags/code-review/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Perfectionism vs. Excellence</title>
+      <link>https://hannesdorfmann.com/perfectionism-vs-excellence/</link>
+      <pubDate>Fri, 29 Jan 2021 10:00:00 +0100</pubDate>
+      
+      <guid>https://hannesdorfmann.com/perfectionism-vs-excellence/</guid>
+      <description>Perfectionism is not the same thing as striving for excellence. How does one differentiate from the other and why does it matter? How does it related to software engineering? That are the questions that I want to answer by looking at a very concrete example from the world of software engineering: Code Reviews.</description>
+    </item>
+    
+  </channel>
+</rss>
