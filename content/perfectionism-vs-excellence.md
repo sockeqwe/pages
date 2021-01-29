@@ -28,7 +28,9 @@ Brené Brown, a research professor at the University of Houston and  author of f
  > Perfectionism is not self-improvement. Perfectionism is, at its core, about trying to earn approval. Most perfectionists grew up being praised for achievement and performance (grades, manners, rule following, people pleasing, appearance, sports). Somewhere along the way, they adopted this dangerous and debilitating belief system: I am what I accomplish and how well I accomplish it. Please. Perform. Perfect. Prove.
  > Perfectionism is a self-destructive and addictive belief system that fuels this primary thought: If I look perfect and do everything perfectly, I can avoid or minimize the painful feelings of blame, judgment, and shame.
  >
- > **Perfectionism is more about perception than internal motivation, and there is no way to control perception, no matter how much time and energy we spend trying.**
+ > Perfectionism is more about perception than internal motivation, and there is no way to control perception, no matter how much time and energy we spend trying.
+ > 
+ > Perfectionism is other-focused: What will people think? Perfectionism is a hustle.
 
 I found it interesting to see perfectionism being linked to perception. 
 Do I want to be perceived as perfect? Why? By whom?
@@ -82,13 +84,72 @@ fun remaining_time_between_two_consecutive_days_is_86400_seconds(){
 
 Now, lets see how this relates to our Perfectionism vs. Excellent discussion.
 
-If we are a perfectionist looking for perfection we could request the following changes before we accept this PR (as it matches our definition of perfection only after changes are applied):
+If we are a perfectionist looking for perfection we could request the following changes before we accept this PR (as it matches our definition of perfection only after our desired changes are applied):
+
+![Code Review Comment1](/images/perfectionism-excellence/review_unit_test.png)
+
+So what did we do here? 
+We said that the solution of the coworker to compute two consecutive dates is not perfect but Calendar is perfect to us. Remember, perfect is subjective. 
+Going back to Brené Browns definition of Perfectionism:
+ > Perfectionism is more about perception than internal motivation, and there is no way to control perception, no matter how much time and energy we spend trying.
+ > 
+ > Perfectionism is other-focused: What will people think?
+
+Aren't we by requesting this change (subconsciously) just trying to be perceived as perfect (or smarter or more knowledgeable) by whoever reads our comment, like the author of the code who requested our code review?
 
 
+#### Healthy striving for excellence
+Healthy striving is self-focused: "How can I improve?". 
+If we translate this to code review, then the questions is: How can we improve this solution to make it excellent?
 
+Coming back to the code review example from above, the question we should ask ourselves is does using `Calendar` APIs make this piece of code more excellent? I dont think so. 
+
+Excellence is objective. Excellence has defined standards. 
+
+For example: when reviewing code that implements a certain algorithm we can measure runtime performance and know what excellence means in that context.
+Similarly, building a backend system with multiple microservices we can measure scalability, resilience, request throughput and so on. 
+Another example is proper domain model which you can measure indirectly (maybe not by a meaningful number like throughput on the backend) by taking into account i.e. coupling and dependencies we have to other components or the complexity of a module. 
+Even on a smaller scope: just using enums over string literals to model a finite set of options is excellent. 
+The standard that defines excellence in that case is that you have fewer errors by using enums as most compilers can check for exhaustive use in `when` expressions in Kotlin (`switch` in Java).
+For sure there are other things where the definition of excellence is not that clear. For example naming (of types or variables). 
+But even in that case, there is a chance that there are common best practices or naming conventions that serve as a standard (and statical analysis tools can do that code review for you). 
+Or even more broadly speaking: Excellence means less bugs.
+
+With that said, lets finish code review example from above.
+So instead of reviewing code by focusing on perfectionism ("you must use `Calendar`!") we should focus on excellence.
+One issue that we as code reviewer could point out is that just using `Date` is not the best choice if we need to work with different timezones. 
+Focusing on that aspect is focusing on striving for excellence (less chance to have timezone related bugs or misbehavior).
+Or focusing on the fact that there is no check in `secondsRemaining(now : Date, endDate : Date)` that `endDate` is actually after `now`.
+
+Probably a more perfectionism driven point of view is to point out that `now` is probably not the best variable name.
+Here the question is: Does it make the solution excellent by renaming that variable? 
+Are we sure that we are not striving for our own subjective perfectionism?
+Is there a standard that defines excellence in this context? 
+We could argue that it is misleading for the reader of the code.
+But is it a blocker to not aprove this code from our co-worker? 
+What are our team standards in that context.
+
+But what if I still really really really want to make the point that I, think `Calendar` is a better choice here? 
+
+Here is a little guide that works well for me:
+
+1. Step: Take a step back and ask yourself: Is it about perfectionism or excellence?
+2. Step: If it is about my own perfectionism then I have to acknowlege that. Self-awareness is key.
+3. Step: There is nothing wrong with making a comment that I, personally, think that `Calendar` is a better choice but I acknowledge that it is a matter of personal preference and not because it makes the solution more excellent. 
+
+So my code review comment could look like this:
+
+![Code Review Comment2](/images/perfectionism-excellence/review_unit_test2.png)
+
+By doing so I don't chase perfection.
+I dont want to look perfect and I dont expect the author to achieve unattainable ideals. 
+I actually leave the ownership by the author of the code.
+
+And last but not least, we skip the whole dance where both, the code reviewer and the author of the code, are in disagreement because both stick to their different picture of perfect code. 
+Either the code reviewer get annoyed and says at some point "then do whatever you want" or the author of the code says "okay, I give up I change it to whatever you want me to change" but for sure we didnt improve the code towards an excellent soltuion.
 
 [^1]: https://en.wikipedia.org/wiki/Perfectionism_(psychology) visited at Januar 28, 2021.
 [^2]: Paul L. Hewitt, Gordon L. Flett, Samuel F. Mikail. [Perfectionism: A Relational Approach to Conceptualization, Assessment, and Treatment](https://www.amazon.com/dare-lead-brave-conversations-hearts). 2017.
 https://www.amazon.com/Perfectionism-Relational-Conceptualization-Assessment-Treatment/dp/1462528724
-[^3]: Brown, Brené. [Dare to Lead](https://www.amazon.com/dare-lead-brave-conversations-hearts). 2018.
+[^3]: Brené Brown. [Dare to Lead](https://www.amazon.com/dare-lead-brave-conversations-hearts). 2018.
 [^4]: https://en.wikipedia.org/wiki/Excellence
