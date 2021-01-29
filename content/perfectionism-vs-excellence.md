@@ -1,6 +1,6 @@
 ---
 title: "Perfectionism vs. Excellence"
-date: 2021-01-28T10:00:00+01:00
+date: 2021-01-29T10:00:00+01:00
 description: "Perfectionism is not the same thing as striving for excellence. When reviewing PRs do we aim for perfectionism or for excellence? Code Reviews."
 type: "post"
 categories: 
@@ -146,7 +146,7 @@ I dont want to look perfect and I dont expect the author to achieve unattainable
 I actually leave the ownership by the author of the code.
 
 And last but not least, we skip the whole dance where both, the code reviewer and the author of the code, are in disagreement because both stick to their different picture of perfect code. 
-Either the code reviewer get annoyed and says at some point "then do whatever you want" or the author of the code says "okay, I give up I change it to whatever you want me to change" but for sure we didnt improve the code towards an excellent soltuion.
+Either the code reviewer gets annoyed and says at some point "then do whatever you want" or the author of the code says "okay, I give up I change it to whatever you want" but for sure they didn't improve the code towards an excellent soltuion.
 
 [^1]: https://en.wikipedia.org/wiki/Perfectionism_(psychology) visited at Januar 28, 2021.
 [^2]: Paul L. Hewitt, Gordon L. Flett, Samuel F. Mikail. [Perfectionism: A Relational Approach to Conceptualization, Assessment, and Treatment](https://www.amazon.com/dare-lead-brave-conversations-hearts). 2017.
