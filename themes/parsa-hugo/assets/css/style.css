@@ -1,6 +1,6 @@
 :root {
   --content-margin-image: 40px;
-  --content-margin-bottom-element: 30px;
+  --content-margin-bottom-element: 20px;
 }
 
 .theme-light {
@@ -846,7 +846,7 @@ textarea.form-control {
   height: 400px;
 }
 
-blockqublockquote {
+blockquote {
   font-style: italic;
   color: #000000;
   background: var(--color-secondary) ;
@@ -855,7 +855,7 @@ blockqublockquote {
 }
 
 blockquote > p {
-  margin: 0;
+  margin: 0 !important;
 }
 
 .content * {
@@ -991,4 +991,9 @@ blockquote > p {
   padding-right:10px;
   border-top: 1px solid var(--font-color-title);
   border-bottom: 1px solid var(--font-color-title);
+}
+
+.footnotes p, .footnotes ol {
+  font-size: 12px;
+  margin-bottom: 0px;
 }
