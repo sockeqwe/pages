@@ -12,7 +12,7 @@ tags:
 Perfectionism is not the same thing as striving for excellence. 
 How does one differentiate from the other and why does it matter? 
 How does it related to software engineering? 
-That are the questions that I want to answer by looking at a very concrete example from the world of software engineering: Code Reviews.
+These are the questions that I want to answer by looking at a very concrete example from the world of software engineering: Code Reviews.
 
 ## What is perfectionism?
 
