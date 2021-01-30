@@ -194,7 +194,7 @@ One issue that we as code reviewer could point out is that just using <code>Date
 Focusing on that aspect is focusing on striving for excellence (less chance to have timezone related bugs or misbehaviour).
 Or focusing on the fact that there is no check in <code>secondsRemaining(now : Date, endDate : Date)</code> that <code>endDate</code> is actually after <code>now</code>.
 Another area that could be improved to be more excellent is to point out that instead of returning just seconds as type <code>Long</code> from <code>fun secondsRemaining(now : Date, endDate : Date) : Long</code> we should introduce a domain model <code>RemainingTime</code> because most likely we need to do another computation (worst case in the UI layer where it is harder to write unit tests for) to translate remaining seconds into remaining days, hours, minutes and seconds as these are what the UI widget needs at the end.</p>
-<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">data</span> <span class="n">calss</span> <span class="n">RemainingTime</span><span class="p">(</span> 
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">data</span> <span class="k">class</span> <span class="nc">RemainingTime</span><span class="p">(</span> 
   <span class="k">val</span> <span class="py">days</span> <span class="p">:</span> <span class="n">Int</span><span class="p">,</span>
   <span class="k">val</span> <span class="py">hours</span> <span class="p">:</span> <span class="n">Int</span><span class="p">,</span> 
   <span class="k">val</span> <span class="py">minutes</span> <span class="p">:</span> <span class="n">Int</span><span class="p">,</span> 
