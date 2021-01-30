@@ -155,7 +155,7 @@ But what if I still really really really want to make the point that I, think `C
 
 Here is a little guide that works well for me when reviewing code:
 
-1. Step: Take a step back and ask me: Is it about perfectionism or excellence?
+1. Step: Take a step back and ask myself: Is it about perfectionism or excellence?
 2. Step: If it is about my own perfectionism then I have to acknowledge that. Self-awareness is key.
 3. Step: There is nothing wrong with making a comment that I, personally, think that `Calendar` is a better choice but I must acknowledge that it is a matter of personal preference and not because it makes the solution more excellent. 
 
