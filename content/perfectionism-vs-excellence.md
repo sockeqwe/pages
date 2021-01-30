@@ -170,6 +170,10 @@ I actually leave the ownership by the author of the code.
 And last but not least, we skip the whole dance where both, the code reviewer and the author of the code, are in disagreement because both stick to their different picture of perfect code. 
 Either the code reviewer gets annoyed and says at some point "then do whatever you want" or the author of the code says "okay, I give up and I change it to whatever you want" but for sure they didn't collaborate to improve the code towards an excellent solution.
 
+
+P.S. Prefectionism vs. Excellence is of course not only relevant for Code Reviews. 
+From my point of view it applies to everything in life, not just Software Engineering (or a subset of that disciplin such as Code Reviews).
+
 [^1]: https://en.wikipedia.org/wiki/Perfectionism_(psychology) visited at Januar 28, 2021.
 [^2]: Paul L. Hewitt, Gordon L. Flett, Samuel F. Mikail. [Perfectionism: A Relational Approach to Conceptualization, Assessment, and Treatment](https://www.amazon.com/dare-lead-brave-conversations-hearts). 2017.
 https://www.amazon.com/Perfectionism-Relational-Conceptualization-Assessment-Treatment/dp/1462528724
