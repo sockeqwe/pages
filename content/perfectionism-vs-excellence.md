@@ -128,7 +128,7 @@ Or focusing on the fact that there is no check in `secondsRemaining(now : Date, 
 Another area that could be improved to be more excellent is to point out that instead of returning just seconds as type `Long` from `fun secondsRemaining(now : Date, endDate : Date) : Long` we should introduce a domain model `RemainingTime` because most likely we need to do another computation (worst case in the UI layer where it is harder to write unit tests for) to translate remaining seconds into remaining days, hours, minutes and seconds as these are what the UI widget needs at the end.
 
 ```kotlin
-data calss RemainingTime( 
+data class RemainingTime( 
   val days : Int,
   val hours : Int, 
   val minutes : Int, 
