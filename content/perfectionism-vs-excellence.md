@@ -107,7 +107,7 @@ Aren't we by requesting this change (subconsciously) just trying to be perceived
 Healthy striving is self-focused: "How can I improve?". 
 If we translate this to code review then the question is: How can we improve the solution to make it excellent?
 
-Coming back to the code review example from above, the question we should ask ourselves is does using `Calendar` APIs make this piece of code more excellent? I dont think so. 
+Coming back to the code review example from above, the question we should ask ourselves is does using `Calendar` APIs make this piece of code more excellent? I don't think so. 
 
 Excellence is objective. Excellence has defined standards. 
 
