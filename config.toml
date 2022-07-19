@@ -71,7 +71,7 @@ home = "Home"
 # theme layout ( two layout is available, "1" and "2" )
 layout = "2"
 # Meta data
-description = "This is meta description"
+description = "Hannes Dorfmann. Software Engineering. Leadership. Android."
 # Preloader
 preloader = false
 # search
@@ -79,7 +79,7 @@ search = true
 # about author
 author = "Hannes Dorfmann"
 author_image = "images/about/hannes-banner.png"
-bio = "I'm writing about software engineering, mainly android developement, leadership and other random stuff. I'm co-host of [TheContext Podcast](https://thecontext.github.io/) and speaker at conferences. I love football and enjoy hiking.\n\n I'm an Engineering Manager at Freeletics."
+bio = "I'm writing about software engineering, mainly android developement, leadership and other random stuff. I'm co-host of [TheContext Podcast](https://thecontext.github.io/) and speaker at conferences. I love football and enjoy hiking.\n\n I'm an Engineering Manager at OneFootball."
 # Contact info
 mobile = "+90 000 333 22"
 email = "exmaple@ymail.com"
