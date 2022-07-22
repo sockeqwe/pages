@@ -848,8 +848,8 @@ textarea.form-control {
 
 blockquote {
   font-style: italic;
-  color: #000000;
-  background: var(--color-secondary) ;
+  color: var(--font-color-text-secondary);
+  background: var(--color-secondary);
   padding: 20px;
   font-weight: 600;
 }
