@@ -78,7 +78,10 @@ preloader = false
 search = true
 # about author
 author = "Hannes Dorfmann"
-author_image = "images/about/hannes-banner.png"
+author_image_480 = "images/about/hannes-banner-480.png"
+author_image_620 = "images/about/hannes-banner-620.png"
+author_image_768 = "images/about/hannes-banner-768.png"
+author_image_800 = "images/about/hannes-banner-800.png"
 bio = "I'm writing about software engineering, mainly android developement, leadership and other random stuff. I'm co-host of [TheContext Podcast](https://thecontext.github.io/) and speaker at conferences. I love football and enjoy hiking.\n\n I'm an Engineering Manager at OneFootball."
 # Contact info
 mobile = "+90 000 333 22"

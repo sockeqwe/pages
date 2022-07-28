@@ -44,9 +44,12 @@
         </ul>
       </div>
       <div class="col-lg-6 text-right">
-        {{ with site.Params.author_image }}
-        <img class="img-fluid" src="{{site.Params.author_image | absURL}}" alt="banner-image">
-        {{ end }}
+        <img class="img-fluid" 
+            srcset="{{site.Params.author_image_480 | absURL}} 480w,
+            {{site.Params.author_image_620 | absURL}} 620w,
+            {{site.Params.author_image_768 | absURL}} 768w,
+            {{site.Params.author_image_800 | absURL}} 800w"            
+            alt="banner-image">
       </div>
     </div>
   </div>
