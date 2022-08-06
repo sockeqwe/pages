@@ -154,7 +154,7 @@ no side effects are happening because of some unexpected Action being dispatched
 Moreover, if I add more Actions later, I don't have to change anything in the unit test shown above. 
 `instantiateSealedSubclasses()` creates a new instance of this new Action type too.
 
-Another rare use case I had from time to time is while doing some prototyping of a new screen of an android app and the backend to deliver data for it is not ready yet. 
+Another use case I have from time to time is while doing some prototyping of a new screen of an android app and the backend to deliver data for it is not ready yet. 
 I just need data in the meantime.
 Again, Instantiator helps me here temporarily. 
 
