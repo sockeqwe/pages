@@ -212,6 +212,9 @@ For me it is quite handy when working in a code base with a ton of <code>Actions
 no side effects are happening because of some unexpected Action being dispatched.</p>
 <p>Moreover, if I add more Actions later, I don&rsquo;t have to change anything in the unit test shown above.
 <code>instantiateSealedSubclasses()</code> creates a new instance of this new Action type too.</p>
+<p>Another rare use case I had from time to time is while doing some prototyping of a new screen of an android app and the backend to deliver data for it is not ready yet.
+I just need data in the meantime.
+Again, Instantiator helps me here temporarily.</p>
 <h2 id="alternatives">Alternatives</h2>
 <p>I know that similar libraries or tools like <code>Instantiator</code> already exist.
 Some of them come from the Java land and have not so great interop with some kotlin features such as <code>object</code> or <code>sealed interfaces</code>.
