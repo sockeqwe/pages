@@ -3,17 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://hannesdorfmann.com/categories/</loc>
-    <lastmod>2021-01-29T10:00:00+01:00</lastmod>
+    <loc>https://hannesdorfmann.com/categories/android/</loc>
+    <lastmod>2022-08-05T10:00:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://hannesdorfmann.com/tags/code-review/</loc>
-    <lastmod>2021-01-29T10:00:00+01:00</lastmod>
+    <loc>https://hannesdorfmann.com/categories/</loc>
+    <lastmod>2022-08-05T10:00:00+01:00</lastmod>
   </url>
   
   <url>
     <loc>https://hannesdorfmann.com/</loc>
+    <lastmod>2022-08-05T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/instantiator/</loc>
+    <lastmod>2022-08-05T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/tags/kotlin/</loc>
+    <lastmod>2022-08-05T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/tags/</loc>
+    <lastmod>2022-08-05T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/categories/testing/</loc>
+    <lastmod>2022-08-05T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/tags/unit-tests/</loc>
+    <lastmod>2022-08-05T10:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://hannesdorfmann.com/tags/code-review/</loc>
     <lastmod>2021-01-29T10:00:00+01:00</lastmod>
   </url>
   
@@ -25,16 +55,6 @@
   <url>
     <loc>https://hannesdorfmann.com/categories/soft-skills/</loc>
     <lastmod>2021-01-29T10:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://hannesdorfmann.com/tags/</loc>
-    <lastmod>2021-01-29T10:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://hannesdorfmann.com/categories/android/</loc>
-    <lastmod>2021-01-22T10:00:00+01:00</lastmod>
   </url>
   
   <url>

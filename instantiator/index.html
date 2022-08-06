@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Hannes Dorfmann</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Instantiate test data with Instantiator">
+  <meta name="author" content="Hannes Dorfmann">
+  <meta name="generator" content="Hugo 0.73.0" />
+  <meta property='og:title' content='Instantiate test data with Instantiator'/>
+  <meta property='og:description' content='Instantiate test data with Instantiator' />
+
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/plugins/themify-icons/themify-icons.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/css/style.min.css" media="screen">
+
+  <!-- Syntax highlightning Stylesheet -->
+  
+  <link rel="stylesheet" href="https://hannesdorfmann.com/css/syntax-highlighting.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="https://hannesdorfmann.com/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://hannesdorfmann.com/images/favicon.png " type="image/x-icon">
+
+  </head><body class="theme-light"><header class="navigation">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navogation"
+      aria-controls="navogation" aria-expanded="false" aria-label="Toggle navigation">
+      <span id="navbar-toggler" class="ti-menu"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="navogation">
+      <ul class="navbar-nav ml-auto">
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/presentations">Presentations</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" href="https://hannesdorfmann.com/contact">Contact</a>
+        </li>
+        
+        
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-dark" onclick="toggleTheme()">
+            <img id="themeSwitcher" class="navbar-nav ml-lg-4" src="/images/theme/moon.svg"/>
+          </a>
+        </li>
+      </ul>
+      
+      <!-- search -->
+      <form class="form-inline position-relative ml-lg-4" action="https://hannesdorfmann.com/search">
+        <input class="form-control px-0 w-100" type="search" placeholder="Search" id="search-query" name="s">
+        <button class="search-icon" type="submit"><i class="ti-search text-dark"></i></button>
+      </form>
+      
+    </div>
+  </nav>
+</header>
+
+
+<section class="section bg-secondary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Instantiate test data with Instantiator</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-inline d-flex justify-content-between py-3">
+          <li class="list-inline-item"><i class="ti-user mr-2"></i>Post by Hannes Dorfmann</li>
+          <li class="list-inline-item"><i class="ti-calendar mr-2"></i>Aug 05, 2022</li>
+        </ul>
+        <article class="content">
+          
+          <p>I have noticed that most of the unit tests I write are testing how my code transforms data or business logic.
+My class or business logic just needs data as input (thus I need some test data to write unit tests).
+For example, most of my android apps load a list of items from the backend and then the android app is transforming that data into some state object or front-end specific domain objects.
+I found myself spending too much time to creating data for my tests rather than writing tests.</p>
+<p>That is where <code>Instantiator</code> comes to the rescue.
+<code>Instantiator</code> is a little Kotlin library that I have written that uses reflection to fill <code>data class</code> with random test data (but it is not only limited to data classes).
+And yes, you can find it on <a href="https://github.com/sockeqwe/Instantiator">Github</a>.</p>
+<h2 id="instantiatior">Instantiatior</h2>
+<p>Instantiator is a little tool I have written that uses reflections to instantiate test data.
+It is not bound to junit (although one could build a junit test runner on top of it).</p>
+<p>Usage is quite simple: <code>instance()</code> and you get an instance.
+Example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">data</span> <span class="k">class</span> <span class="nc">Person</span><span class="p">(</span>
+  <span class="k">val</span> <span class="py">id</span> <span class="p">:</span> <span class="n">Int</span><span class="p">,</span> 
+  <span class="k">val</span> <span class="py">name</span> <span class="p">:</span> <span class="n">String</span>
+<span class="p">)</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">val</span> <span class="py">person</span> <span class="p">:</span> <span class="n">Person</span> <span class="p">=</span> <span class="n">instance</span><span class="p">()</span>  <span class="c1">// instance() is from Instantiator
+</span><span class="c1"></span><span class="k">val</span> <span class="py">persons</span> <span class="p">:</span> <span class="n">Lis</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">instance</span><span class="p">()</span>
+</code></pre></div><p>Et voilà, you have a <code>Person</code> or a <code>List&lt;Person&gt;</code>.
+<code>person.id</code> and <code>person.name</code> is filled with random data (so a random number and a random string).</p>
+<p>Let&rsquo;s take a look at some of my use cases.
+As said before, most of the time my business logic is just transforming data or that data is accessed through a <code>Repository</code> and then we validate some business logic accordingly.</p>
+<p>Let&rsquo;s take a look at how a typical android app of mine interact with a <code>Respository</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">class</span> <span class="nc">FakePersonRepository</span><span class="p">(</span>
+  <span class="k">var</span> <span class="py">items</span> <span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span>
+<span class="p">)</span> <span class="p">:</span> <span class="n">PersonRepository</span> <span class="p">{</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">loadPersons</span><span class="p">()</span> <span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">items</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@Test</span>
+<span class="k">fun</span> <span class="nf">`move from loading state to show list state`</span><span class="p">(){</span>
+  <span class="k">val</span> <span class="py">persons</span> <span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">instance</span><span class="p">()</span>
+  <span class="k">val</span> <span class="py">repository</span> <span class="p">=</span> <span class="n">FakePersonRepository</span><span class="p">(</span><span class="n">persons</span><span class="p">)</span>
+
+  <span class="k">val</span> <span class="py">viewModel</span> <span class="p">=</span> <span class="n">PersonListViewModel</span><span class="p">(</span><span class="n">repository</span><span class="p">)</span>
+  <span class="n">assertTrue</span><span class="p">(</span><span class="n">viewModel</span><span class="p">.</span><span class="n">loading</span><span class="p">)</span>
+  <span class="n">assertNull</span><span class="p">(</span><span class="n">viewModel</span><span class="p">.</span><span class="n">items</span><span class="p">)</span>
+  <span class="n">viewModel</span><span class="p">.</span><span class="n">loadPersons</span><span class="p">()</span> <span class="c1">// loads data from repository
+</span><span class="c1"></span>  <span class="n">assertEquals</span><span class="p">(</span><span class="n">persons</span><span class="p">,</span> <span class="n">viewModel</span><span class="p">.</span><span class="n">items</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>As you see in the example above, I don&rsquo;t really care about the actual item&rsquo;s content of the <code>List&lt;Person&gt;</code>.
+I actually want to unit test my <code>ViewModel's</code> business logic.
+This is where <code>Instantiator</code> could be useful (of course one could argue that in the oversimplified example from above one could just return an <code>emptyList()</code> if we don&rsquo;t care about the items at all, but I hope you get the point that in a slightly more complex data set up emptyList() is probably not suitable).</p>
+<p>Another example is to test pagination business logic:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@Test</span>
+<span class="k">fun</span> <span class="nf">`when loading next page succeeds then loaded items are added`</span><span class="p">(){</span>
+  <span class="k">val</span> <span class="py">startItems</span> <span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">instance</span><span class="p">()</span>
+  <span class="k">val</span> <span class="py">repository</span> <span class="p">=</span> <span class="n">FakePersonRepository</span><span class="p">(</span><span class="n">startItems</span><span class="p">)</span>
+
+  <span class="k">val</span> <span class="py">nextPageItems</span> <span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">instance</span><span class="p">()</span>
+
+  <span class="k">val</span> <span class="py">viewModel</span> <span class="p">=</span> <span class="n">PersonListViewModel</span><span class="p">(</span><span class="n">repository</span><span class="p">)</span>
+  <span class="n">assertEquals</span><span class="p">(</span><span class="n">startItems</span><span class="p">,</span> <span class="n">viewModel</span><span class="p">.</span><span class="n">items</span><span class="p">)</span>
+
+  <span class="n">repository</span><span class="p">.</span><span class="n">items</span> <span class="p">=</span> <span class="n">nextPageItems</span> <span class="c1">// set next items to be returned when loading next page
+</span><span class="c1"></span>  <span class="n">viewModel</span><span class="p">.</span><span class="n">loadNextPage</span><span class="p">()</span> 
+  <span class="n">assertEquals</span><span class="p">(</span> <span class="n">startItems</span> <span class="p">+</span> <span class="n">nextPageItems</span><span class="p">,</span> <span class="n">viewModel</span><span class="p">.</span><span class="n">items</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>Another use case where I found <code>Instantiator</code> useful is when a mobile app loads data from a backend that returns a response with a deeply nested hierarchy of data objects.
+Instantiating such a deep hierarchy of data classes manually is a nightmare.
+In the past, I tried to simplify that by storing the backend&rsquo;s json response in a text file and later in my unit tests I load the json from that file and parse it to get instances of my test data.
+While that works it also has some disadvantages, for example whenever the response&rsquo;s data types change you need to adjust things in the stored json files too.
+You might have multiple such files containing json responses that you need to adjust.
+With <code>Instantiator</code> you don&rsquo;t have that problem because it uses reflection to instantiate objects.
+Thus, there is no need to keep in sync your class definition and a file containing the interesting data to fill your class with.
+Also <code>Instantiator</code> can fill any deeply nested data hierarchy without any problems.
+No additional manual work required.</p>
+<p>I am also a fan of MVI or state machines.
+In fact, I use <a href="https://github.com/freeletics/FlowRedux">FlowRedux</a> nowadays for my projects.
+In MVI you send an <code>Intent</code> (or <code>Actions</code> as it is called in Redux world, thus also in <code>FlowRedux</code>) to trigger something.
+But do you also test if sending other <code>Intents</code> (or <code>Actions</code>) are doing  nothing while your app is in a certain state?</p>
+<p>This is something where <code>Instantiator</code> can help as it offers also a way to instantiate an instance of each class in a <code>sealed interface/class</code> hierarchy.
+For that we have to use <code>instantiateSealedSubclasses()</code> instead of <code>instance()</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">sealed</span> <span class="k">interface</span> <span class="nc">Action</span> <span class="c1">// could also be called Intent instead of Action
+</span><span class="c1"></span>
+<span class="k">object</span> <span class="nc">LoadItems</span> <span class="p">:</span> <span class="n">Action</span> <span class="c1">// this action triggers loading
+</span><span class="c1"></span><span class="k">data</span> <span class="k">class</span> <span class="nc">ItemClicked</span><span class="p">(</span><span class="k">val</span> <span class="py">itemId</span> <span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">Action</span>
+<span class="k">data</span> <span class="k">class</span> <span class="nc">ApplyFilter</span><span class="p">(</span><span class="k">val</span> <span class="py">filter</span> <span class="p">:</span> <span class="n">Filter</span><span class="p">)</span> <span class="p">:</span> <span class="n">Action</span>
+
+<span class="k">enum</span> <span class="k">class</span> <span class="nc">Filter</span> <span class="p">{</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span> <span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="n">@Test</span>
+<span class="k">fun</span> <span class="nf">`when in error state only LoadItems action causes state transition`</span><span class="p">(){</span>
+  <span class="k">val</span> <span class="py">stateMachine</span> <span class="p">=</span> <span class="n">MyStateMachine</span><span class="p">(</span><span class="n">initialState</span> <span class="p">=</span> <span class="n">ErrorState</span><span class="p">)</span>
+  <span class="n">assertEquals</span><span class="p">(</span><span class="n">ErrorState</span><span class="p">,</span> <span class="n">stateMachine</span><span class="p">.</span><span class="n">state</span><span class="p">)</span>
+
+  <span class="k">val</span> <span class="py">allActions</span> <span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Action</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">instantiateSealedSubclasses</span><span class="p">()</span> <span class="c1">// part of Instantiator
+</span><span class="c1"></span>  <span class="k">val</span> <span class="py">allActionsExceptLoadItem</span> <span class="p">=</span> <span class="n">allActions</span><span class="p">.</span><span class="n">filter</span> <span class="p">{</span> <span class="n">it</span> <span class="k">is</span> <span class="n">LoadItems</span> <span class="p">}</span> 
+
+  <span class="n">println</span><span class="p">(</span><span class="n">allActionsExceptLoadItem</span><span class="p">)</span> <span class="c1">// [ ItemClicked(123), ApplyFilter(B) ]
+</span><span class="c1"></span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">action</span> <span class="k">in</span> <span class="n">allActionsExceptLoadItem</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// validate that state is not changed because of ItemClicked or ApplyFilter action
+</span><span class="c1"></span>    <span class="n">stateMachine</span><span class="p">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="n">assertEquals</span><span class="p">(</span><span class="n">ErrorState</span><span class="p">,</span> <span class="n">stateMachine</span><span class="p">.</span><span class="n">state</span><span class="p">)</span> 
+  <span class="p">}</span>
+
+  <span class="n">stateMachine</span><span class="p">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">LoadItems</span><span class="p">)</span>
+  <span class="n">assertEquals</span><span class="p">(</span><span class="n">Loading</span><span class="p">,</span> <span class="n">stateMachine</span><span class="p">.</span><span class="n">state</span><span class="p">)</span> <span class="c1">// this is the only expected state transition
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>As you see, instead of creating a list with all <code>Actions</code> manually, you can use Instantiator&rsquo;s <code>instantiateSealedSubclasses()</code> to create an instance of each subclass of <code>Action</code>.
+For me it is quite handy when working in a code base with a ton of <code>Actions</code> and I would like to validate
+no side effects are happening because of some unexpected Action being dispatched.</p>
+<p>Moreover, if I add more Actions later, I don&rsquo;t have to change anything in the unit test shown above.
+<code>instantiateSealedSubclasses()</code> creates a new instance of this new Action type too.</p>
+<h2 id="alternatives">Alternatives</h2>
+<p>I know that similar libraries or tools like <code>Instantiator</code> already exist.
+Some of them come from the Java land and have not so great interop with some kotlin features such as <code>object</code> or <code>sealed interfaces</code>.
+You may wonder if my problem is not what property-based testing is solving, for example <a href="https://kotest.io/docs/proptest/property-based-testing.html">Kotest</a> has support for it.
+Yes, it goes in that direction but I don&rsquo;t want to do fully property-based testing most of the time.
+Then there are other libraries and frameworks tight to junit such as <a href="https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests">junit&rsquo;s parameterized tests</a>.
+Most of them these framework still require you to provide test data:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@ParameterizedTest</span>
+<span class="nd">@ValueSource</span><span class="o">(</span><span class="n">ints</span> <span class="o">=</span> <span class="o">{</span> <span class="n">1</span><span class="o">,</span> <span class="n">2</span><span class="o">,</span> <span class="n">3</span> <span class="o">})</span>
+<span class="kt">void</span> <span class="nf">testWithValueSource</span><span class="o">(</span><span class="kt">int</span> <span class="n">argument</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">assertTrue</span><span class="o">(</span><span class="n">argument</span> <span class="o">&gt;</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">argument</span> <span class="o">&lt;</span> <span class="n">4</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>That is what I would like to avoid: the need for setting up test data.
+The closest to what I would like to have for my unit test is Google&rsquo;s <a href="https://github.com/google/TestParameterInjector">TestParameterInjector
+</a> but it doesn&rsquo;t support some kotlin features.</p>
+<p>I don&rsquo;t want to convince you that <code>Instantiator</code> is better or sell you my tool somehow.
+Actually, how it started was that I wanted to learn more about Kotlin&rsquo;s reflections capabilities and <code>Instantiator</code> was to some degree a side effect of these learnings.</p>
+<p>Nevertheless, if you want to check out <code>Instantiator</code>, it is open source on Github:
+<a href="https://github.com/sockeqwe/Instantiator">https://github.com/sockeqwe/Instantiator</a></p>
+
+        </article>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row justify-content-md-center">
+
+            <div class="share-post-box">
+
+                <a class="text-dark"
+                    href="https://twitter.com/intent/tweet?text=&quot;Instantiate%20test%20data%20with%20Instantiator&quot;%20https%3a%2f%2fhannesdorfmann.com%2finstantiator%2f%20via%20@sockeqwe"
+                    target="_blank" title="Share on Twitter"><i class="ti-twitter-alt share-icon"></i></a>
+
+                <a class="text-dark" href="http://www.reddit.com/submit?url=https%3a%2f%2fhannesdorfmann.com%2finstantiator%2f&title=Instantiate%20test%20data%20with%20Instantiator"
+                    target="_blank" title="Share on Reddit"><i class="ti-reddit share-icon"></i></a>
+
+
+                <a class="text-dark" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fhannesdorfmann.com%2finstantiator%2f"
+                    target="_blank" title="Share on LinkedIn"><i class="ti-linkedin share-icon"></i></a>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="widget">
+  <h4 class="mb-4">LATEST POSTS</h4>
+  
+  <div class="media mb-4">
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Aug 05, 2022</li>
+      </ul>
+      <h6><a class="text-dark" href="https://hannesdorfmann.com/instantiator/">Instantiate test data with Instantiator</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Jan 29, 2021</li>
+      </ul>
+      <h6><a class="text-dark" href="https://hannesdorfmann.com/perfectionism-vs-excellence/">Perfectionism vs. Excellence</a></h6>
+    </div>
+  </div>
+  
+  <div class="media mb-4">
+    <div class="media-body">
+      <ul class="list-inline d-flex justify-content-between mb-2">
+        <li class="list-inline-item">Jan 22, 2021</li>
+      </ul>
+      <h6><a class="text-dark" href="https://hannesdorfmann.com/abstraction-text-resource/">Finding the right abstraction (when working with Strings)</a></h6>
+    </div>
+  </div>
+  
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="bg-secondary">
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          
+              <h6>Copyright &copy; 2022 <br /> Hannes Dorfmann</h6>
+              <small>Theme based on hugo-parsa.</small>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Categories in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/categories/android">Android</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/annotation-processor">Annotation-Processor</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/java">Java</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/soft-skills">Soft-Skills</a>
+            </li>
+            <li class="list-inline-item m-1"><a
+                href="/categories/testing">Testing</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Tags in this Blog</h6>
+          
+          <ul class="list-inline tag-list">
+            <li class="list-inline-item m-1"><a
+                href="/tags/algorithms">algorithms</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/android">android</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/code-review">code-review</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/database">database</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/design-patterns">design-patterns</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/java">java</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/kotlin">kotlin</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/library">library</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/navigation">navigation</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/software-architecture">software-architecture</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ui">ui</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/unit-tests">unit-tests</a></li>
+            <li class="list-inline-item m-1"><a
+                href="/tags/ux">ux</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+          <h6>Follow</h6>
+          <ul class="list-inline d-inline-block">
+            
+            <li class="list-inline-item"><a href="https://twitter.com/sockeqwe" class="text-dark"><i class="ti-twitter-alt"></i></a></li>
+            
+            <li class="list-inline-item"><a href="https://github.com/sockeqwe/" class="text-dark"><i class="ti-github"></i></a></li>
+            
+            <li class="list-inline-item"><a href="https://hannesdorfmann.com/index.xml" class="text-dark"><i class="ti-rss"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</footer>
+
+
+
+<script>
+  var indexURL = "https://hannesdorfmann.com/index.json"
+</script>
+
+
+<!-- JS Plugins -->
+
+<script src="https://hannesdorfmann.com/plugins/jQuery/jquery.min.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/slick/slick.min.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/headroom/headroom.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/masonry/masonry.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/smooth-scroll/smooth-scroll.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/search/fuse.min.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/search/mark.js"></script>
+
+<script src="https://hannesdorfmann.com/plugins/search/search.js"></script>
+
+
+<!-- Main Script -->
+
+<script src="https://hannesdorfmann.com/js/script.min.js"></script>
+
+<!-- google analitycs -->
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-54945521-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+  This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button"
+    class="btn btn-sm btn-outline-light ml-2">I Accept</span>
+</div>
+<script>
+  (function ($) {
+    const cookieBox = document.getElementById('js-cookie-box');
+    const cookieButton = document.getElementById('js-cookie-button');
+    if (!Cookies.get('cookie-box')) {
+      cookieBox.classList.remove('cookie-box-hide');
+      cookieButton.onclick = function () {
+        Cookies.set('cookie-box', true, {
+          expires:  365 
+    });
+    cookieBox.classList.add('cookie-box-hide');
+  };
+		}
+	}) (jQuery);
+</script>
+
+
+<style>
+  .cookie-box {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgb(71, 71, 71);
+    transition: all .75s cubic-bezier(.19, 1, .22, 1);
+    color: #fdfdfd;
+  }
+
+  .cookie-box-hide {
+    display: none;
+  }
+</style>
+<script data-goatcounter="https://hannesdorfmann.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+    </body>
+</html>

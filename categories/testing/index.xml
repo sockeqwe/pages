@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>testing on Hannes Dorfmann</title>
+    <link>https://hannesdorfmann.com/categories/testing/</link>
+    <description>Recent content in testing on Hannes Dorfmann</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 05 Aug 2022 10:00:00 +0100</lastBuildDate>
+    
+	<atom:link href="https://hannesdorfmann.com/categories/testing/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Instantiate test data with Instantiator</title>
+      <link>https://hannesdorfmann.com/instantiator/</link>
+      <pubDate>Fri, 05 Aug 2022 10:00:00 +0100</pubDate>
+      
+      <guid>https://hannesdorfmann.com/instantiator/</guid>
+      <description>I have noticed that most of the unit tests I write are testing how my code transforms data or business logic. My class or business logic just needs data as input (thus I need some test data to write unit tests). For example, most of my android apps load a list of items from the backend and then the android app is transforming that data into some state object or front-end specific domain objects.</description>
+    </item>
+    
+  </channel>
+</rss>
