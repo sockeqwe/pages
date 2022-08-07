@@ -41,7 +41,7 @@ val persons : List<Person> = instance()
 
 
 Et voilà, you have a `Person` or a `List<Person>`.
-`person.id` and `person.name` is filled with random data (so a random number and a random string).
+`person.id` and `person.name` are filled with random data (a random number and a random string).
 
 Let's take a look at some of my use cases. 
 As said before, most of the time my business logic is just transforming data or that data is accessed through a `Repository` and then we validate some business logic accordingly. 
