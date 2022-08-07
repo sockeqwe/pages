@@ -36,7 +36,7 @@ data class Person(
 
 ```kotlin
 val person : Person = instance()  // instance() is from Instantiator
-val persons : Lis<Person> = instance()
+val persons : List<Person> = instance()
 ```
 
 
