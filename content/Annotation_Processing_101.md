@@ -18,7 +18,7 @@ To clarify a very important thing from the very beginning: we are not talking ab
 
 Annotation processing is a tool build in javac for scanning and processing annotations **at compile time**. You can register your own annotation processor for certain annotations. At this point I assume that you already know what an annotation is and how to declare an annotation type. If you are not familar with annotations you can find more information in the [official java documentation](http://docs.oracle.com/javase/tutorial/java/annotations/index.html). Annotation processing is already available since Java 5 but a useable API is available since Java 6 (released in December 2006). It took some time until the java world realized the power of annotation processing. So it has become popular in the last few years.
 
-An annotation processor for a certain annotation takes java code (or compiled byte code) as input and generate files (usually .java files) as output. What does that exactly means? You can generate java code! The generated java code is in a generated **.java** file. So you **can not** manipulate an existing java class for instance adding a method. The generated java file will be compiled by javac as any other hand written java source file.
+An annotation processor for a certain annotation takes java code (or compiled byte code) as input and generate files (usually .java files) as output. What does that exactly means? You can generate Java code! The generated java code is in a generated **.java** file. So you **can not** manipulate an existing Java class for instance adding a method. The generated java file will be compiled by `javac` as any other hand written java source file.
 
 ### AbstractProcessor
 Let's have a look at the Processor API. Every Processor extends from `AbstractProcessor` as follows:
@@ -43,7 +43,7 @@ public class MyProcessor extends AbstractProcessor {
 }
 ```
 
- * `init(ProcessingEnvironment env)`: Every annotation processor class **must have an empty constructor**. However, there is a special init() method which is invoked by the annotation processing tool with the `ProcessingEnviroment` as parameter. The ProcessingEnviroment provides some useful util classes `Elements`, `Types` and `Filer`. We will use them later.
+ * `init(ProcessingEnvironment env)`: Every annotation processor class **must have an empty constructor**. However, there is a special `init()` method which is invoked by the annotation processing tool with the `ProcessingEnviroment` as parameter. The `ProcessingEnviroment` provides some useful util classes `Elements`, `Types` and `Filer`. We will use them later.
  * `process(Set<? extends TypeElement> annotations, RoundEnvironment env)`: This is kind of `main()` method of each processor. Here you write your code for scanning, evaluating and processing annotations and generating java files. With `RoundEnviroment` passed as parameter you can query for elements annotated with a certain annotation as we will see later.
  * `getSupportedAnnotationTypes()`: Here you have to specify for which annotations this annotation processor should be registered for. Note that the return type is a set of strings containing full qualified names for your annotation types you want to process with this annotation processor. In other words, you define here for which annotations you register your annotation processor.
  * `getSupportedSourceVersion()`: Used to specify which java version you use. Usually you will return `SourceVersion.latestSupported()`. However, you could also return `SourceVersion.RELEASE_6` if you have good reasons for stick with Java 6. I recommend to use `SourceVersion.latestSupported();`
@@ -69,7 +69,7 @@ For compatibility reasons, especially for android, I recommend to override `getS
 The next thing you have to know is that the annotation processor runs in it's own jvm. Yes you read correctly. javac starts a complete java virtual machine for running annotation processors. So what that means for you? You can use anything you would use in any other java application. Use guava! If you want to you can use dependency injection tools like dagger or any other library you want to. But don't forget. Even if it's just a small processor you should take care about efficient algorithms and design patterns like you would do for any other java application.
 
 ### Register Your Processor
-You may ask yourself *"How do I register MyProcessor to javac?"*. You have to provide a **.jar** file. Like any other .jar file you pack your (compiled) annotation processor in that file. Furthermore you also have to pack a special file called **javax.annotation.processing.Processor** located in **META-INF/services** in your .jar file. So the content of your .jar file looks like this:
+You may ask yourself *"How do I register MyProcessor to javac?"*. You have to provide a **.jar** file. Like any other .jar file you pack your (compiled) annotation processor in that file. Furthermore you also have to pack a special file called **javax.annotation.processing.Processor** located in **META-INF/services** in your .jar file. So the content of your `.jar` file looks like this:
 
 ```
 MyProcessor.jar
@@ -93,7 +93,7 @@ With **MyProcessor.jar** in your buildpath javac automatically detects and reads
 
 
 ## Example: Factory Pattern
-It's time to for a concrete example. We will use maven as our build system and dependency management tool. If you are not familiar with maven, don't worry maven is not necessary. The whole code can be found [on github](https://github.com/sockeqwe/annotationprocessing101).
+It's time for a concrete example. We will use Maven as our build system and dependency management tool. If you are not familiar with Maven, don't worry Maven is not necessary. The whole code can be found [on github](https://github.com/sockeqwe/annotationprocessing101).
 
 First of all I have to say, that it's not so easy to find a simple problem for a tutorial that we can solve with an annotation processor. Here we gonna implement a very simple factory pattern (not abstract factory pattern). It should give you just a brief introduction on the annotation processing API. So the problem statement may be a little bit dump and not a real world one. Once again, you will learn about annotation processing and not about design patterns.
 
@@ -277,7 +277,7 @@ You may ask yourself if we could just apply `@Factory` on the `Meal` interface. 
  5. `id` are limited to Strings and must be unique in it's type group.
 
 ### The Processor
-I will guide you step by step by adding line of code followed by an explanation paragraph. Three dots (**...**) means that code is omitted either was discussed in the paragraph before or will be added later as next step. Goal is to make the snipped more readable. As already mentioned above the complete code can be found [on github](https://github.com/sockeqwe/annotationprocessing101). Ok lets start with the skeleton of our **FactoryProcessor**:
+I will guide you step by step by adding lines of code followed by an explanation paragraph. Three dots (**...**) mean that code is omitted, either was discussed in the paragraph before or will be added later as next step. Goal is to make the snipped more readable. As already mentioned above the complete code can be found [on github](https://github.com/sockeqwe/annotationprocessing101). Ok lets start with the skeleton of our **FactoryProcessor**:
 
 ```java
 @AutoService(Processor.class)
@@ -326,7 +326,7 @@ In `init()` we retrieve a reference to
  * `Types`: A utils class to work with `TypeMirror` (more information later)
  * `Filer`: Like the name suggests with Filer you can create files.
 
-In annotation processing we are scanning java source code files. Every part of the source code is a certain type of `Element`. In other words: `Element` represents a program element such as a package, class, or method. Each element represents a static, language-level construct. In the following example I have added comments to clarify that:
+In annotation processing we are scanning java source code files. Every part of the source code is a certain type of `Element`. In other words: `Element` represents a program element such as a package, class, or method. Each element represents a static, language-level construct. In the following example I added comments to clarify that:
 
 ```java
 package com.example;	// PackageElement
@@ -339,23 +339,23 @@ public class Foo {		// TypeElement
 	public Foo () {} 	// ExecuteableElement
 
 	public void setA ( 	// ExecuteableElement
-	                 int newA	// TypeElement
-	                 ) {}
+		int newA	// TypeElement
+ 	) {}
 }
 ```
 
-You have to change the way you see source code. It's just structured text. It's not executable. You can think of it like a XML file you try to parse (or an abstract syntax tree in compiler construction). Like in XML parsers there is some kind of DOM with elements. You can navigate from Element to it's parent or child Element.
+You have to change the way you see source code. It's just structured text. It's not executable. You can think of it like a XML file you try to parse (or an abstract syntax tree in compiler construction). Like in XML parsers there is some kind of DOM with elements. You can navigate from `Element` to it's parent or child `Element`.
 
 For instance if you have a `TypeElement` representing `public class Foo` you could iterate over its children like that:
 
 ```java
 TypeElement fooClass = ... ;
 for (Element e : fooClass.getEnclosedElements()){ // iterate over children
-	Element parent = e.getEnclosingElement();  // parent == fooClass
+	Element parent = e.getEnclosingElement(); // parent == fooClass
 }
 ```
 
-As you see Elements are representing source code. TypeElement represent type elements in the source code like classes. However, TypeElement does not contain information about the class itself. From TypeElement you will get the name of the class, but you will not get information about the class like the superclass. This is kind of information are accessible through a `TypeMirror`. You can access the TypeMirror of an Element by calling `element.asType()`.
+As you see `Element`s are representing source code. `TypeElement` represent type elements in the source code like classes. However, `TypeElement` does not contain information about the class itself. From `TypeElement` you will get the name of the class, but you will not get information about the class like the superclass. This is kind of information are accessible through a `TypeMirror`. You can access the `TypeMirror` of an `Element` by calling `element.asType()`.
 
 
 ### Searching For @Factory
@@ -386,7 +386,7 @@ public class FactoryProcessor extends AbstractProcessor {
 
 }
 ```
-No rocket science here. `roundEnv.getElementsAnnotatedWith(Factory.class))` returnes a list of Elements annotated with `@Factory`. You may have noted that I have avoited saying *"returns list of classes annotated with @Factory"*, because it really returns list of `Element`. Remember: `Element` can be a class, method, variable etc. So what we have to do next is to check if the Element is a class:
+No rocket science here. `roundEnv.getElementsAnnotatedWith(Factory.class))` returnes a list of `Element`s annotated with `@Factory`. You may have noted that I have avoited saying *"returns list of classes annotated with @Factory"*, because it really returns list of `Element`. Remember: `Element` can be a class, method, variable etc. So what we have to do next is to check if `Element` is a class:
 
 ```java
 @Override
@@ -403,12 +403,12 @@ No rocket science here. `roundEnv.getElementsAnnotatedWith(Factory.class))` retu
    ...
 }
 ```
-What's going on here? We want to ensure that only elements of type class are processed by our processor. Previously we have learned that classes are `TypeElements`. So why don't we check `if (! (annotatedElement instanceof TypeElement) )`. That's a wrong assumption because interfaces are TypeElement as well. So in annoation processing you should avoid *instanceof* but rather us [ElementKind](http://docs.oracle.com/javase/7/docs/api/javax/lang/model/element/ElementKind.html) or [TypeKind](http://docs.oracle.com/javase/7/docs/api/javax/lang/model/type/TypeKind.html) with TypeMirror.
+What's going on here? We want to ensure that only elements of type class are processed by our processor. Previously we have learned that classes are `TypeElements`. So why don't we check `if (! (annotatedElement instanceof TypeElement) )`. That's a wrong assumption because interfaces are `TypeElement` as well. So in annoation processing you should avoid *instanceof* but rather us [ElementKind](http://docs.oracle.com/javase/7/docs/api/javax/lang/model/element/ElementKind.html) or [TypeKind](http://docs.oracle.com/javase/7/docs/api/javax/lang/model/type/TypeKind.html) with TypeMirror.
 
 ### Error Handling
-In `init()` we also retrieve a reference to `Messager`. A Messager provides the way for an annotation processor to report error messages, warnings and other notices. It's not a logger for you, the developer of the annotation processor (even thought it can be used for that during development of the processor). Messager is used to write messages to the third party developer who uses your annotation processor in their projects. There are different levels of messages described in the [official docs](http://docs.oracle.com/javase/7/docs/api/javax/tools/Diagnostic.Kind.html). Very important is [Kind.ERROR](http://docs.oracle.com/javase/7/docs/api/javax/tools/Diagnostic.Kind.html#ERROR) because this kind of message is used to indicate that our annotation processor has failed processing. Probably the third party developer is misusing our `@Factory` annotation (i.e. annotated an interface with @Factory). The concept is a little bit different from traditional java application where you would throw an `Exception`. If you throw an exception in `process()` then the jvm which runs annotation processing crashs (like any other java application) and the third party developer who is using our FactoryProcessor will get an error from javac with a hardly understandable Exception, because it contains the stacktrace of FactoryProcessor. Therefore Annotation Processor has this `Messager` class. It prints a pretty error message. Additionaly, you can   link to the element who has raised this error. In modern IDEs like IntelliJ the third party developer can click on this error message and the IDE will jump to the source file and line of the third party developers project where the error source is.
+In `init()` we also retrieve a reference to `Messager`. A `Messager` provides the way for an annotation processor to report error messages, warnings and other notices. It's not a logger for you, the developer of the annotation processor (even thought it can be used for that during development of the processor). `Messager` is used to write messages to the third party developer who uses your annotation processor in their projects. There are different levels of messages described in the [official docs](http://docs.oracle.com/javase/7/docs/api/javax/tools/Diagnostic.Kind.html). Very important is [Kind.ERROR](http://docs.oracle.com/javase/7/docs/api/javax/tools/Diagnostic.Kind.html#ERROR) because this kind of message is used to indicate that our annotation processor has failed processing. Probably the third party developer is misusing our `@Factory` annotation (i.e. annotated an interface with @Factory). The concept is a little bit different from traditional java application where you would throw an `Exception`. If you throw an exception in `process()` then the jvm which runs annotation processing crashes (like any other java application) and the third party developer who is using our `FactoryProcessor` will get an error from `javac` with a hardly understandable `Exception`, because it contains the stacktrace of `FactoryProcessor`. Therefore annotation processor has this `Messager` class. It prints a pretty error message. Additionaly, you can link to the element who has raised this error. In modern IDEs like IntelliJ the third party developer can click on this error message and the IDE will jump to the source file and line of the third party developers project where the error source is.
 
-Back to implementing the `process()` method. We raise a error message if the user has annotated a non class with @Factory:
+Back to implementing the `process()` method. We raise a error message if the user has annotated a non class with `@Factory`:
 
 ```java
 public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -436,13 +436,13 @@ private void error(Element e, String msg, Object... args) {
  }
  ```
 
- To get the message of the Messager displayed it's `important that the annotation processor has to complete without crashing`. That's why we `return` after having called `error()`. If we don't return here `process()` will continue running since  `messager.printMessage(
-    	Diagnostic.Kind.ERROR)` does not stop the process. So it's very likely that if we don't return after printing the error we will run in an internal *NullPointerException* etc. if we continue in `process()`. As said before, the problem is that if an unhandled exception is thrown in `process()` javac will print the stacktrace of the internal *NullPointerException* and NOT your error message of `Messager`.
+ To get the message of the `Messager` displayed it's **important that the annotation processor has to complete without crashing**. That's why we `return` after having called `error()`. If we don't return here, `process()` will continue running since  `messager.printMessage(
+    	Diagnostic.Kind.ERROR)` does not stop the process. So it's very likely that if we don't return after printing the error we will run in an internal `NullPointerException` etc. if we continue in `process()`. As said before, the problem is that if an unhandled exception is thrown in `process()` `javac` will print the stacktrace of the internal `NullPointerException` and NOT your error message of `Messager`.
 
 ### Datamodel
-Before we continue with checking if classes annotated with @Factory observe our five rules (see above) we are going to introduce data structures which makes it easier for us to continue. Sometimes the problem or processor seems to be so simple that programmers tend to write the whole processor in a procedural manner. **But you know what? An Annotation Processor is still a java application. So use object oriented programming, interfaces, design patterns and anything else you would use in any other java application!**
+Before we continue with checking if classes annotated with `@Factory` observe our five rules (see above) we are going to introduce data structures which makes it easier for us to continue. Sometimes the problem or processor seems to be so simple that programmers tend to write the whole processor in a procedural manner. **But you know what? An Annotation Processor is still a java application. So use object oriented programming, interfaces, design patterns and anything else you would use in any other java application!**
 
-Our FactoryProcessor is quite simple but there are some information we want to store as objects. With `FactoryAnnotatedClass` we store the annotated class data like qualified class name along with the data of the @Factory annotation itself. So we store the TypeElement and evaluate the @Factory annotation:
+Our `FactoryProcessor` is quite simple but there are some information we want to store as objects. With `FactoryAnnotatedClass` we store the annotated class data like qualified class name along with the data of the `@Factory` annotation itself. So we store the `TypeElement` and evaluate the `@Factory` annotation:
 
 ```java
 public class FactoryAnnotatedClass {
@@ -512,7 +512,7 @@ public class FactoryAnnotatedClass {
 }
 ```
 
-Lot of code, but the most important thing happens ins the constructor where you find the following lines of code:
+Lots of code, but the most important thing is the constructor where you find the following lines of code:
 
 ```java
 Factory annotation = classElement.getAnnotation(Factory.class);
@@ -525,10 +525,10 @@ if (StringUtils.isEmpty(id)) {
     }
 ```
 
-Here we access the @Factory annotation and check if the id is not empty. We will throw an IllegalArgumentException if id is empty. You may be confused now because previously we said that we are not throwing exceptions but rather use `Messager`. That's still correct. We throw an exception here internally and we will catch that one in `process()` as you will see later. We do that for two reasons:
+Here we access the `@Factory` annotation and check if the `id` is not empty. We will throw an `IllegalArgumentException` if `id` is empty. You may be confused now because previously we said that we are not throwing exceptions but rather use `Messager`. That's still correct. We throw an exception here internally and we will catch that one in `process()` as you will see later. We do that for two reasons:
 
  1. I want to demonstrate that you should still code like in any other java application. Throwing and catching exceptions is considered as good practice in java.
- 2. If we want to print a message right from `FactoryAnnotatedClass` we also have to pass the `Messager` and as already mentioned in "Error Handling" (scroll up) the processor has to terminate successfully to make `Messager` print the error message. So if we would write an error message by using `Messager` how do we "notify" `process()` that an error has occurred? The easiest and from my point of view most intuitive way is to throw an Exception and let `process()` chatch this one.
+ 2. If we want to print a message right from `FactoryAnnotatedClass` we also have to pass the `Messager` and as already mentioned in "Error Handling" (scroll up) the processor has to terminate successfully to make `Messager` print the error message. So if we would write an error message by using `Messager` how do we "notify" `process()` that an error has occurred? The easiest and from my point of view most intuitive way is to throw an exception and let `process()` chatch this one.
 
 Next we want to get the `type` field of the `@Factory` annotation.  We are interessted in the full qualified name.
 
@@ -545,10 +545,10 @@ Next we want to get the `type` field of the `@Factory` annotation.  We are inter
     }
 ```
 
-That's a little bit tricky, because the type is `java.lang.Class`. That means, that this is a real Class object. Since annotation processing runs before compiling java source code we have to consider two cases:
+That's a little bit tricky, because the type is `java.lang.Class`. That means, that this is a real class object. Since annotation processing runs before compiling java source code we have to consider two cases:
 
- 1. **The class is already compiled**: This is the case if a third party .jar contains compiled .class files with `@Factory` annotations. In that case we can directly access the Class like we do in the `try-block`.
- 2. **The class is not compiled yet**: This will be the case if we try to compile our source code which has @Factory annotations. Trying to  access the Class directly throws a `MirroredTypeException`. Fortunately MirroredTypeException contains a `TypeMirror` representation of our not yet compiled class. Since we know that it must be type of class (we have already checked that before) we can cast it to `DeclaredType` and access `TypeElement` to read the qualified name.
+ 1. **The class is already compiled**: This is the case if a third party `.jar` contains compiled `.class` files with `@Factory` annotations. In that case we can directly access the class like we do in the `try-block`.
+ 2. **The class is not compiled yet**: This will be the case if we try to compile our source code which has `@Factory` annotations. Trying to access the class directly throws a `MirroredTypeException`. Fortunately `MirroredTypeException` contains a `TypeMirror` representation of our not yet compiled class. Since we know that it must be type of class (we have already checked that before) we can cast it to `DeclaredType` and access `TypeElement` to read the qualified name.
 
 Alright, now we need one more datastructure named `FactoryGroupedClasses` which basically groups all `FactoryAnnotatedClasses` together.
 
@@ -580,7 +580,7 @@ public class FactoryGroupedClasses {
 }
 ```
 
-As you see it's basically just a `Map<String, FactoryAnnotatedClass>`. This map is used to map an @Factory.id() to FactoryAnnotatedClass. We have chosen `Map` because we want to ensure that each id is unique. That can be easily done with a map lookup. `generateCode()` will be called to generate the Factory code (discussed later).
+As you see it's basically just a `Map<String, FactoryAnnotatedClass>`. This map is used to map an `@Factory.id()` to `FactoryAnnotatedClass`. We have chosen `Map` because we want to ensure that each `id` is unique. That can be easily done with a map lookup. `generateCode()` will be called to generate the factory code (discussed later).
 
 
 ### Matching Criteria
@@ -693,7 +693,7 @@ We have added a method `isValidClass()` and it checks if our rules are complied:
 
  * Class must be public: `classElement.getModifiers().contains(Modifier.PUBLIC)`
  * Class can not be abstract: `classElement.getModifiers().contains(Modifier.ABSTRACT)`
- * Class must be subclass or implement the Class as specified in `@Factoy.type()`. First we use `elementUtils.getTypeElement(item.getQualifiedFactoryGroupName())` to create a Element of the passed `Class` (`@Factoy.type()`). Yes you got it, you can create `TypeElement` (with TypeMirror) just by knowing the qualified class name. Next we check if it's an interface or a class: `superClassElement.getKind() == ElementKind.INTERFACE`.
+ * Class must be subclass or implement the class as specified in `@Factoy.type()`. First we use `elementUtils.getTypeElement(item.getQualifiedFactoryGroupName())` to create an element of the passed class (`@Factoy.type()`). Yes you got it, you can create `TypeElement` (with TypeMirror) just by knowing the qualified class name. Next we check if it's an interface or a class: `superClassElement.getKind() == ElementKind.INTERFACE`.
  So we have two cases: If it's an interfaces then `classElement.getInterfaces().contains(superClassElement.asType())`. If it's a class, then we have to scan the inheritance hierarchy with calling `currentClass.getSuperclass()`. Note that this check could also be done with `typeUtils.isSubtype()`.
  * Class must have a public empty constructor: So we iterate over all enclosed elements `classElement.getEnclosedElements()` and check for `ElementKind.CONSTRUCTOR`, `Modifier.PUBLIC` and `constructorElement.getParameters().size() == 0`
 
@@ -775,7 +775,7 @@ public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment 
 }
 
 ```
-Writing a java file is pretty the same as writing any other file in java. We use an `Writer` provided by `Filer`. We could write our generated code as concatination of Strings. Fortunately, Square Inc. well known for plenty awesome open source projects gives us with [JavaWriter](https://github.com/square/javawriter) a high level library for generating Java Code:
+Writing a java file is pretty the same as writing any other file in java. We use an `Writer` provided by `Filer`. We could write our generated code as concatination of `String`s. Fortunately, Square Inc. well known for plenty awesome open source projects gives us with [JavaWriter](https://github.com/square/javawriter) a high level library for generating Java Code:
 
 ```java
 public class FactoryGroupedClasses {
@@ -844,7 +844,7 @@ Annotation Processing maybe takes more than one processing round. The official j
 
 > Annotation processing happens in a sequence of rounds. On each round, a processor may be asked to process a subset of the annotations found on the source and class files produced by a prior round. The inputs to the first round of processing are the initial inputs to a run of the tool; these initial inputs can be regarded as the output of a virtual zeroth round of processing.
 
-A simpler definition: A processing round is calling `process()` of an annotation processor. To stick with our factory sample:  `FactoryProcessor` is instantiated once (new Processor object is **not** created for each round), but `process()` can be called multiple times, if new source files has been created. Sounds a little bit strange, doesn't it? The reason is that, the generated source code files could contain `@Factory` annotated classes as well, which would be processed by `FactoryProcessor`.
+A simpler definition: A processing round is calling `process()` of an annotation processor. To stick with our factory sample: `FactoryProcessor` is instantiated once (new `Processor` object is **not** created for each round), but `process()` can be called multiple times, if new source files has been created. Sounds a little bit strange, doesn't it? The reason is that, the generated source code files could contain `@Factory` annotated classes as well, which would be processed by `FactoryProcessor`.
 
 For example our `PizzaStore` sample will be processed in 3 rounds:
 
@@ -854,7 +854,7 @@ Round  | Input | Output
 2      | MealFactory.java | none
 3      | none   | none
 
-There is another reason why I'm explaining processing rounds. If you look at our `FactoryProcessor` code you see that we collect data and store them in private field `Map<String, FactoryGroupedClasses> factoryClasses`. In first round we detect MagheritaPizza, CalzonePizza and Tiramisu and we generate a file MealFactory.java. In the second round we take MealFactory as input. Since there is no `@Factory` annotation in MealFactory no data will be collected, we would not expect to get an error. However we get one:
+There is another reason why I'm explaining processing rounds. If you look at our `FactoryProcessor` code you see that we collect data and store them in private field `Map<String, FactoryGroupedClasses> factoryClasses`. In first round we detect `MagheritaPizza`, `CalzonePizza` and `Tiramisu` and we generate a file `MealFactory.java`. In the second round we take `MealFactory` as input. Since there is no `@Factory` annotation in `MealFactory` no data will be collected, we would not expect to get an error. However we get one:
 
 **Attempt to recreate a file for type com.hannesdorfmann.annotationprocessing101.factory.MealFactory**
 
@@ -883,7 +883,7 @@ public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment 
 I know there are other ways to deal with that problem i.e. we could also set a boolean flag etc. The point is: Keep in mind that annotation processing is done in multiple processing rounds and you can not override or recreate already generated source files.
 
 ## Separation of processor and annotation
-If you have looked at the [git repository](https://github.com/sockeqwe/annotationprocessing101/tree/master/factory) of our factory processor you will see that we have organized our repository in two maven modules. We did that, because we want to give the user of our Factory example the possibility to compile just the annotation in his own project and to include the processor module just for compilation. Confused? I.e. if we would have just one single artifact another developer who wants to use our factory processor in his own project would include both the `@Factory` annotation and the whole `FactoryProcessor` code (incl. FactoryAnnotatedClass and FactoryGroupedClasses) in his project build. I'm pretty sure that the other one won't have the processor class in his compiled project. If you are an android developer maybe you have heard of the 65k method limit (a android .dex file can only address 65.000 methods). If we would have used guava in FactoryProcessor and would provide just a single artifact containing annotation and processor code, then the android apk would not only contain FactoryProcessor code but the whole guava code as well. Guava has about 20.000 methods. Therefore a separation of annotation and processor makes sense.
+If you have looked at the [git repository](https://github.com/sockeqwe/annotationprocessing101/tree/master/factory) of our factory processor you will see that we have organized our repository in two maven modules. We did that, because we want to give the user of our factory example the possibility to compile just the annotation in his own project and to include the processor module just for compilation. Confused? I.e. if we would have just one single artifact another developer who wants to use our factory processor in his own project would include both the `@Factory` annotation and the whole `FactoryProcessor` code (incl. `FactoryAnnotatedClass` and `FactoryGroupedClasses`) in his project build. I'm pretty sure that the other one won't have the processor class in his compiled project. If you are an Android developer maybe you have heard of the 65k method limit (a android .dex file can only address 65.000 methods). If we would have used Guava in `FactoryProcessor` and would provide just a single artifact containing annotation and processor code, then the Android APK would not only contain `FactoryProcessor` code but the whole Guava code as well. Guava has about 20.000 methods. Therefore a separation of annotation and processor makes sense.
 
 ## Instantiation Of Generated Classes
 As you have seen in `PizzaStore` sample the generated class `MealFactory` is a normal java class as any other handwritten class. Furthermore, you have to instantiate it by hand (like any other java object).
@@ -902,7 +902,7 @@ public class PizzaStore {
 }
 ```
 
-If you are an android developer you should be familiar with a great annotation processors called [ButterKnife](http://jakewharton.github.io/butterknife/). In ButterKnife you annotate android Views with `@InjectView`. The ButterKnifeProcessor generates a class `MyActivity$$ViewInjector`. But in ButterKnife you don't have to instantiate the ButterKnife injector by hand by calling `new MyActivity$$ViewInjector()` but you can use `Butterknife.inject(activity)`. ButterKnife internally uses reflections to instantiate `MyActivity$$ViewInjector()`:
+If you are an Android developer you should be familiar with a great annotation processors called [ButterKnife](http://jakewharton.github.io/butterknife/). In ButterKnife you annotate Android views with `@InjectView`. The `ButterKnifeProcessor` generates a class `MyActivity$$ViewInjector`. But in ButterKnife you don't have to instantiate the ButterKnife injector by hand by calling `new MyActivity$$ViewInjector()` but you can use `Butterknife.inject(activity)`. ButterKnife internally uses reflections to instantiate `MyActivity$$ViewInjector()`:
 
 ```java
 try {
@@ -910,20 +910,20 @@ try {
 } catch (ClassNotFoundException e) { ... }
 ```
 
-But is reflection not slow and didn't we tried to get rich of reflections performance issues by using annotation processing which generates native code? Yes, reflection brings perfomance issues. However, it speeds up development because the developer has not to instantiate objects by hand. ButterKnife uses a HashMap to "cache" the instantiated objects. So `MyActivity$$ViewInjector` is only instantiated once by using reflections. Next time `MyActivity$$ViewInjector` is needed it will be retrieved from the HashMap.
+But is reflection not slow and didn't we tried to get rich of reflections performance issues by using annotation processing which generates native code? Yes, reflection brings perfomance issues. However, it speeds up development because the developer has not to instantiate objects by hand. ButterKnife uses a `HashMap` to "cache" the instantiated objects. So `MyActivity$$ViewInjector` is only instantiated once by using reflections. Next time `MyActivity$$ViewInjector` is needed it will be retrieved from the `HashMap`.
 
-[FragmentArgs](https://github.com/sockeqwe/fragmentargs) works similar to ButterKnife. It uses reflection to instantiate things that otherwise the developer who uses FragmentArgs has to do manually. FragmentArgs generates a special "lookup" class while annotation processing which is kind of HashMap. So the whole FragmentArgs library executes only one reflection call at the very first time to instantiate this special HashMap class. Once this class is instantiated with `Class.forName()` fragment arguments injection runs in native java code.
+[FragmentArgs](https://github.com/sockeqwe/fragmentargs) works similar to ButterKnife. It uses reflection to instantiate things that otherwise the developer who uses `FragmentArgs` has to do manually. `FragmentArgs` generates a special "lookup" class while annotation processing which is kind of `HashMap`. So the whole `FragmentArgs` library executes only one reflection call at the very first time to instantiate this special `HashMap` class. Once this class is instantiated with `Class.forName()` fragment arguments injection runs in native java code.
 
 All in all it's up to you (the developer of annotation processor) to find a good compromise between reflection and usability for other users of your annotation processor.
 
 ## Conclusion
-I hope you have a deeper understanding of annotation processing now. I have to say it once again: Annotation processing is a very powerful tool and helps reducing writing boiler plate code. I also want to mention that with annotation processors you can do much more complex things than I show in this simple factory sample, for example type erasure on Generics, because annotation processing happens before type erasure. As you have seen there are two common problems you have to deal when writing: First, if you want to use ElementUtils, TypeUtils and Messager in other  classes then you have to pass them as parameters somehow. In [AnnotatedAdapter](https://github.com/sockeqwe/AnnotatedAdapter), one of my annotation processors for android, I tried to solve that problem with Dagger (Dependency Injection). It feels a little bit to much overhead for such a simple processor, however it has worked well. The second thing you have to deal is you have to make "queries" for `Elements`. As I said before, working with elements can be seen as parsing XML or HTML. For HTML you can use jQuery. Something similar to jQuery for annotation processing would be really awesome. Please comment below if you know any similar library.
+I hope you have a deeper understanding of annotation processing now. I have to say it once again: annotation processing is a very powerful tool and helps reducing writing boiler plate code. I also want to mention that with annotation processors you can do much more complex things than I show in this simple factory sample, for example type erasure on generics, because annotation processing happens before type erasure. As you have seen there are two common problems you have to deal when writing: First, if you want to use `ElementUtils`, `TypeUtils` and `Messager` in other  classes then you have to pass them as parameters somehow. In [AnnotatedAdapter](https://github.com/sockeqwe/AnnotatedAdapter), one of my annotation processors for android, I tried to solve that problem with Dagger (Dependency Injection). It feels a little bit to much overhead for such a simple processor, however it has worked well. The second thing you have to deal is you have to make "queries" for `Elements`. As I said before, working with elements can be seen as parsing XML or HTML. For HTML you can use jQuery. Something similar to jQuery for annotation processing would be really awesome. Please comment below if you know any similar library.
 
 **Please note that parts of the code of FactoryProcessor has some edges and pitfalls. These "mistakes" are placed explicit by me to struggle through them as I explain common mistakes while writing annotation processors (like  "Attempt to recreate a file"). If you start writing your own annotation processor based on FactoryProcessor DON'T copy and paste this pitfalls. Instead you should avoid them from the very beginning.**
 
 In a future blog post (Annotation Processing 102) I will write about unit testing annotation processors. However, my next blog post will be about software architecture in android. Stay tuned.
 
 ### Update
-I gave a talk about Annotation Processing at droidcon Germany 2015. The video of my talk can be found at [youtube](https://www.youtube.com/watch?v=43FFfTyDYEg):
+I gave a talk about annotation processing at Droidcon Germany 2015. The video of my talk can be found at [youtube](https://www.youtube.com/watch?v=43FFfTyDYEg):
 
 {{< youtube 43FFfTyDYEg >}}
